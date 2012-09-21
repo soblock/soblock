@@ -1,0 +1,43 @@
+package org.wavecraft.gameobject.physics;
+
+import org.wavecraft.gameobject.GameObjectMoving;
+import org.wavecraft.ui.KeyboardBinding;
+import org.wavecraft.ui.events.UiEvent;
+import org.wavecraft.ui.events.UiEventKeyboardPressed;
+import org.wavecraft.ui.events.UiEventListener;
+import org.wavecraft.ui.events.UiEventMediator;
+
+public class PhysicsWrapper extends Physics implements UiEventListener{
+
+	private Physics physics = PhysicsFreeFlight.getInstance();
+
+	public PhysicsWrapper(){
+		UiEventMediator.addListener(this);
+		PhysicsFreeFlight.getInstance();
+		PhysicsWalkIntersect.getInstance();
+	}
+	@Override
+	public void move(GameObjectMoving movingObject, double dt) {
+		physics.move(movingObject, dt);
+		//System.out.println(physics.getClass().toString());
+	}
+	@Override
+	public void handle(UiEvent e) {
+		if (e instanceof UiEventKeyboardPressed){
+			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_SWITCH_PHYSICS){
+				if (physics instanceof PhysicsFreeFlight){
+					physics = PhysicsWalkIntersect.getInstance();
+					System.out.println("WALK INTERSECT");
+				}
+				else{
+					if (physics instanceof PhysicsWalkIntersect){
+						physics = PhysicsFreeFlightIntersect.getInstance();
+						System.out.println("FREE FLIGHT MODE");
+					}
+				}
+			}
+
+		}
+	}
+
+}
