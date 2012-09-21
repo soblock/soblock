@@ -13,11 +13,11 @@ public class CameraThirdPerson implements Camera {
 	public void setModelViewMatrix() {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
-		
+				
 		float ux = (float) (Math.cos(angles.x) );
 		float uy = (float) (Math.sin(angles.x) );
 		float uz = (float) (Math.sin(angles.y));
-		//float uz = -0.25f;
+
 		float centerx = (float) position.x + ux;
 		float centery = (float) position.y + uy;
 		float centerz = (float) position.z + uz;
