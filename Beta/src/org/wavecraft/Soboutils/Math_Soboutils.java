@@ -2,12 +2,11 @@ package org.wavecraft.Soboutils;
 
 
 public class Math_Soboutils {
-	// return the ith bit in the binary decomposition of k
 
 	public static int[] powerOf2;
 	public static float[] fpowerOf2;
 	public static double[] dpowerOf2;
-
+	
 	public Math_Soboutils(){
 		powerOf2 = new int[60];
 		for (int J=0;J<60;J++){
