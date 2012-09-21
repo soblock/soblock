@@ -33,6 +33,8 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 	double non_lin_friction_coeff= 0.002;
 	double jumpCoefft = Math.sqrt(gravityG*1.1 )*1000;
 	double shockCoeff=0.5;
+	double bounceCoeff=0.3;
+	double VminBounce=2;
 	
 	private static PhysicsWalkIntersect instance;
 	public static PhysicsWalkIntersect getInstance(){
@@ -126,9 +128,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			BoundingBox box = movingObject.getTranslatedBoundingBox();
 			box= box.extrude(velocity.scalarMult(dt));
 			ArrayList<Octree> listOfIntersectedLeaf = CollisionDetectionOctree.intersectedLeaf(root, box);
-			boolean shock_z=false;
-			velocitynm1= new Coord3d(velocity);
-			avoid_blocks(listOfIntersectedLeaf, movingObject, dt,shock_z);
+			avoid_blocks(listOfIntersectedLeaf, movingObject, dt);
 			direction.clear();
 			scalarSpeedMult = 1;
 		}
@@ -173,8 +173,15 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 	}
 
+	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt){
+		boolean shock_zp=false;
+		boolean shock_zm=false;
+		velocitynm1= new Coord3d(velocity);
+		avoid_blocks(listOfIntersectedLeaf, movingObject, dt,shock_zp,shock_zm);
+		
+	}
 
-	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_z) {
+	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
 		// / the player is a considered a sphere of radius size_player
 		double s = 0.125;
 		double h = 1;//1/s;
@@ -277,7 +284,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 					tz = Math.max(t - eps / uz, 0);
 					if (tz == 0){
 						is_blocked_z = true;
-						shock_z=true;
+						shock_zp=true;
 					}
 					dt = Math.min(dt, tz);
 				}
@@ -291,7 +298,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 					tz = Math.max(t + eps / uz, 0);
 					if (tz == 0){
 						is_blocked_z = true;
-						shock_z=true;
+						shock_zm=true;
 					}
 					dt = Math.min(dt, tz);
 				}
@@ -307,9 +314,14 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			velocity.x=ux;
 			velocity.y=uy;
 			velocity.z=uz;
-			if (shock_z) {
-				System.out.println(velocitynm1.toString());
+			if (shock_zp) {
+				//System.out.println(velocitynm1.toString());
 				velocity.z=-shockCoeff*velocitynm1.z;
+			}
+			if (shock_zm && VminBounce<-uz){
+				System.out.println(velocity.toString());
+				velocity.z=-bounceCoeff*velocitynm1.z;
+				System.out.println(velocity.toString());
 			}
 
 		} else {
@@ -326,7 +338,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			position.x=eyex;
 			position.y=eyey;
 			position.z=eyez;
-			avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_z);
+			avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm);
 		}
 
 	}
