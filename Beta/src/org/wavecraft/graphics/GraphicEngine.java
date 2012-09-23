@@ -37,9 +37,11 @@ import org.wavecraft.graphics.vbo.VBOWrapper;
 import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
+import org.wavecraft.graphics.view.WindowSize;
 import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifAdder;
 import org.wavecraft.modif.ModifOctree;
+import org.wavecraft.ui.menu.Console;
 import org.wavecraft.ui.menu.MenuSelectColorMap;
 import org.wavecraft.ui.menu.MenuSelectBlock;
 
@@ -70,6 +72,7 @@ public class GraphicEngine {
 		OctreeEventMediator.addListener(vboFace);
 		MegaTexture.getInstance();
 
+		WindowSize.getInstance();
 		// vboTest = new VBOWrapper(VboMode.V3N3T2);
 		// float[] initArrayForVbo = {
 		// // x y z nx ny nz tx ty
@@ -107,9 +110,12 @@ public class GraphicEngine {
 		MenuSelectBlock.getInstance().draw();
 		MenuSelectColorMap.getInstance().draw();
 		ColorMap.getInstance().plotLegend(ColorMap.getInstance().cm);
-
+		Console.getInstance().draw();
+		
+		
 		// GL11.glFlush();
 		Display.update();
+		
 	}
 
 	public static void innerRender() {

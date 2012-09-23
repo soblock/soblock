@@ -138,7 +138,7 @@ public class MenuSelectColorMap  {
 			default:
 				break;
 			}
-			if (action != null ) {System.out.println(action.getClass().toString());}
+
 			WCButton button = new WCButton(buttonName,new Coord2d( 0.7 , ymr + i*deltax),
 					new Coord2d(buttonSizex, buttonSizey), action);
 			buttons.add(button);

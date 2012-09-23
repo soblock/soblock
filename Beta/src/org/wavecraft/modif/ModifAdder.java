@@ -18,6 +18,7 @@ import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMouseClicked;
+import org.wavecraft.ui.menu.Console;
 
 
 // singleton 
@@ -166,6 +167,8 @@ public class ModifAdder implements UiEventListener {
 		nodeToRegenerate.setState(OctreeStateLeaf.getInstance());
 		OctreeEvent event = new OctreeEvent(nodeToRegenerate, OctreeEventKindof.LEAFY);
 		OctreeEventMediator.addEvent(event);
+		
+		Console.getInstance().push("ADD "+nodeToAdd.toString());
 	}
 
 	private void removeBlock(DyadicBlock nodeToRemove){
@@ -191,6 +194,8 @@ public class ModifAdder implements UiEventListener {
 		Octree octreeToRemove = octree.smallestCellContaining(nodeToRemove);
 		OctreeEvent event = new OctreeEvent(octreeToRemove, OctreeEventKindof.KILL);
 		OctreeEventMediator.addEvent(event);
+		
+		Console.getInstance().push("REMOVE "+nodeToRemove.toString());
 	}
 
 
