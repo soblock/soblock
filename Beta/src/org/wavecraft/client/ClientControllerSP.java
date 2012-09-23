@@ -32,6 +32,9 @@ public class ClientControllerSP {
 	}
 	
 	// TEST COMMIT LAURENT
+	public static void testCommitLaurent(){
+		
+	}
 	
 	// get the views of graphics point in the direction the player is looking at
 	private static void bindView(){
