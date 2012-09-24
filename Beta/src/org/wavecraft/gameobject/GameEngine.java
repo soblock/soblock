@@ -74,47 +74,9 @@ public class GameEngine {
 
 		octree = new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		modif =new ModifOctree(0,0,0,Octree.JMAX,5,0.);
-//		ModifOctree son = new ModifOctree(modif.subBlock(4).x, 
-//				modif.subBlock(4).y, 
-//				modif.subBlock(4).z,Octree.JMAX-1,5,100000);
-//		ModifOctree son1 = new ModifOctree(son.subBlock(4).x, 
-//				son.subBlock(4).y, 
-//				son.subBlock(4).z,Octree.JMAX-2,5,-200000);
-//		ModifOctree son2 = new ModifOctree(son.subBlock(4).x, 
-//				son.subBlock(4).y, 
-//				son.subBlock(4).z,Octree.JMAX-3,5, 200000);
-//		ModifOctree son3 = new ModifOctree(son.subBlock(4).x, 
-//				son.subBlock(4).y, 
-//				son.subBlock(4).z,Octree.JMAX-4,5, -200000);
-//		ModifOctree son4 = new ModifOctree(son.subBlock(4).x, 
-//				son.subBlock(4).y, 
-//				son.subBlock(4).z,Octree.JMAX-5,5, 200000);
-//		son4.father=son3;
-//		son3.father=son2;
-//		son2.father=son1;
-//		son1.father=son;
-//		son.father=modif;
-//		son3.sons=new ModifOctree [8];
-//		son2.sons=new ModifOctree [8];
-//		son1.sons=new ModifOctree [8];
-//		son.sons= new ModifOctree [8];
-//		modif.sons= new ModifOctree [8];
-//		son3.sons[4]=son4;
-//		son2.sons[4]=son3;
-//		son1.sons[4]=son2;
-//		son.sons[4]=son1;
-//		modif.sons[4]=son;
-		
-		
-		
 		modif.computeBounds();
 		modif.sumAncestors = 0;
 		modif.computeSumAncestors();
-		//Octree son1 = new Octree(son.coord.subCoord(7),Octree.JMAX-2,4);
-
-
-
-
 		//octreeBuilder = OctreeBuilderBuilder.getFlatlandGeoCulling(0.5);
 		//octreeBuilder = OctreeBuilderBuilder.getSphereNoculling(new Coord3d(50, 50, 50), 50);
 		//octreeBuilder = OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(600, 600, 600), 500);
@@ -133,7 +95,7 @@ public class GameEngine {
 		double zmax =z0 + 100;
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,zmax);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
-		octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionFlat(Math.pow(2, Octree.JMAX-1)),modif);
+		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionFlat(Math.pow(2, Octree.JMAX-1)),modif);
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionSinc(new Coord3d(512, 512, 512), 100, 100, 256),modif);
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionSphere(new Coord3d(256, 256, 256), 256),modif);
 		
