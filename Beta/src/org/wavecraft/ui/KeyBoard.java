@@ -56,8 +56,6 @@ public class KeyBoard {
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_BACK),KeyboardBinding.KEYBOARD_GAME_KILLBLOCK);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_Z),KeyboardBinding.KEYBOARD_MODIF_INC_ADD);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_X),KeyboardBinding.KEYBOARD_MODIF_DEC_ADD);
-		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_C),KeyboardBinding.KEYBOARD_MODIF_INC_REMOVE);
-		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_V),KeyboardBinding.KEYBOARD_MODIF_DEC_REMOVE);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_F),KeyboardBinding.KEYBOARD_SWITCH_PHYSICS);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_0),KeyboardBinding.KEYBOARD_CONTENT_0);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_1),KeyboardBinding.KEYBOARD_CONTENT_1);
