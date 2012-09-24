@@ -48,16 +48,13 @@ public class Console {
 
 	
 	public void drawBack(){
-		GL11.glBegin(GL11.GL_QUADS);
-		double xMin = positionRelative.x;
-		double xMax = positionRelative.x+sizeRelative.x;
-		double yMin = positionRelative.y;
-		double yMax = positionRelative.y+sizeRelative.y;
-		GL11.glVertex2d(xMin, yMin);
-		GL11.glVertex2d(xMax, yMin);
-		GL11.glVertex2d(xMax, yMax);
-		GL11.glVertex2d(xMin, yMax);
-		GL11.glEnd();
+//		GL11.glBegin(GL11.GL_QUADS);
+//	
+//		GL11.glVertex2d(xMin, yMin);
+//		GL11.glVertex2d(xMax, yMin);
+//		GL11.glVertex2d(xMax, yMax);
+//		GL11.glVertex2d(xMin, yMax);
+//		GL11.glEnd();
 	}
 	public void process(String str, int posy){
 		textRenderer.drawString(str, WindowSize.getInstance().getW(),  WindowSize.getInstance().getH(), 10, posy);
