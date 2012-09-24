@@ -9,6 +9,11 @@ public class CameraTopdown implements Camera{
 	private Coord3d position;
 	private double z = 4096;
 	
+	public CameraTopdown(){
+		this.position = new Coord3d(0,0,0);
+		this.z = 1;
+	}
+	
 	public void setPosition(Coord3d position){
 		this.position = position;
 	}

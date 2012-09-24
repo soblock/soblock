@@ -43,6 +43,14 @@ public class ViewBuilder {
 		return view;
 	}
 	
+	public static View viewWindowCoord(){
+		View view = new View();
+		//view.camera = new CameraTopdown();
+		view.camera = new CameraNo();
+		view.projection = ProjectionOrthoScreenCoordinate.getInstance();
+		return view;
+	}
+	
 	public static void bind(GameObjectMovingOriented OMObject,View view){
 		if (view.camera instanceof CameraFPS){
 			((CameraFPS) view.camera).setConfig(OMObject.getPosition(), OMObject.getAngles());

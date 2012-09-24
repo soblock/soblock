@@ -41,6 +41,7 @@ import org.wavecraft.graphics.view.WindowSize;
 import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifAdder;
 import org.wavecraft.modif.ModifOctree;
+import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.menu.Console;
 import org.wavecraft.ui.menu.MenuSelectColorMap;
 import org.wavecraft.ui.menu.MenuSelectBlock;
@@ -97,11 +98,11 @@ public class GraphicEngine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		viewMain.initRendering();
+		double t1 = System.currentTimeMillis();
 		innerRender();
 
-		// GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-		// viewMinimap.initRendering();
-		// innerRender();
+		double t2 = System.currentTimeMillis()-t1;
+		Profiler.getInstance().push("render", t2,Timer.getCurrT());
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
@@ -113,6 +114,14 @@ public class GraphicEngine {
 		Console.getInstance().draw();
 		
 		
+		// test window view : 
+		View viewWindowCoord = ViewBuilder.viewWindowCoord();	
+		viewWindowCoord.initRendering();
+
+		//Profiler.getInstance().push("test", Timer.getDt(),Timer.getCurrT());
+		//Profiler.getInstance().push("test2", Timer.getDt(),Timer.getCurrT());
+		
+		Profiler.getInstance().display();
 		// GL11.glFlush();
 		Display.update();
 		
