@@ -1,6 +1,7 @@
 package org.wavecraft.ui.menu;
 
 
+import org.lwjgl.opengl.GL11;
 import org.wavecraft.graphics.hud.TextRenderer;
 import org.wavecraft.graphics.view.WindowSize;
 
@@ -17,7 +18,7 @@ public class Console {
 	TextRenderer textRenderer;
 
 	private Console(){
-		ringBufferSz = 32;
+		ringBufferSz = 64;
 		ringBuffer = new String[ringBufferSz];
 		textRenderer = new TextRenderer();
 		textRenderer.setFontSize(12);
@@ -33,18 +34,31 @@ public class Console {
 	}
 
 	public void draw(){
-		int posy = 0;
+		int posy = WindowSize.getInstance().getH()/2;
 		for (int i = ringBufferPos; i>0; i--){
 			process(ringBuffer[i],posy);
-			posy += 20;
+			posy -= 20;
 		}
 		// second half of buffer
 		for (int i = ringBufferSz-1; i>ringBufferPos; i--){
 			process(ringBuffer[i],posy);
-			posy += 20;
+			posy -= 20;
 		}
 	}
 
+	
+	public void drawBack(){
+		GL11.glBegin(GL11.GL_QUADS);
+		double xMin = positionRelative.x;
+		double xMax = positionRelative.x+sizeRelative.x;
+		double yMin = positionRelative.y;
+		double yMax = positionRelative.y+sizeRelative.y;
+		GL11.glVertex2d(xMin, yMin);
+		GL11.glVertex2d(xMax, yMin);
+		GL11.glVertex2d(xMax, yMax);
+		GL11.glVertex2d(xMin, yMax);
+		GL11.glEnd();
+	}
 	public void process(String str, int posy){
 		textRenderer.drawString(str, WindowSize.getInstance().getW(),  WindowSize.getInstance().getH(), 10, posy);
 
