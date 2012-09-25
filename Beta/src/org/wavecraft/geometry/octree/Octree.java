@@ -6,6 +6,7 @@ import org.wavecraft.geometry.octree.events.OctreeEvent;
 import org.wavecraft.geometry.octree.events.OctreeEventKindof;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.modif.ModifOctree;
+import org.wavecraft.geometry.FluidTree.FluidTree;
 
 
 
@@ -110,6 +111,33 @@ public class Octree extends DyadicBlock{
 		* Math_Soboutils.ithbit(block.z, this.getJ() - block.getJ());
 
 	}
+	public Octree find_the_root(){
+		if (father!=null) return father.find_the_root();
+		else return this;
+	}
+	
+	public boolean[] doesThisBlockExist(FluidTree tree){
+		Octree tree1=new Octree(tree.getX(),tree.getY(),tree.getZ(),tree.getJ());
+		return this.doesThisBlockExist(tree1);
+	}
+	public boolean[] doesThisBlockExist(Octree tree){
+		boolean[] res=new boolean [2];
+		res[1]=(sons==null)?true:false;
+		if (this.getJ()==tree.getJ() ){
+			{res[0]=true; return res;}
+		}
+		else{
+			if (sons==null) {res[0]=true; return res;}
+			int offset= findSonContaining(tree);
+			if ( offset<0 || sons[offset]==null){
+				{res[0]=false; return res;}
+			}
+			else{
+				return sons[offset].doesThisBlockExist(tree);
+			}
+		}
+	}
+
 	
 
 }
