@@ -11,6 +11,7 @@ import org.wavecraft.geometry.octree.OctreeStateFatherWorried;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
 import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
+import org.wavecraft.stats.Profiler;
 
 
 public class OctreeUpdaterPriority implements OctreeUpdater {
@@ -131,6 +132,10 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 			if (Timer.getNframe()%10 == 0) {
 				//System.out.format("empty %f put %f process %f  event %f %n",t2 - t1, t3 - t2, t4 -t3, t5 - t4);
 			}
+			Profiler.getInstance().push("OctreeEmptyBins", t2-t1, Timer.getCurrT());
+			Profiler.getInstance().push("OctreeputNodeInBins", t3-t2, Timer.getCurrT());
+			Profiler.getInstance().push("OctreeProcessBins", t4-t3, Timer.getCurrT());
+			Profiler.getInstance().push("OctreeEventMediator", t5-t4, Timer.getCurrT());
 		}
 	}
 

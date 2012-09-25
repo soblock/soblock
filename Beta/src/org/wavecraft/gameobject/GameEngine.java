@@ -150,21 +150,22 @@ public class GameEngine {
 		
 		
 		
-		Profiler.getInstance().tic();
+		double t1 = System.currentTimeMillis();
 		physicsPlayer.move(player, dt);
-		double dt_phys = Profiler.getInstance().toc();
+		double dt_phys = System.currentTimeMillis()-t1;
 		Profiler.getInstance().push("physicPlayer", dt_phys,Timer.getCurrT());
 
 
 		
-		Profiler.getInstance().tic();
+		//double t2 = System.currentTimeMillis();
 		if (Timer.getNframe()%1 == 0){
 			octreeUpdater.updateOctree();
 		}
-		double dt_octreeUpdater = Profiler.getInstance().toc();
-		Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
+		// this function is being profiled in more detail
+		//double dt_octreeUpdater = System.currentTimeMillis()-t2;
+		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
 		
-		Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 	
 
 	}

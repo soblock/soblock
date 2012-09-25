@@ -167,7 +167,10 @@ public class GraphicEngine {
 	}
 
 	public static void update() {
+		double t1 = System.currentTimeMillis();
 		vboFace.update();
+		double t2 = System.currentTimeMillis();
+		Profiler.getInstance().push("updateVBO", t2-t1, Timer.getCurrT());
 	}
 
 	public static View getViewMain() {
