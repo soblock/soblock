@@ -1,10 +1,13 @@
 package org.wavecraft.client;
 
+import java.util.Date;
+
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.graphics.GraphicEngine;
 import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifAdder;
 
+import org.wavecraft.stats.Profiler;
 import org.wavecraft.stats.StatisticsClient;
 import org.wavecraft.ui.UserInterface;
 import org.wavecraft.ui.events.UiEvent;
@@ -63,6 +66,8 @@ public class WaveCraftSP implements UiEventListener {
 		StatisticsClient.update();
 		GameEngine.update();
 		GraphicEngine.update();
+		
+			
 	}
 
 	protected void render() {	
@@ -84,6 +89,9 @@ public class WaveCraftSP implements UiEventListener {
 			UiEventKeyboardPressed eventKeyboard = (UiEventKeyboardPressed) (event);
 			switch (eventKeyboard.key) {
 			case KEYBOARD_APP_CLOSE:
+				Date date = new Date();
+				String dateStr= date.toGMTString();
+				Profiler.getInstance().writeLogInFile("wavecraft_profiler_output"+dateStr);
 				quitNotification = true;
 				System.out.println("quiting application");
 				break;

@@ -4,14 +4,15 @@ import org.lwjgl.opengl.GL11;
 
 public class Grid {
 	
-	private static int N = 256;
+	private static int N = 2048;
+	private static int offset = 16;
 
 	public static void draw(){
 		
 		GL11.glBegin(GL11.GL_LINES);
 		GL11.glLineWidth(1);
 		GL11.glColor3f(1, 0, 0);
-		for (int i=0;i<=N;i++){
+		for (int i=0;i<=N;i+=offset){
 			GL11.glColor3f(1, 0, 0);
 			GL11.glVertex3i(i,0, 0);
 			GL11.glColor3f(0, 1, 0);

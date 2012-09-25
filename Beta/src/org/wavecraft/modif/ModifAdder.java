@@ -18,6 +18,7 @@ import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMouseClicked;
+import org.wavecraft.ui.menu.Console;
 
 
 // singleton 
@@ -26,8 +27,8 @@ public class ModifAdder implements UiEventListener {
 	private static ModifOctree modif ;
 	private static Octree octree;
 	private static int targetContent = 1;
-	private static int targetAddJ = 1; // the size of the modif
-	private static int targetRemoveJ = 2; // the size of the modif
+	private static int targetJ = 1; // the size of the modif
+
 	private static boolean whenLeftClickAddBlock = true;
 
 	public static void setTargetContent(int content){
@@ -42,7 +43,7 @@ public class ModifAdder implements UiEventListener {
 		// find best face
 		Face face = best.nearestIntersectedFace(GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 		DyadicBlock nodeToRemove = face.getFather();
-		nodeToRemove = nodeToRemove.ancestor(targetRemoveJ);
+		nodeToRemove = nodeToRemove.ancestor(targetJ);
 		return nodeToRemove;
 	}
 
@@ -53,7 +54,7 @@ public class ModifAdder implements UiEventListener {
 		// find best face
 		Face face = best.nearestIntersectedFace(GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 		DyadicBlock nodeToAdd = face.getNeighbor();
-		nodeToAdd = nodeToAdd.ancestor(targetAddJ);
+		nodeToAdd = nodeToAdd.ancestor(targetJ);
 		return nodeToAdd;
 	}
 
@@ -116,23 +117,13 @@ public class ModifAdder implements UiEventListener {
 			}
 
 			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_MODIF_INC_ADD){
-				targetAddJ++;
-				targetAddJ = Math.min(Octree.JMAX, Math.max(0, targetAddJ));
+				targetJ++;
+				targetJ = Math.min(Octree.JMAX, Math.max(0, targetJ));
 			}
 
 			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_MODIF_DEC_ADD){
-				targetAddJ--;
-				targetAddJ = Math.min(Octree.JMAX, Math.max(0, targetAddJ));
-			}
-
-			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_MODIF_INC_REMOVE){
-				targetRemoveJ++;
-				targetRemoveJ = Math.min(Octree.JMAX, Math.max(0, targetRemoveJ));
-			}
-
-			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_MODIF_DEC_REMOVE){
-				targetRemoveJ--;
-				targetRemoveJ = Math.min(Octree.JMAX, Math.max(0, targetRemoveJ));
+				targetJ--;
+				targetJ = Math.min(Octree.JMAX, Math.max(0, targetJ));
 			}
 
 
@@ -146,7 +137,7 @@ public class ModifAdder implements UiEventListener {
 
 		modif.addModif(nodeToAdd, value, content);
 		modif.computeBounds();
-		
+
 		Octree nodeToRegenerate = octree.smallestCellContaining(nodeToAdd);
 		// if the smallest node is larger than the node to add,
 		// add sons quietly and iterate
@@ -166,6 +157,8 @@ public class ModifAdder implements UiEventListener {
 		nodeToRegenerate.setState(OctreeStateLeaf.getInstance());
 		OctreeEvent event = new OctreeEvent(nodeToRegenerate, OctreeEventKindof.LEAFY);
 		OctreeEventMediator.addEvent(event);
+
+		Console.getInstance().push("ADD "+nodeToAdd.toString());
 	}
 
 	private void removeBlock(DyadicBlock nodeToRemove){
@@ -173,7 +166,7 @@ public class ModifAdder implements UiEventListener {
 		double value = 1E20;
 		modif.addModif(nodeToRemove, value, 0);
 		modif.computeBounds();
-		
+
 		// leafy every non null neighbor
 		DyadicBlock[] neighbors = nodeToRemove.sixNeighbors();
 		for (int i = 0;i<6; i++){
@@ -191,6 +184,8 @@ public class ModifAdder implements UiEventListener {
 		Octree octreeToRemove = octree.smallestCellContaining(nodeToRemove);
 		OctreeEvent event = new OctreeEvent(octreeToRemove, OctreeEventKindof.KILL);
 		OctreeEventMediator.addEvent(event);
+
+		Console.getInstance().push("REMOVE "+nodeToRemove.toString());
 	}
 
 

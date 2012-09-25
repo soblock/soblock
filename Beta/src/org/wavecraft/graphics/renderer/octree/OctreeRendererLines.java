@@ -35,7 +35,7 @@ public class OctreeRendererLines implements UiEventListener {
 	}
 
 	private OctreeRendererLines(){
-		drawMode = DrawMode.MODIF;
+		drawMode = DrawMode.DRAWNOTHING;
 		UiEventMediator.addListener(this);
 	}
 

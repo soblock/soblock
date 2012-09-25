@@ -5,6 +5,7 @@ package org.wavecraft.ui.menu;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.graphics.hud.TextRenderer;
+import org.wavecraft.graphics.view.WindowSize;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
@@ -12,8 +13,7 @@ import org.wavecraft.ui.events.UiEventMouseClicked;
 import org.wavecraft.ui.events.UiEventWindowResized;
 
 public class WCButton implements UiEventListener{
-	private static int w=1;
-	private static int h=1;
+
 
 	private String text;
 	protected Coord2d positionRelative; // relative position of the left-up corner between -1 and 1 
@@ -111,6 +111,8 @@ public class WCButton implements UiEventListener{
 	}
 
 	protected void drawText(){
+		int w = WindowSize.getInstance().getW();
+		int h = WindowSize.getInstance().getH();
 		int x = (int) (w*(positionRelative.x  +1)/2.0f) + textMargins[0];
 		int y = (int) (h*(-positionRelative.y - sizeRelative.y + 1)/2.0f) + textMargins[1] ;
 		//System.out.format("x %d y %d %n",x,y);
@@ -119,17 +121,13 @@ public class WCButton implements UiEventListener{
 
 	@Override
 	public void handle(UiEvent e) {
-		// TODO Auto-generated method stub
-		if (e instanceof UiEventWindowResized){
-			UiEventWindowResized eRs = (UiEventWindowResized) e;
-			w = eRs.w;
-			h = eRs.h;
-		}
-
+		
 		if (e instanceof UiEventMouseClicked){
 			UiEventMouseClicked eClicked = (UiEventMouseClicked) e;
 
 			if (eClicked.buttonId == 0){
+				int w = WindowSize.getInstance().getW();
+				int h = WindowSize.getInstance().getH();
 
 				// convert the click mouse point coordinate
 				// into canvas coordinate

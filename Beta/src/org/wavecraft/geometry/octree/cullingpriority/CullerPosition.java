@@ -13,7 +13,7 @@ import org.wavecraft.ui.events.UiEventMediator;
 public class CullerPosition implements Culler, OctreePriorityFunction, UiEventListener{
 
 	private Coord3d position;
-	private double geoCullCoefficient = 24;
+	private double geoCullCoefficient = 32;
 	private final static double minCullingCoefficient = 1;
 	private final static double maxCullingCoefficient = 64;
 	public CullerPosition(){
@@ -65,14 +65,20 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 		// TODO Auto-generated method stub
 		double p = 0;
 		if (node.getState() instanceof OctreeStateLeaf ){ 
-			if (node.getJ() == 0) return 10000;
-			p = node.center().distance(position)/node.edgeLentgh();
+			if (node.getJ() == 0) return 100000000;
+			//p = node.center().distance(position)/node.edgeLentgh();
+			double ttj = node.edgeLentgh();
+			p = node.distance(position)/(ttj);
 		}
 		if (node.getState() instanceof OctreeStateNotYetVisited){
-			p = node.center().distance(position)/node.edgeLentgh() ;
+			//p = node.center().distance(position)/node.edgeLentgh() ;
+			p = 0;
+			//double ttj = node.edgeLentgh();
+			//p = node.distance(position)/(ttj);
 		}
 		if (node.getState() instanceof OctreeStateFatherCool){
-			p = 0;
+			//p = 0;
+			p = node.edgeLentgh()/(node.distance(position)+1);
 			//p = node.center().distance(position)/node.edgeLentgh() ;
 			//p =  node.edgeLentgh() / node.center().distance(position);
 		}

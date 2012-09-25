@@ -24,6 +24,7 @@ import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSinc;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSphere;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
+import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifOctree;
@@ -108,14 +109,25 @@ public class GameEngine {
 
 	public static void update(){
 		double dt = Timer.getDt();
+		
+		
+		
+		double t1 = System.currentTimeMillis();
 		physicsPlayer.move(player, dt);
+		double dt_phys = System.currentTimeMillis()-t1;
+		Profiler.getInstance().push("physicPlayer", dt_phys,Timer.getCurrT());
 
+
+		
+		//double t2 = System.currentTimeMillis();
 		if (Timer.getNframe()%1 == 0){
 			octreeUpdater.updateOctree();
 		}
+		// this function is being profiled in more detail
+		//double dt_octreeUpdater = System.currentTimeMillis()-t2;
+		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
 		
-
-		Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 	
 
 	}

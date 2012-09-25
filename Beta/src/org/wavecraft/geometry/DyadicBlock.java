@@ -13,6 +13,22 @@ public class DyadicBlock extends Coord3i {
 		this.J = J;
 	}
 
+	public double distanceSquared(Coord3d pos){
+		double ttj = Math.pow(2, J);
+		double dx = (ttj*(x+0.5) - pos.x);
+		double dy = (ttj*(y+0.5) - pos.y);
+		double dz = (ttj*(z+0.5) - pos.z);
+		return dx*dx + dy*dy + dz*dz;
+	}
+	
+	public double distance(Coord3d pos){
+		double ttj = Math.pow(2, J);
+		double dx = (ttj*(x+0.5) - pos.x);
+		double dy = (ttj*(y+0.5) - pos.y);
+		double dz = (ttj*(z+0.5) - pos.z);
+		return Math.sqrt(dx*dx + dy*dy + dz*dz);
+	}
+	
 	public int getJ() {
 		return J;
 	}
