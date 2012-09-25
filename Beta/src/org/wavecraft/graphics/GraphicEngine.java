@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 
+import java.util.ArrayList;
+
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -23,6 +25,7 @@ import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.graphics.hud.HUD;
 import org.wavecraft.graphics.hud.HUDBuilder;
 import org.wavecraft.graphics.light.Light;
+import org.wavecraft.graphics.renderer.DyadicBlockString;
 import org.wavecraft.graphics.renderer.GameObjectRenderer;
 import org.wavecraft.graphics.renderer.GameObjectRendererBuilder;
 import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
@@ -30,6 +33,7 @@ import org.wavecraft.graphics.renderer.octree.BlockRendererTexture;
 import org.wavecraft.graphics.renderer.octree.ColorMap;
 import org.wavecraft.graphics.renderer.octree.FaceRendererLines;
 import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
+import org.wavecraft.graphics.texture.CharacterTexture;
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.graphics.vbo.FaceToArray;
 import org.wavecraft.graphics.vbo.VBOFace;
@@ -55,6 +59,8 @@ public class GraphicEngine {
 	private static HUD hud;
 	private static Light light;
 
+	static ArrayList<Octree> octreeArrMsg ;
+
 	private static VBOFace vboFace = null;
 
 	private GraphicEngine() {
@@ -74,6 +80,17 @@ public class GraphicEngine {
 		MegaTexture.getInstance();
 
 		WindowSize.getInstance();
+
+		Coord3i ci = new Coord3i(300, 150, 250);
+
+
+
+		octreeArrMsg = DyadicBlockString.stringToOctreeArr("welcome in beautiful wavecraft",2,ci);
+
+		for (int i = 0 ;i<octreeArrMsg.size();i++){
+			vboFace.pushNode(octreeArrMsg.get(i));
+		}
+
 		// vboTest = new VBOWrapper(VboMode.V3N3T2);
 		// float[] initArrayForVbo = {
 		// // x y z nx ny nz tx ty
@@ -83,6 +100,10 @@ public class GraphicEngine {
 		// 0, 1, 0, 0, 0, 1, 0, 1,
 		// };
 		// vboTest.initFromFloat(initArrayForVbo);
+
+		//CharacterTexture.getInstance().printChar(2);
+		//CharacterTexture.getInstance().printString("helloworld");
+
 	}
 
 	public static GraphicEngine getGraphicEngine() {
@@ -112,19 +133,19 @@ public class GraphicEngine {
 		MenuSelectColorMap.getInstance().draw();
 		ColorMap.getInstance().plotLegend(ColorMap.getInstance().cm);
 		Console.getInstance().draw();
-		
-		
+
+
 		// test window view : 
 		View viewWindowCoord = ViewBuilder.viewWindowCoord();	
 		viewWindowCoord.initRendering();
 
 		//Profiler.getInstance().push("test", Timer.getDt(),Timer.getCurrT());
 		//Profiler.getInstance().push("test2", Timer.getDt(),Timer.getCurrT());
-		
+
 		Profiler.getInstance().display();
 		// GL11.glFlush();
 		Display.update();
-		
+
 	}
 
 	public static void innerRender() {
@@ -139,7 +160,7 @@ public class GraphicEngine {
 		// gameObjectRenderer.render(GameEngine.getPlayer());
 		// light.setPositionSunLight();
 
-		
+
 		BlockRendererLines.getInstance().renderEmphasize(ModifAdder.getNodeToRemove(), 0);
 		BlockRendererLines.getInstance().renderEmphasize(ModifAdder.getNodeToAdd(), 1);
 

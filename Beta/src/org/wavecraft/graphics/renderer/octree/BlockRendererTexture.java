@@ -8,6 +8,8 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 
+import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.client.Timer;
 import org.wavecraft.geometry.DyadicBlock;
@@ -125,4 +127,21 @@ public class BlockRendererTexture {
 		GL11.glEnd();
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
+	
+	
+	public static void render(ArrayList<Octree> octreeArr){
+		MegaTexture.getInstance();
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		MegaTexture.bind();
+		GL11.glBegin(GL11.GL_QUADS);
+		for (int i = 0 ; i< octreeArr.size(); i++){
+			afterGLQuads2(octreeArr.get(i));
+		}
+		GL11.glEnd();
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+	}
+	
 }

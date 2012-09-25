@@ -63,7 +63,9 @@ public class GameEngine {
 
 	private GameEngine(){
 		player = new Player();
-		player.position.z=2;
+		player.position.x=95;
+		player.position.y=91;
+		player.position.z=240;
 
 		new Math_Soboutils();
 		

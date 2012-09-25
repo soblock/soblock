@@ -11,10 +11,12 @@ import org.newdawn.slick.util.ResourceLoader;
 public class MegaTexture {
 	private static int szAll,szOne;
 	private static Texture texture;
+	
 	private static MegaTexture instance = null;
 
 	private MegaTexture(){
 		String filename = "data/megatexture.jpg";
+		
 		try {
 			texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream(filename));
 		} catch (IOException e) {
@@ -22,6 +24,8 @@ public class MegaTexture {
 		}
 		szAll = 512;
 		szOne = 32;
+		
+		
 	}
 
 	public static MegaTexture getInstance(){

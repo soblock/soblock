@@ -39,10 +39,10 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 	public OctreeUpdaterPriority(Octree octree, OctreeBuilder builder){
 		this.octree = octree;
 		this.builder = builder;
-		nBins = 64;
-		nFamily= 2;
+		nBins = 16;
+		nFamily= 1;
 		this.maxPriority = 64;
-		budgetPerFramePerFamily = 32;
+		budgetPerFramePerFamily = 10000000; // huge budget at the begining
 		bins = new ArrayList[nBins*nFamily];
 		for (int i = 0 ; i<nBins*nFamily ; i++){
 			bins[i] = new ArrayList<Octree>(10000);
@@ -119,6 +119,10 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 	@Override
 	public void updateOctree() {
 
+		if (Timer.getNframe()==30){
+			budgetPerFramePerFamily = 32;
+		}
+		
 		if (Timer.getNframe()%nFrameWithoutUpdate == 0){
 			double t1 = System.currentTimeMillis();
 			emptyBins();
