@@ -66,6 +66,12 @@ public class GameEngine {
 		player.position.x=95;
 		player.position.y=91;
 		player.position.z=240;
+		
+		if (Octree.JMAX == 10){
+			player.position.x = 450;
+			player.position.x = 380;
+			player.position.z = 816;
+		}
 
 		new Math_Soboutils();
 		

@@ -32,7 +32,7 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 	}
 	
 	public double thres(int J){
-		int J0 = 4;
+		int J0 = 7;
 		if (J<J0){
 			return geoCullCoefficient*Math.pow(2, J);
 		}

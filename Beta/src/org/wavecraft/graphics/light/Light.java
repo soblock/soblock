@@ -9,6 +9,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.GameEngine;
@@ -45,27 +46,40 @@ public class Light {
 		position = new Coord3d(x, y, z);
 	}
 	
+	public void setSkyColor(){
+		 GL11.glClearColor(135/255.01f, 206/255.0f, 250/255.0f, 0.0f);
+	}
+	
 	public void draw(){
 		//DyadicBlock lightBlock = new DyadicBlock((int) position.x,(int) position.y,(int) position.z,0);
 		//BlockRendererLines.render(lightBlock);
-		GL11.glPointSize(10);
-		GL11.glColor3d(1,1,1);
+		GL11.glPointSize(30);
+		
+		GL11.glColor3d(1,1,0);
 		GL11.glBegin(GL11.GL_POINTS);
 		GL11.glVertex3f((float) position.x,(float) position.y,(float) position.z);
 		GL11.glEnd();
 	}
 	
 	public  void initLight(){
+		setSkyColor();
+		
 		ByteBuffer temp = ByteBuffer.allocateDirect(16);
 		
 		temp.order(ByteOrder.nativeOrder());
 		float multAmbient = 2.4f	;
 		float multDiffuse = 3;
 		float multSpecula = 3;
+		float skyLigth[] = {135/255.01f, 206/255.0f, 250/255.0f}; 
 		
-		float lightAmbient[] = { multAmbient, multAmbient, multAmbient, 1 };
-		float lightDiffuse[] = { multDiffuse, multDiffuse, multDiffuse, 1 };
-		float lightSpecula[] = { multSpecula, multSpecula, multSpecula, 1 };
+		float lightAmbient[] = {skyLigth[0]* multAmbient, skyLigth[1]*multAmbient, skyLigth[2]*multAmbient, 1 };
+		float lightDiffuse[] = {skyLigth[0]* multDiffuse, skyLigth[1]*multDiffuse, skyLigth[2]*multDiffuse, 1 };
+		float lightSpecula[] = {skyLigth[0]* multSpecula, skyLigth[1]*multSpecula, skyLigth[2]*multSpecula, 1 };
+
+		
+		//float lightAmbient[] = { multAmbient, multAmbient, multAmbient, 1 };
+	//	float lightDiffuse[] = { multDiffuse, multDiffuse, multDiffuse, 1 };
+//		float lightSpecula[] = { multSpecula, multSpecula, multSpecula, 1 };
 
 		glEnable(GL_LIGHTING);
 		float lightPosition[] = { (float)position.x,(float)position.y,(float)position.z, 1.0f };

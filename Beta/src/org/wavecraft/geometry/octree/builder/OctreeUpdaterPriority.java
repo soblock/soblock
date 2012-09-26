@@ -24,7 +24,9 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 
 	private int nBins;
 	private int nFamily;
-	private ArrayList<Octree>[] bins;
+	private Octree[][] bins;
+	private int[] binPos;
+	private int[] binCapacity;
 	private double maxPriority ;
 
 	private Octree octree;
@@ -43,15 +45,26 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 		nFamily= 1;
 		this.maxPriority = 64;
 		budgetPerFramePerFamily = 10000000; // huge budget at the begining
-		bins = new ArrayList[nBins*nFamily];
+		
+		bins = new Octree[nBins*nFamily][];
+		binPos = new int[nBins*nFamily];
+		binCapacity = new int[nBins*nFamily];
 		for (int i = 0 ; i<nBins*nFamily ; i++){
-			bins[i] = new ArrayList<Octree>(10000);
+			int initCapacity = 1000000;
+			bins[i] = new Octree[initCapacity];
+			
+			binPos[i] = 0;
 		}
 	}
 
 	private void emptyBins(){
 		for (int i = 0 ; i<nBins ; i++){
-			bins[i].clear();
+			//bins[i].clear();
+			for (int j = 0;j<binPos[i];j++){
+				bins[i][j]= null;
+			}
+			binPos[i]=0;
+			//bins[i] = new ArrayList<Octree>(100000);
 		}
 	}
 
@@ -81,7 +94,12 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 				double priorityValue = builder.priority(node);
 				int binIndice = (int) ((nBins-1)* Math.min(priorityValue/maxPriority,1));
 				//System.out.println(binIndice);
-				bins[binIndice + nBins*nodeFamily].add(node);
+				int trueBinInd = binIndice + nBins*nodeFamily;
+				
+				bins[trueBinInd][binPos[trueBinInd]] = node;
+				binPos[trueBinInd]++;
+				
+				//bins[binIndice + nBins*nodeFamily].add(node);
 				//System.out.println(binIndice);
 				//System.out.println(node.toString2());
 			}
@@ -100,8 +118,10 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 			int iBin = 0;// indice of the bin
 			int iNode = 0;// indice of the node inside the bin
 			while (budget > 0 && iBin < nBins){
-				if (iNode<bins[iBin  + nBins*iFamily ].size()){
-					Octree node = bins[iBin  + nBins*iFamily].get(iNode);
+				//if (iNode<bins[iBin  + nBins*iFamily ].size()){
+				if (iNode<binPos[iBin  + nBins*iFamily ]){
+					//Octree node = bins[iBin  + nBins*iFamily].get(iNode);
+					Octree node = bins[iBin  + nBins*iFamily][iNode];
 					double res =node.getState().internalJob(node, builder);
 					budget -= res;
 					iNode++;
@@ -121,6 +141,7 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 
 		if (Timer.getNframe()==30){
 			budgetPerFramePerFamily = 32;
+			percentageOfUpdate = 1/4.0;
 		}
 		
 		if (Timer.getNframe()%nFrameWithoutUpdate == 0){

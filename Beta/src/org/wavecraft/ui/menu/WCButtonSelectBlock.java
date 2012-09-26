@@ -38,7 +38,7 @@ public class WCButtonSelectBlock extends WCButton{
 		double xMax = positionRelative.x+sizeRelative.x;
 		double yMin = positionRelative.y;
 		double yMax = positionRelative.y+sizeRelative.y;
-		float[] texCoord = MegaTexture.getTexCoordinate(contentId);
+		float[] texCoord = MegaTexture.getTexCoordinate(contentId,0);
 		//texCoord for xmin xmax ymin ymax
 		GL11.glTexCoord2f(texCoord[0], texCoord[2]);
 		GL11.glVertex2d(xMin, yMin);
