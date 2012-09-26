@@ -119,6 +119,13 @@ public class GraphicEngine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		viewMain.initRendering();
+		
+		
+		  //GL11.glEnable(GL11.GL_FOG);
+		  //GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
+		  //GL11.glFogf(GL11.GL_FOG_START, 48.f);
+		  //GL11.glFogf(GL11.GL_FOG_END, 256.f);
+		
 		double t1 = System.currentTimeMillis();
 		innerRender();
 

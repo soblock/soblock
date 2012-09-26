@@ -67,9 +67,9 @@ public class Light {
 		ByteBuffer temp = ByteBuffer.allocateDirect(16);
 		
 		temp.order(ByteOrder.nativeOrder());
-		float multAmbient = 2.4f	;
-		float multDiffuse = 3;
-		float multSpecula = 3;
+		float multAmbient = 1.5f*2.4f	;
+		float multDiffuse = 1.5f*3;
+		float multSpecula = 1.5f*3;
 		float skyLigth[] = {135/255.01f, 206/255.0f, 250/255.0f}; 
 		
 		float lightAmbient[] = {skyLigth[0]* multAmbient, skyLigth[1]*multAmbient, skyLigth[2]*multAmbient, 1 };

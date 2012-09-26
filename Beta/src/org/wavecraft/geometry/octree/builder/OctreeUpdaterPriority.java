@@ -141,7 +141,7 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 
 		if (Timer.getNframe()==30){
 			budgetPerFramePerFamily = 32;
-			percentageOfUpdate = 1/4.0;
+			percentageOfUpdate = 1/8.0;
 		}
 		
 		if (Timer.getNframe()%nFrameWithoutUpdate == 0){
