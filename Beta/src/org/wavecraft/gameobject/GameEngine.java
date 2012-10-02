@@ -63,7 +63,15 @@ public class GameEngine {
 
 	private GameEngine(){
 		player = new Player();
-		player.position.z=2;
+		player.position.x=95;
+		player.position.y=91;
+		player.position.z=240;
+		
+		if (Octree.JMAX == 10){
+			player.position.x = 450;
+			player.position.x = 380;
+			player.position.z = 816;
+		}
 
 		new Math_Soboutils();
 		
@@ -90,9 +98,9 @@ public class GameEngine {
 		//octreeBuilder = OctreeBuilderBuilder.getSincGeoCulling(center, scale, deltaz, Z0);
 		//octreeBuilder = OctreeBuilderBuilder.getPerlinGeoCulling();
 		//octreeBuilder = OctreeBuilderBuilder.getPerlinMSGeoCulling();
-		double z0=1.5*Math_Soboutils.powerOf2[Octree.JMAX-1];
+		double z0=1.5*Math_Soboutils.powerOf2[8-1];
 		
-		octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
+		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
 		double zmax =z0 + 100;
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,zmax);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
