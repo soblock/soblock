@@ -22,6 +22,7 @@ import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.OctreeUtils;
 import org.wavecraft.geometry.octree.builder.OctreeBuilderWorldFuntionCullerModif;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
+import org.wavecraft.geometry.octree.fluid.FluidTree;
 import org.wavecraft.graphics.hud.HUD;
 import org.wavecraft.graphics.hud.HUDBuilder;
 import org.wavecraft.graphics.light.Light;
@@ -32,6 +33,7 @@ import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
 import org.wavecraft.graphics.renderer.octree.BlockRendererTexture;
 import org.wavecraft.graphics.renderer.octree.ColorMap;
 import org.wavecraft.graphics.renderer.octree.FaceRendererLines;
+import org.wavecraft.graphics.renderer.octree.FluidTreeRenderer;
 import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
 import org.wavecraft.graphics.texture.CharacterTexture;
 import org.wavecraft.graphics.texture.MegaTexture;
@@ -137,9 +139,9 @@ public class GraphicEngine {
 		hud.draw();
 
 		MenuSelectBlock.getInstance().draw();
-		MenuSelectColorMap.getInstance().draw();
+		//MenuSelectColorMap.getInstance().draw();
 		ColorMap.getInstance().plotLegend(ColorMap.getInstance().cm);
-		Console.getInstance().draw();
+		//Console.getInstance().draw();
 
 
 		// test window view : 
@@ -149,7 +151,7 @@ public class GraphicEngine {
 		//Profiler.getInstance().push("test", Timer.getDt(),Timer.getCurrT());
 		//Profiler.getInstance().push("test2", Timer.getDt(),Timer.getCurrT());
 
-		Profiler.getInstance().display();
+		//Profiler.getInstance().display();
 		// GL11.glFlush();
 		Display.update();
 
@@ -184,6 +186,25 @@ public class GraphicEngine {
 
 		vboFace.draw();
 
+		
+
+		
+		FluidTree fluidTreeExample = new FluidTree(0, 0, 0, 1);
+		FluidTree fluidTreeExample1 = new FluidTree(0, 0, 0, 0);
+		FluidTree fluidTreeExample2 = new FluidTree(0, 0, 1, 0);
+		fluidTreeExample.initSons();
+		fluidTreeExample.value=0;
+		FluidTree[] sons = fluidTreeExample.getSons();
+		sons[0] = fluidTreeExample1;
+		sons[1] = fluidTreeExample2;
+		
+		//fluidTreeExample.getSons()[1]=fluidTreeExample2;
+		fluidTreeExample1.value = 1;
+		fluidTreeExample2.value = 1;
+		FluidTreeRenderer.renderTexture(fluidTreeExample);
+		
+		
+		
 		Light.disableLights();
 
 		light.draw();

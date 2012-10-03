@@ -183,8 +183,9 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
 		// / the player is a considered a sphere of radius size_player
-		double s = 0.125;
-		double h = 1;//1/s;
+		double playerWidth = 0.35; 
+		double playerHeightDown = 1.5; // under-the-eye player size
+		double playerHeightUp = 0.30; // up-ther eye player size
 		double size_cell;
 		double dt_save = dt;
 		double cx_min, cx_max, cy_min, cy_max, cz_min, cz_max, t;
@@ -224,12 +225,12 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 
 
-			if (ux > 0 && eyex <= cx_min - s && !is_blocked_x) {
-				t = (cx_min - s - eyex) / ux;
+			if (ux > 0 && eyex <= cx_min - playerWidth && !is_blocked_x) {
+				t = (cx_min - playerWidth - eyex) / ux;
 				yf = eyey + t * uy;
 				zf = eyez + t * uz;
-				if (cy_min - s <= yf && yf <= cy_max + s
-						&& cz_min - s * h <= zf && zf <= cz_max + h * s) {
+				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth
+						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					tx = Math.max(t - eps / ux, 0);
 					if (tx == 0)
 						is_blocked_x = true;
@@ -238,12 +239,12 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 				}
 
 			}
-			if (ux < 0 && eyex >= cx_max + s && !is_blocked_x) {
-				t = (cx_max + s - eyex) / ux;
+			if (ux < 0 && eyex >= cx_max + playerWidth && !is_blocked_x) {
+				t = (cx_max + playerWidth - eyex) / ux;
 				yf = eyey + t * uy;
 				zf = eyez + t * uz;
-				if (cy_min - s <= yf && yf <= cy_max + s
-						&& cz_min - s * h <= zf && zf <= cz_max + h * s) {
+				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth
+						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					tx = Math.max(t + eps / ux, 0);
 					if (tx == 0)
 						is_blocked_x = true;
@@ -251,36 +252,36 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 				}
 			}
-			if (uy > 0 && eyey <= cy_min - s && !is_blocked_y) {
-				t = (cy_min - s - eyey) / uy;
+			if (uy > 0 && eyey <= cy_min - playerWidth && !is_blocked_y) {
+				t = (cy_min - playerWidth - eyey) / uy;
 				xf = eyex + t * ux;
 				zf = eyez + t * uz;
-				if (cx_min - s <= xf && xf <= cx_max + s
-						&& cz_min - h * s <= zf && zf <= cz_max + h * s) {
+				if (cx_min - playerWidth <= xf && xf <= cx_max + playerWidth
+						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					ty = Math.max(t - eps / uy, 0);
 					if (ty == 0)
 						is_blocked_y = true;
 					dt = Math.min(dt, ty);
 				}
 			}
-			if (uy < 0 && eyey >= cy_max + s && !is_blocked_y) {
-				t = (cy_max + s - eyey) / uy;
+			if (uy < 0 && eyey >= cy_max + playerWidth && !is_blocked_y) {
+				t = (cy_max + playerWidth - eyey) / uy;
 				xf = eyex + t * ux;
 				zf = eyez + t * uz;
-				if (cx_min - s <= xf && xf <= cx_max + s
-						&& cz_min - h * s <= zf && zf <= cz_max + h * s) {
+				if (cx_min - playerWidth <= xf && xf <= cx_max + playerWidth
+						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					ty = Math.max(t + eps / uy, 0);
 					if (ty == 0)
 						is_blocked_y = true;
 					dt = Math.min(dt, ty);
 				}
 			}
-			if (uz > 0 && eyez <= cz_min - h * s && !is_blocked_z) {
-				t = (cz_min - h * s - eyez) / uz;
+			if (uz > 0 && eyez <= cz_min - playerHeightUp && !is_blocked_z) {
+				t = (cz_min - playerHeightUp - eyez) / uz;
 				xf = eyex + t * ux;
 				yf = eyey + t * uy;
-				if (cy_min - s <= yf && yf <= cy_max + s && cx_min - s <= xf
-						&& xf <= cx_max + s) {
+				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth && cx_min - playerWidth <= xf
+						&& xf <= cx_max + playerWidth) {
 					tz = Math.max(t - eps / uz, 0);
 					if (tz == 0){
 						is_blocked_z = true;
@@ -289,12 +290,12 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 					dt = Math.min(dt, tz);
 				}
 			}
-			if (uz < 0 && eyez >= cz_max + h * s && !is_blocked_z) {
-				t = (cz_max + h * s - eyez) / uz;
+			if (uz < 0 && eyez >= cz_max + playerHeightDown && !is_blocked_z) {
+				t = (cz_max + playerHeightDown - eyez) / uz;
 				xf = eyex + t * ux;
 				yf = eyey + t * uy;
-				if (cy_min - s <= yf && yf <= cy_max + s && cx_min - s <= xf
-						&& xf <= cx_max + s) {
+				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth && cx_min - playerWidth <= xf
+						&& xf <= cx_max + playerWidth) {
 					tz = Math.max(t + eps / uz, 0);
 					if (tz == 0){
 						is_blocked_z = true;

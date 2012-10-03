@@ -15,6 +15,7 @@ import org.wavecraft.client.Timer;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.octree.Octree;
+import org.wavecraft.geometry.octree.fluid.FluidTree;
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.graphics.vbo.FaceToArray;
 
@@ -26,7 +27,10 @@ public class BlockRendererTexture {
 		if (block instanceof Octree){
 			id = ((Octree) block).getContent();
 		}
-		id = 9;
+		if (block instanceof FluidTree){
+			id = 10;
+		}
+		//id = 9;
 		// get all faces
 		Face[] faces = block.getFaces();
 		
@@ -129,7 +133,7 @@ public class BlockRendererTexture {
 	}
 	
 	
-	public static void render(ArrayList<Octree> octreeArr){
+	public static void render(ArrayList<DyadicBlock> blockArr){
 		MegaTexture.getInstance();
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -137,8 +141,8 @@ public class BlockRendererTexture {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		MegaTexture.bind();
 		GL11.glBegin(GL11.GL_QUADS);
-		for (int i = 0 ; i< octreeArr.size(); i++){
-			afterGLQuads2(octreeArr.get(i));
+		for (int i = 0 ; i< blockArr.size(); i++){
+			afterGLQuads2(blockArr.get(i));
 		}
 		GL11.glEnd();
 		GL11.glDisable(GL11.GL_TEXTURE_2D);

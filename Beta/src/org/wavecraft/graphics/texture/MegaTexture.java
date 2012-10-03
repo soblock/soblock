@@ -77,6 +77,10 @@ public class MegaTexture {
 			terrainCoord =new int[]{8,0};
 			break;
 				
+		case 10:
+			terrainCoord =new int[]{3,4};
+			break;
+			
 			
 			
 		default:

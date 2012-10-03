@@ -73,6 +73,10 @@ public class GameEngine {
 			player.position.z = 816;
 		}
 
+		//player.position.x = 0;
+		//player.position.y = 0;
+		//player.position.z = 0;
+		
 		new Math_Soboutils();
 		
 		// register main player to UiEvents
