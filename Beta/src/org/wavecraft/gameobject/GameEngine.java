@@ -1,7 +1,7 @@
 package org.wavecraft.gameobject;
 
 
-
+import java.util.ArrayList;
 import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.physics.Physics;
 import org.wavecraft.gameobject.physics.PhysicsFreeFlight;
@@ -18,6 +18,7 @@ import org.wavecraft.geometry.octree.builder.OctreeUpdaterPartial;
 import org.wavecraft.geometry.octree.builder.OctreeUpdaterPriority;
 import org.wavecraft.geometry.octree.events.OctreeEventListenerBasic;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
+import org.wavecraft.geometry.octree.fluid.FluidTree;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionNoisyFlat;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSinc;
@@ -30,6 +31,9 @@ import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.Soboutils.Math_Soboutils;
 
+// for the water debuging part ...
+
+import org.wavecraft.graphics.renderer.octree.FluidTreeRenderer;
 
 // this class is the main game engine class
 // it should not be aware of graphics or ui package and must
@@ -41,6 +45,7 @@ public class GameEngine {
 	private static Player player;
 	private static Physics physicsPlayer;
 	private static Octree octree;
+	private static FluidTree water;
 	private static ModifOctree modif;
 	//private static Octree octreeLastUpdatePosition;
 	private static OctreeBuilder octreeBuilder;
@@ -63,9 +68,9 @@ public class GameEngine {
 
 	private GameEngine(){
 		player = new Player();
-		player.position.x=95;
-		player.position.y=91;
-		player.position.z=240;
+		player.position.x=Math.pow(2,octree.JMAX-1);//95;
+		player.position.y=Math.pow(2,octree.JMAX-1);
+		player.position.z=Math.pow(2,octree.JMAX);
 		
 		if (Octree.JMAX == 10){
 			player.position.x = 450;
@@ -73,6 +78,10 @@ public class GameEngine {
 			player.position.z = 816;
 		}
 
+		//player.position.x = 0;
+		//player.position.y = 0;
+		//player.position.z = 0;
+		
 		new Math_Soboutils();
 		
 		// register main player to UiEvents
@@ -83,9 +92,17 @@ public class GameEngine {
 
 		octree = new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		modif =new ModifOctree(0,0,0,Octree.JMAX,5,0.);
+
+		
+		
 		modif.computeBounds();
 		modif.sumAncestors = 0;
 		modif.computeSumAncestors();
+		//Octree son1 = new Octree(son.coord.subCoord(7),Octree.JMAX-2,4);
+
+
+
+
 		//octreeBuilder = OctreeBuilderBuilder.getFlatlandGeoCulling(0.5);
 		//octreeBuilder = OctreeBuilderBuilder.getSphereNoculling(new Coord3d(50, 50, 50), 50);
 		//octreeBuilder = OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(600, 600, 600), 500);
@@ -98,7 +115,7 @@ public class GameEngine {
 		//octreeBuilder = OctreeBuilderBuilder.getSincGeoCulling(center, scale, deltaz, Z0);
 		//octreeBuilder = OctreeBuilderBuilder.getPerlinGeoCulling();
 		//octreeBuilder = OctreeBuilderBuilder.getPerlinMSGeoCulling();
-		double z0=1.5*Math_Soboutils.powerOf2[8-1];
+		double z0=1.5*Math_Soboutils.powerOf2[octree.JMAX-1];
 		
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
 		double zmax =z0 + 100;
@@ -113,6 +130,10 @@ public class GameEngine {
 		OctreeEventMediator.addListener(oelb);
 		//octreeUpdater = new OctreeUpdaterPartial(octree,octreeBuilder);
 		octreeUpdater = new OctreeUpdaterPriority(octree, octreeBuilder);
+		
+		water = new FluidTree(0,0,0,Octree.JMAX,4);
+		water.initSon(6);
+		water.initializeVolumes();
 	}
 
 	public static void update(){
@@ -136,13 +157,23 @@ public class GameEngine {
 		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
 		
 		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
-	
-
+		Octree obstacle=new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
+		obstacle.initSon(2);
+		double dt_fluid =- System.currentTimeMillis();
+		water.move_fluid_bis_treat_once_every_cell(octree,player.position,octreeBuilder);
+		dt_fluid+=System.currentTimeMillis();
+		System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
+		
+		
 	}
 
 	public static Octree getOctree(){
 		return octree;
 	}
+	public static FluidTree getWater(){
+		return water;
+	}
+
 
 
 }

@@ -20,8 +20,7 @@ public class MegaTexture {
 		String filename = "data/terrain4.png";
 
 		try {
-			texture = TextureLoader.getTexture("JPG",
-					ResourceLoader.getResourceAsStream(filename));
+			texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream(filename));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -78,6 +77,10 @@ public class MegaTexture {
 			terrainCoord =new int[]{8,0};
 			break;
 				
+		case 10:
+			terrainCoord =new int[]{3,4};
+			break;
+			
 			
 			
 		default:

@@ -1,14 +1,21 @@
-package org.wavecraft.geometry.FluidTree;
+package org.wavecraft.geometry.octree.fluid;
+
+import java.util.ArrayList;
+
+import org.lwjgl.Sys;
+import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.octree.Octree;
 
 import org.wavecraft.Soboutils.Math_Soboutils;
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.Coord3i;
-import org.wavecraft.geometry.DyadicBlock;
-import org.wavecraft.geometry.octree.Octree;
+
 
 import org.wavecraft.geometry.octree.builder.OctreeBuilder;
 
-public class FluidTree extends DyadicBlock {
+@SuppressWarnings("serial")
+public class FluidTree extends DyadicBlock{
+
 	public static int JMAX = Octree.JMAX;
 	protected FluidTree[] sons = null;
 	protected FluidTree father = null;
@@ -16,6 +23,7 @@ public class FluidTree extends DyadicBlock {
 	public double value=0;
 	boolean isfull=false;
 	boolean hasBeenTreated=false;
+
 
 
 	public FluidTree(DyadicBlock block, FluidTree father,int contenu){
@@ -32,7 +40,28 @@ public class FluidTree extends DyadicBlock {
 		this.value=0.;
 
 	}
+	public FluidTree(int x,int y,int z ,int J, int contenu){
+		super(x,y,z,J);
+		this.father = null;
+		this.value=0.;
+		this.content=contenu;
+	}
 
+	public ArrayList<DyadicBlock> rasterize(){
+		ArrayList<DyadicBlock> raster = new ArrayList<DyadicBlock>();
+		rasterizeInner(this, raster);
+		return raster;
+	}
+
+
+	public void initSons(){
+		sons = new FluidTree[8];
+	}
+
+
+	public FluidTree[] getSons(){
+		return sons;
+	}
 
 	public void move_fluid_bis_treat_once_every_cell(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
 
@@ -66,7 +95,7 @@ public class FluidTree extends DyadicBlock {
 		if (value!=0 && sons!=null) System.out.format("echec %n");
 		if (value<0) System.out.format("echec negative value %n");
 		Octree cube=new Octree(this.getX(),this.getY(),this.getZ(),this.getJ());
-		if (!builder.cull(cube)){
+		if (!builder.cull(cube) && sons!=null){
 
 			int dead_children=0;
 			int full_children=0;
@@ -88,8 +117,8 @@ public class FluidTree extends DyadicBlock {
 			if (saved<1E-5) {value=0; sons=null;return;}
 			if (saved<1E-3) {content=5;}
 			else{content=4;}
-			double trop_plein=fill_this_cube(saved, Terran);
-			if (trop_plein>0) take_care_of_trop_plein(trop_plein, Terran);
+			//double trop_plein=fill_this_cube(saved, Terran);
+			//if (trop_plein>0) take_care_of_trop_plein(trop_plein, Terran);
 			if (sons==null){
 				diffuseFluid(Terran); isfull=true;
 			}
@@ -109,7 +138,7 @@ public class FluidTree extends DyadicBlock {
 		if (!is_wall[5]){
 			Coord3i c=new Coord3i( 0,0,-1);
 			value=fill_with_fluid(value,c,Terran);	
-			if (value==0) {sons=null; value=0.; return;}
+			if (value==0) {this.sons=null; value=0.; return;}
 		}
 
 		if (!is_wall[4]){
@@ -121,12 +150,16 @@ public class FluidTree extends DyadicBlock {
 		if (value==0) return;
 		FluidTree root=findTheRoot();
 		Coord3i[] c=new Coord3i[4];
-		c[0]=new Coord3i( 1, 0,0);c[0]=new Coord3i(-1,0,0);
+		c[0]=new Coord3i( 1, 0,0);c[1]=new Coord3i(-1,0,0);
 		c[2]=new Coord3i( 0, 1,0);c[3]=new Coord3i( 0,-1,0);
 
 		for (int offset=0; offset<4; offset++){
 			if (!is_wall[offset]){	
-				FluidTree voisin=new FluidTree(this.getX()+c[offset].getX(),this.getY()+c[offset].getY(),this.getZ()+c[offset].getZ(),this.getJ());
+				FluidTree voisin=new FluidTree(this.getX()+
+						c[offset].getX(),
+						this.getY()+c[offset].getY(),
+						this.getZ()+c[offset].getZ(),
+						this.getJ());
 				voisin=root.getThisBlock(voisin);
 				voisin.diffuseIn(this, Terran);
 			}	
@@ -201,7 +234,7 @@ public class FluidTree extends DyadicBlock {
 					if (sons[offset].are_neighbors(tree_to_empty)) vol=sons[offset].fill_with_fluid(vol,tree_to_empty,Terran);
 				}
 				else{
-					FluidTree son=this.initSon(offset);
+					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree_to_empty)) {
 						sons[offset]=son;
@@ -232,11 +265,15 @@ public class FluidTree extends DyadicBlock {
 		boolean[] ngbh=new boolean[6];
 		Octree neigh=new Octree(this.getX(),this.getY(),this.getZ(),this.getJ());
 		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
+		System.out.println(neigh.toString());
+		System.out.printf("size max %d \n",size_max);
 		neigh.x+=1;
 		ngbh[0]=(neigh.x<size_max)?false:true;
+		if (ngbh[0]) System.out.printf("wall in +x direction \n");
 		neigh.x-=2;
 		ngbh[1]=(neigh.x>=0)      ?false:true;
 		neigh.x+=1;
+		if (ngbh[1]) System.out.printf("wall in -x direction \n");
 
 		neigh.y+=1;
 		ngbh[2]=(neigh.y<size_max)?false:true;
@@ -285,7 +322,7 @@ public class FluidTree extends DyadicBlock {
 					vol=sons[offset].fill_this_cube(vol,Terran);
 				}
 				else{
-					FluidTree son=this.initSon(offset);
+					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) ) {
 						sons[offset]=son;
@@ -339,7 +376,7 @@ public class FluidTree extends DyadicBlock {
 					if (sons[offset].are_neighbors(tree)) vol+=sons[offset].diffuseIn(tree,Terran);
 				}
 				else{
-					FluidTree son=this.initSon(offset);
+					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree)) {
 						sons[offset]=son;
@@ -352,14 +389,21 @@ public class FluidTree extends DyadicBlock {
 			return vol;
 		}
 	}
-	public FluidTree initSon(int offset){
+	public void initSon(int offset){
+		if (this.sons==null) this.sons= new FluidTree[8];
 		FluidTree son=new FluidTree(this.subBlock(offset),this,this.content);
 		son.father=this;
 		son.value=0;
 		son.sons=null;
-		return son;
-
-
+		this.sons[offset]=son;	
+	}
+	public FluidTree initSonAndReturnIt(int offset){
+		//if (sons==null) this.sons= new FluidTree[8];
+		FluidTree son=new FluidTree(this.subBlock(offset),this,this.content);
+		son.father=this;
+		son.value=0;
+		son.sons=null;
+		return son;	
 	}
 	public double removeFluid(double vol, FluidTree tree_to_empty, Octree Terran){
 		if (sons==null){
@@ -398,7 +442,7 @@ public class FluidTree extends DyadicBlock {
 					if (sons[offset].are_neighbors(tree_to_empty)) vol=sons[offset].removeFluid(vol,tree_to_empty,Terran);
 				}
 				else{
-					FluidTree son=this.initSon(offset);
+					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree_to_empty)) {
 						sons[offset]=son;
@@ -468,4 +512,25 @@ public class FluidTree extends DyadicBlock {
 
 		}
 	}
+
+
+
+	private void rasterizeInner(FluidTree node, ArrayList<DyadicBlock> raster){
+		if (node.sons==null){
+			if( node.value>0){
+				raster.add(node);
+			}
+		}
+
+		else{
+			for (int i =0; i<8; i++){
+				if (node.sons[i]!=null){
+					//System.out.println(this.toString());
+					rasterizeInner(node.sons[i], raster);
+				}
+			}
+		}
+	}
+
+
 }

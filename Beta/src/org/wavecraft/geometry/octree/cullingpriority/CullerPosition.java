@@ -13,7 +13,7 @@ import org.wavecraft.ui.events.UiEventMediator;
 public class CullerPosition implements Culler, OctreePriorityFunction, UiEventListener{
 
 	private Coord3d position;
-	private double geoCullCoefficient = 32;
+	private double geoCullCoefficient = 40;
 	private final static double minCullingCoefficient = 1;
 	private final static double maxCullingCoefficient = 64;
 	public CullerPosition(){
@@ -32,7 +32,7 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 	}
 	
 	public double thres(int J){
-		int J0 = 4;
+		int J0 = 7;
 		if (J<J0){
 			return geoCullCoefficient*Math.pow(2, J);
 		}

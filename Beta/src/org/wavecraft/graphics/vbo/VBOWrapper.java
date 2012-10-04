@@ -116,8 +116,8 @@ public class VBOWrapper {
 			GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
 			break;
 		case V3N3T2 :
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL11.GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL11.GL_NEAREST);
 			GL11.glColor3f(1, 1, 1);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			MegaTexture.bind();
