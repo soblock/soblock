@@ -208,4 +208,25 @@ public class DyadicBlock extends Coord3i {
 			return new DyadicBlock(x/div, y/div, z/div, J);
 		}
 	}
+	
+	public boolean isAdjacentTo(DyadicBlock block){
+		DyadicBlock biggerBlock =  (block.getJ()< this.getJ())?this:block;
+		DyadicBlock smallerBlock = (block.getJ()>=this.getJ())?this:block;
+		int step = (int) Math.pow(2, biggerBlock.getJ()- smallerBlock.getJ());
+		int offsetx = Math.abs(biggerBlock.x-  smallerBlock.x/step);
+		int offsety = Math.abs(biggerBlock.y-  smallerBlock.y/step);
+		int offsetz = Math.abs(biggerBlock.z-  smallerBlock.z/step);
+		int totalOffset = offsetx + offsety + offsetz;
+		return (totalOffset == 1);
+	}
+	
+	public boolean contains(DyadicBlock block){
+		if (this.getJ() < block.getJ()) {
+			return false;
+		}
+		int step = (int) Math.pow(2, this.getJ()- block.getJ());
+		return (block.x/step == this.x &&
+				block.y/step == this.y && 
+				block.z/step == this.z );
+	}
 }

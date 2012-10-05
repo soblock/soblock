@@ -1,5 +1,7 @@
 package org.wavecraft.modif;
 
+import java.util.ArrayList;
+
 import org.wavecraft.Soboutils.Math_Soboutils;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
@@ -95,7 +97,8 @@ public class ModifAdder implements UiEventListener {
 				if (emc.buttonId == 1 ){
 					DyadicBlock nodeToRemove = getNodeToRemove();
 					if (nodeToRemove != null){	
-						removeBlock(nodeToRemove);
+						//removeBlock(nodeToRemove);
+						removeBlockAdjacentCell(nodeToRemove);
 					}
 				}
 			}
@@ -112,7 +115,8 @@ public class ModifAdder implements UiEventListener {
 				DyadicBlock nodeToRemove = getNodeToRemove();
 				if (nodeToRemove != null){
 					System.out.println("node to remove : " + nodeToRemove.toString());
-					removeBlock(nodeToRemove);
+					//removeBlock(nodeToRemove);
+					removeBlockAdjacentCell(nodeToRemove);
 				}
 			}
 
@@ -180,6 +184,29 @@ public class ModifAdder implements UiEventListener {
 			}
 		}
 
+		// remove cell
+		Octree octreeToRemove = octree.smallestCellContaining(nodeToRemove);
+		OctreeEvent event = new OctreeEvent(octreeToRemove, OctreeEventKindof.KILL);
+		OctreeEventMediator.addEvent(event);
+
+		Console.getInstance().push("REMOVE "+nodeToRemove.toString());
+	}
+	
+	private void removeBlockAdjacentCell(DyadicBlock nodeToRemove){
+		// regenerate only adjacent ground cell
+		// add modif to to modif save octree
+		double value = 1E20;
+		modif.addModif(nodeToRemove, value, 0);
+		modif.computeBounds();
+
+		// leafy every ground adjacent cell
+		ArrayList<Octree>adjacentCells= octree.adjacentGroundCells(nodeToRemove);
+		
+		for (Octree adjacentCell: adjacentCells){
+			OctreeEvent event = new OctreeEvent(adjacentCell, OctreeEventKindof.LEAFY);
+			OctreeEventMediator.addEvent(event);
+		}
+		
 		// remove cell
 		Octree octreeToRemove = octree.smallestCellContaining(nodeToRemove);
 		OctreeEvent event = new OctreeEvent(octreeToRemove, OctreeEventKindof.KILL);

@@ -79,6 +79,14 @@ public class GameEngine {
 		
 		new Math_Soboutils();
 		
+		
+		
+		
+		DyadicBlock block1 = new DyadicBlock(0, 0, 2, 0);
+		DyadicBlock block2 = new DyadicBlock(0, 0, 0, 1);
+		System.out.println(block1.toString() + block1.isAdjacentTo(block2) + block2.toString()); 
+		
+		
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
 		UiEventMediator.addListener(player);
