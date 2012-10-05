@@ -95,7 +95,13 @@ public class GameEngine {
 		
 		DyadicBlock block1 = new DyadicBlock(0, 0, 2, 0);
 		DyadicBlock block2 = new DyadicBlock(0, 0, 0, 1);
-		System.out.println(block1.toString() + block1.isAdjacentTo(block2) + block2.toString()); 
+		DyadicBlock block3 = new DyadicBlock(0, 0, 1, 0);
+		DyadicBlock block4 = new DyadicBlock(1, 0, 2, 0);
+		DyadicBlock block5 = new DyadicBlock(0, 0, 5, 0);
+		System.out.println(block1.toString() + block1.isAdjacentTo(block2) + block2.toString());
+		System.out.println(block1.toString() + block1.isAdjacentTo(block3) + block3.toString());
+		System.out.println(block1.toString() + block1.isAdjacentTo(block4) + block4.toString());
+		System.out.println(block1.toString() + block1.isAdjacentTo(block5) + block5.toString());
 		
 		
 		// register main player to UiEvents
@@ -179,7 +185,7 @@ public class GameEngine {
 		double dt_fluid =- System.currentTimeMillis();
 		water.move_fluid_bis_treat_once_every_cell(octree,player.position,octreeBuilder);
 		dt_fluid+=System.currentTimeMillis();
-		System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
+	//	System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
 		
 		
 	}

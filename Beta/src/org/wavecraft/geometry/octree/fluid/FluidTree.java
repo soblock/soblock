@@ -64,13 +64,12 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public void move_fluid_bis_treat_once_every_cell(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
-
 		move_fluid_bis(Terran,observerpos,builder);
-
 		cleanFluidTree(Terran);
 	}
+	
+	
 	public void cleanFluidTree(Octree Terran){
-
 		if (sons==null) {
 			if (value==0) 
 				if (father!=null) father.sons[father.findSonContaining(this)]=null;
@@ -90,6 +89,9 @@ public class FluidTree extends DyadicBlock{
 			if (full_children==8) {value=this.fluidContained(); sons=null; isfull=true;}
 		}
 	}
+	
+	
+	
 	public void move_fluid_bis(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
 
 		if (value!=0 && sons!=null) System.out.format("echec %n");

@@ -213,11 +213,19 @@ public class DyadicBlock extends Coord3i {
 		DyadicBlock biggerBlock =  (block.getJ()< this.getJ())?this:block;
 		DyadicBlock smallerBlock = (block.getJ()>=this.getJ())?this:block;
 		int step = (int) Math.pow(2, biggerBlock.getJ()- smallerBlock.getJ());
-		int offsetx = Math.abs(biggerBlock.x-  smallerBlock.x/step);
-		int offsety = Math.abs(biggerBlock.y-  smallerBlock.y/step);
-		int offsetz = Math.abs(biggerBlock.z-  smallerBlock.z/step);
-		int totalOffset = offsetx + offsety + offsetz;
-		return (totalOffset == 1);
+		// + step or -1
+		int offsetx = smallerBlock.x - step*biggerBlock.x;
+		int offsety = smallerBlock.y - step*biggerBlock.y;
+		int offsetz = smallerBlock.z - step*biggerBlock.z;
+		int validOffset = 0;
+		if (offsetx == -1 || offsetx == step) validOffset++;
+		if (offsety == -1 || offsety == step) validOffset++;
+		if (offsetz == -1 || offsetz == step) validOffset++;
+		int zeroOffset = 0;
+		if (0 <= offsetx && offsetx < step ) zeroOffset++;
+		if (0 <= offsety && offsety < step ) zeroOffset++;
+		if (0 <= offsetz && offsetz < step ) zeroOffset++;
+		return (validOffset == 1 && zeroOffset == 2);
 	}
 	
 	public boolean contains(DyadicBlock block){
