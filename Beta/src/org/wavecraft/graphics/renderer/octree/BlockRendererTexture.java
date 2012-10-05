@@ -35,7 +35,14 @@ public class BlockRendererTexture {
 		Face[] faces = block.getFaces();
 		
 		for (int i = 0 ; i<6 ; i ++){
-			float[] faceData = FaceToArray.toArrayV3N3T2(faces[i], id);
+			float[] faceData;
+			if (block instanceof FluidTree){
+				float value = (float) (((FluidTree)block).value/Math.pow(2, 2*block.getJ()));
+				faceData = FaceToArray.toArrayV3N3T2partlyFilled(faces[i], id, value);
+			}
+			else {
+				faceData = FaceToArray.toArrayV3N3T2(faces[i], id);
+			}
 			for (int vertexid = 0 ; vertexid<4;vertexid++){
 				
 				GL11.glTexCoord2d(faceData[8*vertexid + 6],faceData[8*vertexid + 7]);

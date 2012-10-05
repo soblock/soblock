@@ -120,4 +120,77 @@ public class FaceToArray {
 		}
 		return null;
 	}
+	
+
+	public static float[] toArrayV3N3T2partlyFilled(Face face, int id,float percentageOfFilling){
+		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
+		
+		float txmin = textCoord[0];
+		float txmax = textCoord[1];
+		float tymin = textCoord[2];
+		float tymax = textCoord[3];
+		float ttj = (float) Math.pow(2, face.getJ());
+		float xmin = (float) (ttj*face.coord.x);
+		float ymin = (float) (ttj*face.coord.y);
+		float zmin = (float) (ttj*face.coord.z);
+
+		switch (face.getNormal()){
+		case 1 :{
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,     +1,      0,       0,     txmin,    tymin,
+					xmin,        ymin+ttj,  zmin,     +1,      0,       0,     txmax,    tymin,
+					xmin,        ymin+ttj,  zmin+percentageOfFilling*ttj, +1,      0,       0,     txmax,    tymax,
+					xmin,        ymin,      zmin+percentageOfFilling*ttj, +1,      0,       0,     txmin,    tymax
+			};
+			return data;
+		}
+		case -1 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,     -1,      0,       0,     txmax,    tymin,
+					xmin,        ymin,      zmin+percentageOfFilling*ttj, -1,      0,       0,     txmax,    tymax,
+					xmin,        ymin+ttj,  zmin+percentageOfFilling*ttj, -1,      0,       0,     txmin,    tymax,
+					xmin,        ymin+ttj,  zmin,     -1,      0,       0,     txmin,    tymin
+			};
+			return data;
+		}
+		case 2 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,     +1,       0,     txmax,    tymin,
+					xmin,        ymin,      zmin+percentageOfFilling*ttj,  0,     +1,       0,     txmax,    tymax,
+					xmin+ttj,    ymin,  	zmin+percentageOfFilling*ttj,  0,     +1,       0,     txmin,    tymax,
+					xmin+ttj,    ymin,      zmin,      0,     +1,       0,     txmin,    tymin
+			};
+			return data;
+		}
+		case -2 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,     -1,       0,     txmin,    tymin,
+					xmin+ttj,    ymin,      zmin,      0,     -1,       0,     txmax,    tymin,
+					xmin+ttj,    ymin,  	zmin+percentageOfFilling*ttj,  0,     -1,       0,     txmax,    tymax,
+					xmin,        ymin,      zmin+percentageOfFilling*ttj,  0,     -1,       0,     txmin,    tymax
+			};
+			return data;
+		}
+		case -3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,      0,      -1,     txmax,    tymin,
+					xmin    ,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymin,
+					xmin+ttj,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymax,
+					xmin+ttj,    ymin,      zmin,      0,      0,      -1,     txmax,    tymax
+			};
+			return data;
+		}
+		case 3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmin,    tymin,
+					xmin+ttj,    ymin,      zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmin,    tymax,
+					xmin+ttj,    ymin+ttj,  zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmax,    tymax,
+					xmin    ,    ymin+ttj,  zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmax,    tymin
+			};
+			return data;
+		}
+		}
+		return null;
+	}
+
 }
