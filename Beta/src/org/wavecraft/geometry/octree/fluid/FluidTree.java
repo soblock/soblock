@@ -161,7 +161,6 @@ public class FluidTree extends DyadicBlock{
 						this.getZ()+c[offset].getZ(),
 						this.getJ());
 				voisin=root.getThisBlock(voisin);
-				System.out.printf("volume of fluid in da cube %f \n",this.value);
 				voisin.diffuseIn(this, Terran);
 			}	
 		}
@@ -355,12 +354,8 @@ public class FluidTree extends DyadicBlock{
 				v=Math.min(tree.value, v);
 				// cannot add more in tree than empty space in tree
 				v=Math.max(v,(-Math_Soboutils.dpowerOf2[3*tree.getJ()]+tree.value));
-				
 				// cannot remove more the the volume of this from this
-				System.out.printf("value of the fluid removed %f before last restriction \n", tree.value);
 				v=Math.max(v,-value);
-				System.out.printf("value of the fluid removed %f \n", this.value);
-				System.out.printf("dh %f \n", h);
 				tree.value-=v;
 				value+=v;
 				return -v;
@@ -513,7 +508,7 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public void initializeVolumes(){
-		if (sons==null) value=Math_Soboutils.dpowerOf2[3*getJ()]/10;
+		if (sons==null) value=Math_Soboutils.dpowerOf2[3*getJ()];
 		else{
 			value=0.0;
 			for (int offset = 0; offset < 8; offset++) {
