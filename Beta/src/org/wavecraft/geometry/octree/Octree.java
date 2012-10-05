@@ -148,7 +148,7 @@ public class Octree extends DyadicBlock{
 	}
 
 	public boolean[] doesThisBlockExist(FluidTree tree){
-		Octree tree1=new Octree(tree.getX(),tree.getY(),tree.getZ(),tree.getJ());
+		Octree tree1=new Octree(tree.x,tree.y,tree.z,tree.getJ());
 		return this.doesThisBlockExist(tree1);
 	}
 	public boolean[] doesThisBlockExist(Octree tree){

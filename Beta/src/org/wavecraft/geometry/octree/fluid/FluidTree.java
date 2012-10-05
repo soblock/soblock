@@ -94,7 +94,7 @@ public class FluidTree extends DyadicBlock{
 
 		if (value!=0 && sons!=null) System.out.format("echec %n");
 		if (value<0) System.out.format("echec negative value %n");
-		Octree cube=new Octree(this.getX(),this.getY(),this.getZ(),this.getJ());
+		Octree cube=new Octree(this.x,this.y,this.z,this.getJ());
 		if (!builder.cull(cube) && sons!=null){
 
 			int dead_children=0;
@@ -155,10 +155,10 @@ public class FluidTree extends DyadicBlock{
 
 		for (int offset=0; offset<4; offset++){
 			if (!is_wall[offset]){	
-				FluidTree voisin=new FluidTree(this.getX()+
-						c[offset].getX(),
-						this.getY()+c[offset].getY(),
-						this.getZ()+c[offset].getZ(),
+				FluidTree voisin=new FluidTree(this.x+
+						c[offset].x,
+						this.y+c[offset].y,
+						this.z+c[offset].z,
 						this.getJ());
 				voisin=root.getThisBlock(voisin);
 				voisin.diffuseIn(this, Terran);
@@ -171,7 +171,7 @@ public class FluidTree extends DyadicBlock{
 	}
 	public double fill_with_fluid(double vol, Coord3i c, Octree Terran){
 		FluidTree root=findTheRoot();
-		FluidTree voisin=new FluidTree(this.getX()+c.getX(),this.getY()+c.getY(),this.getZ()+c.getZ(),this.getJ());
+		FluidTree voisin=new FluidTree(this.x+c.x,this.y+c.y,this.z+c.z,this.getJ());
 		voisin=root.getThisBlock(voisin);
 		double v=vol;
 		if (vol>0 )v=voisin.fill_with_fluid(vol,this, Terran);
@@ -249,12 +249,12 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public boolean are_neighbors(FluidTree tree){
-		if(  (getX()  )*Math_Soboutils.powerOf2[getJ()]==(tree.getX()+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (getX()+1)*Math_Soboutils.powerOf2[getJ()]==(tree.getX()  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (getY()  )*Math_Soboutils.powerOf2[getJ()]==(tree.getY()+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (getY()+1)*Math_Soboutils.powerOf2[getJ()]==(tree.getY()  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (getZ()  )*Math_Soboutils.powerOf2[getJ()]==(tree.getZ()+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (getZ()+1)*Math_Soboutils.powerOf2[getJ()]==(tree.getZ()  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (x  )*Math_Soboutils.powerOf2[getJ()]==(tree.x+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (x+1)*Math_Soboutils.powerOf2[getJ()]==(tree.x  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (y  )*Math_Soboutils.powerOf2[getJ()]==(tree.y+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (y+1)*Math_Soboutils.powerOf2[getJ()]==(tree.y  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (z  )*Math_Soboutils.powerOf2[getJ()]==(tree.z+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (z+1)*Math_Soboutils.powerOf2[getJ()]==(tree.z  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
 		return false;
 	}
 
@@ -263,17 +263,17 @@ public class FluidTree extends DyadicBlock{
 
 	public boolean[] nghb_infos(Octree Terran){
 		boolean[] ngbh=new boolean[6];
-		Octree neigh=new Octree(this.getX(),this.getY(),this.getZ(),this.getJ());
+		Octree neigh=new Octree(this.x,this.x,this.x,this.getJ());
 		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
-		System.out.println(neigh.toString());
-		System.out.printf("size max %d \n",size_max);
+		//System.out.println(neigh.toString());
+		//System.out.printf("size max %d \n",size_max);
 		neigh.x+=1;
 		ngbh[0]=(neigh.x<size_max)?false:true;
-		if (ngbh[0]) System.out.printf("wall in +x direction \n");
+		//if (ngbh[0]) System.out.printf("wall in +x direction \n");
 		neigh.x-=2;
 		ngbh[1]=(neigh.x>=0)      ?false:true;
 		neigh.x+=1;
-		if (ngbh[1]) System.out.printf("wall in -x direction \n");
+		//if (ngbh[1]) System.out.printf("wall in -x direction \n");
 
 		neigh.y+=1;
 		ngbh[2]=(neigh.y<size_max)?false:true;
@@ -343,8 +343,8 @@ public class FluidTree extends DyadicBlock{
 		if (sons==null){
 			boolean[] exist=Terran.doesThisBlockExist(this);
 			if ( !exist[0]){
-				double h=  tree.getZ()*Math_Soboutils.dpowerOf2[tree.getJ()]
-						-getZ()*Math_Soboutils.dpowerOf2[getJ()];
+				double h=  tree.z*Math_Soboutils.dpowerOf2[tree.getJ()]
+						-z*Math_Soboutils.dpowerOf2[getJ()];
 				h+= tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]
 						-value/Math_Soboutils.dpowerOf2[2*getJ()];
 				// cannot add more to this than empty space in this 
@@ -465,13 +465,13 @@ public class FluidTree extends DyadicBlock{
 
 
 	public double take_care_of_trop_plein(double trop_plein,Octree Terran){
-		int h=this.getZ()+1;
+		int h=this.z+1;
 		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
 		int index=1;
 		FluidTree root=this.findTheRoot();
 		while(trop_plein>0 && h<size_max){
 			Coord3i c=new Coord3i( 0,0,index);
-			FluidTree voisin=new FluidTree(this.getX()+c.getX(),this.getY()+c.getY(),this.getZ()+c.getZ(),this.getJ());
+			FluidTree voisin=new FluidTree(this.x+c.x,this.y+c.y,this.z+c.z,this.getJ());
 			voisin=root.getThisBlock(voisin);
 			double saved=voisin.fluidContained();
 			voisin.sons=null;

@@ -229,4 +229,6 @@ public class DyadicBlock extends Coord3i {
 				block.y/step == this.y && 
 				block.z/step == this.z );
 	}
+	
+	
 }
