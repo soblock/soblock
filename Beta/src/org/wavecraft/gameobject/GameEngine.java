@@ -159,6 +159,8 @@ public class GameEngine {
 		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 		Octree obstacle=new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		obstacle.initSon(2);
+		Octree son1= (obstacle.getSons())[2];
+		son1.initSon(1);
 		double dt_fluid =- System.currentTimeMillis();
 		water.move_fluid_bis_treat_once_every_cell(octree,player.position,octreeBuilder);
 		dt_fluid+=System.currentTimeMillis();

@@ -20,7 +20,7 @@ public class FluidTree extends DyadicBlock{
 	protected FluidTree[] sons = null;
 	protected FluidTree father = null;
 	protected int content = 0;
-	public double value=0;
+	public double value;
 	boolean isfull=false;
 	boolean hasBeenTreated=false;
 
@@ -148,7 +148,7 @@ public class FluidTree extends DyadicBlock{
 		}
 
 		if (value==0) return;
-		FluidTree root=findTheRoot();
+		FluidTree root=this.findTheRoot();
 		Coord3i[] c=new Coord3i[4];
 		c[0]=new Coord3i( 1, 0,0);c[1]=new Coord3i(-1,0,0);
 		c[2]=new Coord3i( 0, 1,0);c[3]=new Coord3i( 0,-1,0);
@@ -161,6 +161,7 @@ public class FluidTree extends DyadicBlock{
 						this.getZ()+c[offset].getZ(),
 						this.getJ());
 				voisin=root.getThisBlock(voisin);
+				System.out.printf("volume of fluid in da cube %f \n",this.value);
 				voisin.diffuseIn(this, Terran);
 			}	
 		}
@@ -343,12 +344,23 @@ public class FluidTree extends DyadicBlock{
 		if (sons==null){
 			boolean[] exist=Terran.doesThisBlockExist(this);
 			if ( !exist[0]){
-				double h=tree.getZ()*Math_Soboutils.dpowerOf2[tree.getJ()]-getZ()*Math_Soboutils.dpowerOf2[getJ()];
-				h+=       tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]-value/Math_Soboutils.dpowerOf2[2*getJ()];
-				double v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value,h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]));
+				double h=  tree.getZ()*Math_Soboutils.dpowerOf2[tree.getJ()]
+						-getZ()*Math_Soboutils.dpowerOf2[getJ()];
+				h+= tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]
+						-value/Math_Soboutils.dpowerOf2[2*getJ()];
+				// cannot add more to this than empty space in this 
+				double v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value
+						,h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]));
+				// cannot remove more the the volume of tree from tree
 				v=Math.min(tree.value, v);
+				// cannot add more in tree than empty space in tree
 				v=Math.max(v,(-Math_Soboutils.dpowerOf2[3*tree.getJ()]+tree.value));
+				
+				// cannot remove more the the volume of this from this
+				System.out.printf("value of the fluid removed %f before last restriction \n", tree.value);
 				v=Math.max(v,-value);
+				System.out.printf("value of the fluid removed %f \n", this.value);
+				System.out.printf("dh %f \n", h);
 				tree.value-=v;
 				value+=v;
 				return -v;

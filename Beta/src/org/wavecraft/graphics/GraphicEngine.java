@@ -184,7 +184,7 @@ public class GraphicEngine {
 
 		light.initLight();
 
-		//vboFace.draw();
+		vboFace.draw();
 
 		
 
