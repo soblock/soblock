@@ -7,6 +7,11 @@ import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.fluid.FluidTree;
 
 public class FluidTreeRenderer {
+	
+	public FluidTreeRenderer(){
+	
+	}
+
 
 	// extremly inefficent, for debug only
 	public static void renderTexture(FluidTree fluidTree){

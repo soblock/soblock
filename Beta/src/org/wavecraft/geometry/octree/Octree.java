@@ -8,13 +8,14 @@ import org.wavecraft.geometry.octree.events.OctreeEvent;
 import org.wavecraft.geometry.octree.events.OctreeEventKindof;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.modif.ModifOctree;
+import org.wavecraft.geometry.octree.fluid.FluidTree;
 
 
 
 @SuppressWarnings("serial")
 // put every thing application-specific ( fluid, modif etc... ) in state
 public class Octree extends DyadicBlock{
-	public static int JMAX = 8	;
+	public static int JMAX = 8;
 	protected Octree[] sons = null;
 	protected Octree father = null;
 	protected OctreeState state = null;
@@ -52,6 +53,14 @@ public class Octree extends DyadicBlock{
 			sons[offset] = new Octree(this.subBlock(offset),this);
 			sons[offset].setContent(content);
 		}
+	}
+
+	public void initSon(int offset){
+		if (sons==null) this.sons= new Octree[8];
+		Octree son=new Octree(this.subBlock(offset),this);
+		son.father=this;
+		son.sons=null;
+		this.sons[offset]=son;	
 	}
 
 	public void initSonsQuietly(){
@@ -107,11 +116,12 @@ public class Octree extends DyadicBlock{
 
 	public int findSonContaining(DyadicBlock block) {
 		return Math_Soboutils.ithbit(block.x, this.getJ() - block.getJ()) + 2
-		* Math_Soboutils.ithbit(block.y, this.getJ() - block.getJ())
-		+ 4
-		* Math_Soboutils.ithbit(block.z, this.getJ() - block.getJ());
+				* Math_Soboutils.ithbit(block.y, this.getJ() - block.getJ())
+				+ 4
+				* Math_Soboutils.ithbit(block.z, this.getJ() - block.getJ());
 
 	}
+
 
 	public ArrayList<Octree> adjacentGroundCells(DyadicBlock block){
 		// return the list of the cell contained in the octree
@@ -134,6 +144,35 @@ public class Octree extends DyadicBlock{
 				}
 			}
 
+		}
+	}
+
+	public boolean[] doesThisBlockExist(FluidTree tree){
+		Octree tree1=new Octree(tree.getX(),tree.getY(),tree.getZ(),tree.getJ());
+		return this.doesThisBlockExist(tree1);
+	}
+	public boolean[] doesThisBlockExist(Octree tree){
+		boolean[] res=new boolean [2];
+		if (this.getState() instanceof OctreeStateDead){
+			res[0]=false;
+			res[1]=false;
+			return res;
+		}
+		else{
+			res[1]=(sons==null)?true:false;
+			if (this.getJ()==tree.getJ() ){
+				{res[0]=true; return res;}
+			}
+			else{
+				if (sons==null) {res[0]=true; return res;}
+				int offset= findSonContaining(tree);
+				if ( offset<0 || sons[offset]==null){
+					{res[0]=false; return res;}
+				}
+				else{
+					return sons[offset].doesThisBlockExist(tree);
+				}
+			}
 		}
 	}
 

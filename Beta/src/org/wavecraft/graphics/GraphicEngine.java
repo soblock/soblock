@@ -189,21 +189,18 @@ public class GraphicEngine {
 		
 
 		
-		FluidTree fluidTreeExample = new FluidTree(0, 0, 0, 1);
+
+		FluidTree fluidTreeExample = new FluidTree(0, 0, 0, 8);
 		FluidTree fluidTreeExample1 = new FluidTree(0, 0, 0, 0);
 		FluidTree fluidTreeExample2 = new FluidTree(0, 0, 1, 0);
-		fluidTreeExample.initSons();
-		fluidTreeExample.value=0;
-		FluidTree[] sons = fluidTreeExample.getSons();
-		sons[0] = fluidTreeExample1;
-		sons[1] = fluidTreeExample2;
+		fluidTreeExample.initSon(7);
+		fluidTreeExample.initializeVolumes();
 		
 		//fluidTreeExample.getSons()[1]=fluidTreeExample2;
-		fluidTreeExample1.value = 1;
-		fluidTreeExample2.value = 1;
-		FluidTreeRenderer.renderTexture(fluidTreeExample);
-		
-		
+//		fluidTreeExample1.value = 1;
+//		fluidTreeExample2.value = 1;
+		FluidTreeRenderer.renderTexture(GameEngine.getWater());
+
 		
 		Light.disableLights();
 
