@@ -122,7 +122,77 @@ public class FaceToArray {
 	}
 	
 
-	public static float[] toArrayV3N3T2partlyFilled(Face face, int id,float percentageOfFilling){
+	public static float[] toArrayV3N3T2partlyFilledbis(Face face, int id,float w){
+		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
+		
+		float txmin = textCoord[0];
+		float txmax = textCoord[1];
+		float tymin = textCoord[2];
+		float tymax = textCoord[3];
+		float ttj = (float) Math.pow(2, face.getJ());
+		float xmin = (float) (ttj*(face.coord.x+0.5)-w/2.);
+		float ymin = (float) (ttj*(face.coord.y+0.5)-w/2.);
+		float zmin = (float) (ttj*face.coord.z);
+
+		switch (face.getNormal()){
+		case 1 :{
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,     +1,      0,       0,     txmin,    tymin,
+					xmin,        ymin+w,    zmin,     +1,      0,       0,     txmax,    tymin,
+					xmin,        ymin+w,    zmin+ttj, +1,      0,       0,     txmax,    tymax,
+					xmin,        ymin,      zmin+ttj, +1,      0,       0,     txmin,    tymax
+			};
+			return data;
+		}
+		case -1 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,     -1,      0,       0,     txmax,    tymin,
+					xmin,        ymin,      zmin+ttj,   -1,      0,       0,     txmax,    tymax,
+					xmin,        ymin+w,    zmin+ttj,   -1,      0,       0,     txmin,    tymax,
+					xmin,        ymin+w,    zmin,     -1,      0,       0,     txmin,    tymin
+			};
+			return data;
+		}
+		case 2 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,     +1,       0,     txmax,    tymin,
+					xmin,        ymin,      zmin+ttj,    0,     +1,       0,     txmax,    tymax,
+					xmin+w,      ymin,  	zmin+ttj,    0,     +1,       0,     txmin,    tymax,
+					xmin+w,      ymin,      zmin,      0,     +1,       0,     txmin,    tymin
+			};
+			return data;
+		}
+		case -2 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,     -1,       0,     txmin,    tymin,
+					xmin+w,      ymin,      zmin,      0,     -1,       0,     txmax,    tymin,
+					xmin+w,      ymin,  	zmin+ttj,  0,     -1,       0,     txmax,    tymax,
+					xmin,        ymin,      zmin+ttj,  0,     -1,       0,     txmin,    tymax
+			};
+			return data;
+		}
+		case -3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,      0,      -1,     txmax,    tymin,
+					xmin    ,    ymin+w,    zmin,      0,      0,      -1,     txmin,    tymin,
+					xmin+w,      ymin+w,    zmin,      0,      0,      -1,     txmin,    tymax,
+					xmin+w,      ymin,      zmin,      0,      0,      -1,     txmax,    tymax
+			};
+			return data;
+		}
+		case 3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,      0,      +1,     txmin,    tymin,
+					xmin+w,      ymin,      zmin,      0,      0,      +1,     txmin,    tymax,
+					xmin+w,      ymin+w,    zmin,      0,      0,      +1,     txmax,    tymax,
+					xmin    ,    ymin+w,    zmin,      0,      0,      +1,     txmax,    tymin
+			};
+			return data;
+		}
+		}
+		return null;
+	}
+	public static float[] toArrayV3N3T2partlyFilled(Face face, int id,float heightOfFluid){
 		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
 		
 		float txmin = textCoord[0];
@@ -139,16 +209,16 @@ public class FaceToArray {
 			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
 					xmin,        ymin,      zmin,     +1,      0,       0,     txmin,    tymin,
 					xmin,        ymin+ttj,  zmin,     +1,      0,       0,     txmax,    tymin,
-					xmin,        ymin+ttj,  zmin+percentageOfFilling*ttj, +1,      0,       0,     txmax,    tymax,
-					xmin,        ymin,      zmin+percentageOfFilling*ttj, +1,      0,       0,     txmin,    tymax
+					xmin,        ymin+ttj,  zmin+heightOfFluid, +1,      0,       0,     txmax,    tymax,
+					xmin,        ymin,      zmin+heightOfFluid, +1,      0,       0,     txmin,    tymax
 			};
 			return data;
 		}
 		case -1 :{ 
 			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
 					xmin,        ymin,      zmin,     -1,      0,       0,     txmax,    tymin,
-					xmin,        ymin,      zmin+percentageOfFilling*ttj, -1,      0,       0,     txmax,    tymax,
-					xmin,        ymin+ttj,  zmin+percentageOfFilling*ttj, -1,      0,       0,     txmin,    tymax,
+					xmin,        ymin,      zmin+heightOfFluid, -1,      0,       0,     txmax,    tymax,
+					xmin,        ymin+ttj,  zmin+heightOfFluid, -1,      0,       0,     txmin,    tymax,
 					xmin,        ymin+ttj,  zmin,     -1,      0,       0,     txmin,    tymin
 			};
 			return data;
@@ -156,8 +226,8 @@ public class FaceToArray {
 		case 2 :{ 
 			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
 					xmin,        ymin,      zmin,      0,     +1,       0,     txmax,    tymin,
-					xmin,        ymin,      zmin+percentageOfFilling*ttj,  0,     +1,       0,     txmax,    tymax,
-					xmin+ttj,    ymin,  	zmin+percentageOfFilling*ttj,  0,     +1,       0,     txmin,    tymax,
+					xmin,        ymin,      zmin+heightOfFluid,  0,     +1,       0,     txmax,    tymax,
+					xmin+ttj,    ymin,  	zmin+heightOfFluid,  0,     +1,       0,     txmin,    tymax,
 					xmin+ttj,    ymin,      zmin,      0,     +1,       0,     txmin,    tymin
 			};
 			return data;
@@ -166,8 +236,8 @@ public class FaceToArray {
 			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
 					xmin,        ymin,      zmin,      0,     -1,       0,     txmin,    tymin,
 					xmin+ttj,    ymin,      zmin,      0,     -1,       0,     txmax,    tymin,
-					xmin+ttj,    ymin,  	zmin+percentageOfFilling*ttj,  0,     -1,       0,     txmax,    tymax,
-					xmin,        ymin,      zmin+percentageOfFilling*ttj,  0,     -1,       0,     txmin,    tymax
+					xmin+ttj,    ymin,  	zmin+heightOfFluid,  0,     -1,       0,     txmax,    tymax,
+					xmin,        ymin,      zmin+heightOfFluid,  0,     -1,       0,     txmin,    tymax
 			};
 			return data;
 		}
@@ -182,15 +252,16 @@ public class FaceToArray {
 		}
 		case 3 :{ 
 			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
-					xmin,        ymin,      zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmin,    tymin,
-					xmin+ttj,    ymin,      zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmin,    tymax,
-					xmin+ttj,    ymin+ttj,  zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmax,    tymax,
-					xmin    ,    ymin+ttj,  zmin-(1-percentageOfFilling)*ttj,      0,      0,      +1,     txmax,    tymin
+					xmin,        ymin,      zmin-(ttj-heightOfFluid),      0,      0,      +1,     txmin,    tymin,
+					xmin+ttj,    ymin,      zmin-(ttj-heightOfFluid),      0,      0,      +1,     txmin,    tymax,
+					xmin+ttj,    ymin+ttj,  zmin-(ttj-heightOfFluid),      0,      0,      +1,     txmax,    tymax,
+					xmin    ,    ymin+ttj,  zmin-(ttj-heightOfFluid),      0,      0,      +1,     txmax,    tymin
 			};
 			return data;
 		}
 		}
 		return null;
 	}
+
 
 }
