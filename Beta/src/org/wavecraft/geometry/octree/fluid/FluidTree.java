@@ -57,17 +57,20 @@ public class FluidTree extends DyadicBlock{
 	public void initSons(){
 		sons = new FluidTree[8];
 	}
+	
 
 
 	public FluidTree[] getSons(){
 		return sons;
 	}
-
+    public void killMeFather(){
+    	father.sons[this.father.findSonContaining(this)]=null;
+    }
 	public void move_fluid_bis_treat_once_every_cell(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
 
 		move_fluid_bis(Terran,observerpos,builder);
 
-		cleanFluidTree(Terran);
+		//cleanFluidTree(Terran);
 	}
 	public void removeUnecessaryKids(){
 		if (sons!=null){
@@ -131,11 +134,14 @@ public class FluidTree extends DyadicBlock{
 				this.sons=null;
 				this.value=saved;
 			}
-			if (saved<1E-2*Math_Soboutils.fpowerOf2[2*this.getJ()]) {value=0; return;}
+			//if (saved<1E-5*Math_Soboutils.fpowerOf2[2*this.getJ()]) {value=0; return;}
+			if (saved<1E-5) {value=0; return;}
 
 			//double trop_plein=fill_this_cube(saved, Terran);
 			//if (trop_plein>0) take_care_of_trop_plein(trop_plein, Terran);
-			diffuseFluid(Terran); isfull=true;
+			diffuseFluid(Terran); 
+			
+			if (this.sons==null )isfull=true;
 		}
 	}
 	public void diffuseFluid( Octree Terran){
@@ -170,6 +176,7 @@ public class FluidTree extends DyadicBlock{
 				voisin.diffuseIn(this, Terran);
 			}	
 		}
+		if (this.value<1E-5) {this.killMeFather();return;}
 	}
 	public FluidTree findTheRoot(){
 		if (father!=null) return father.findTheRoot();

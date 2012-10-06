@@ -185,7 +185,7 @@ public class GameEngine {
 		double dt_fluid =- System.currentTimeMillis();
 		water.move_fluid_bis_treat_once_every_cell(octree,player.position,octreeBuilder);
 		dt_fluid+=System.currentTimeMillis();
-	//	System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
+		System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
 		
 		
 	}
