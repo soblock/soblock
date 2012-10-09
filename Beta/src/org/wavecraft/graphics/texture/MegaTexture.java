@@ -38,7 +38,7 @@ public class MegaTexture {
 			terrainCoord =new int[]{0,0};
 			break;
 
-		case 1:
+		case 2:
 			if (normal==3){
 				terrainCoord =new int[]{5,8};
 			}
@@ -51,14 +51,24 @@ public class MegaTexture {
 			}
 			break;
 			
-		case 2 :
-			terrainCoord =new int[]{1,0};
+		case 1 :
+			terrainCoord =new int[]{0,13};
 			break;
 		case 3 :
-			terrainCoord =new int[]{4,0};
+			terrainCoord =new int[]{4,2};
 			break;
 		case 4 :
-			terrainCoord =new int[]{5,0};
+			if (normal==3){
+				terrainCoord =new int[]{2,4};
+			}
+			else{
+				if (normal==-3){
+					terrainCoord =new int[]{2,0};
+				}
+				else
+				terrainCoord =new int[]{4,4};
+			}
+			
 			break;
 		case 5 :
 			terrainCoord =new int[]{6,0};
@@ -81,6 +91,18 @@ public class MegaTexture {
 			terrainCoord =new int[]{3,4};
 			break;
 			
+		case 11:
+			if (normal==3){
+				terrainCoord =new int[]{3,4};
+			}
+			else{
+				if (normal==-3){
+					terrainCoord =new int[]{2,0};
+				}
+				else
+				terrainCoord =new int[]{4,4};
+			}
+			break;
 			
 			
 		default:

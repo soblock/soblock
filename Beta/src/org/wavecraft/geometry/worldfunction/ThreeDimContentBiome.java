@@ -108,7 +108,7 @@ public class ThreeDimContentBiome implements ThreeDimContent{
 		soils[0][7] =2; soils[1][7] =2;
 		soils[0][8] =3; soils[1][8] =2;
 		soils[0][9] =4; soils[1][9] =2;
-		soils[0][10]=37; soils[1][10]=37;
+		soils[0][10]=11; soils[1][10]=11;
 
 	}
 	public void initialize_soils_proportions(){
