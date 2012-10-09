@@ -84,6 +84,7 @@ public class ThreeDimFunctionPerlin implements ThreeDimFunction {
 		      +pseudoRandomInt(i+1,j+1,k+1)*(  dx)*(  dy)*(  dz);
 	}
 	
+	
 	@Override
 	public double valueAt(Coord3d coord) {
 		// TODO Auto-generated method stub

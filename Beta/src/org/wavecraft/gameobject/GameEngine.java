@@ -136,10 +136,10 @@ public class GameEngine {
 		//octreeBuilder = OctreeBuilderBuilder.getPerlinGeoCulling();
 		//octreeBuilder = OctreeBuilderBuilder.getPerlinMSGeoCulling();
 
-		double z0=1.5*Math_Soboutils.powerOf2[octree.JMAX-1];
+		double z0=Math_Soboutils.powerOf2[octree.JMAX-1];
 		
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
-		double zmax =z0 + 100;
+		double zmax =z0*2;
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,zmax);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionFlat(Math.pow(2, Octree.JMAX-1)),modif);
@@ -185,7 +185,7 @@ public class GameEngine {
 		double dt_fluid =- System.currentTimeMillis();
 		water.move_fluid_bis_treat_once_every_cell(octree,player.position,octreeBuilder);
 		dt_fluid+=System.currentTimeMillis();
-		System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
+		//System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
 		
 		
 	}

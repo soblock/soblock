@@ -150,16 +150,15 @@ public class FluidTree extends DyadicBlock{
 		if (!is_wall[5]){
 			Coord3i c=new Coord3i( 0,0,-1);
 			value=fill_with_fluid(value,c,Terran);	
-			if (value==0) {this.sons=null; value=0.; return;}
+			if (value==0) {this.killMeFather(); return;}
 		}
 
 		if (!is_wall[4]){
 			Coord3i c=new Coord3i( 0,0,1);
 			double v=-Math_Soboutils.dpowerOf2[3*this.getJ()]+value;
-			value+=-v+fill_with_fluid(v,c,Terran);		
+			value+=-v+fill_with_fluid(v,c,Terran);	
+			if (value==0) {this.killMeFather(); return;}
 		}
-
-		if (value==0) return;
 		FluidTree root=this.findTheRoot();
 		Coord3i[] c=new Coord3i[4];
 		c[0]=new Coord3i( 1, 0,0);c[1]=new Coord3i(-1,0,0);
@@ -167,11 +166,7 @@ public class FluidTree extends DyadicBlock{
 
 		for (int offset=0; offset<4; offset++){
 			if (!is_wall[offset]){	
-				FluidTree voisin=new FluidTree(this.x+
-						c[offset].x,
-						this.y+c[offset].y,
-						this.z+c[offset].z,
-						this.getJ());
+				FluidTree voisin=new FluidTree(this.x+c[offset].x,this.y+c[offset].y,this.z+c[offset].z,this.getJ());
 				voisin=root.getThisBlock(voisin);
 				voisin.diffuseIn(this, Terran);
 			}	
@@ -317,7 +312,6 @@ public class FluidTree extends DyadicBlock{
 				else{
 					sons=new FluidTree[8];
 					value=0;
-					//System.out.format("value = %f saved value = %f %n", value, saved_v);
 					return fill_this_cube(vol,Terran);
 				}
 			}
@@ -336,9 +330,7 @@ public class FluidTree extends DyadicBlock{
 						vol=sons[offset].fill_this_cube(vol,Terran);
 					}		
 				}
-				//if (sons[offset]==null || sons[offset].fluid_contained()==0) dead_children+=1;
 			}
-			//if (dead_children==8) sons=null;
 			return vol;
 		}
 	}
@@ -515,7 +507,7 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public void initializeVolumes(){
-		if (sons==null) value=Math_Soboutils.dpowerOf2[3*getJ()];
+		if (sons==null) value=0.;//Math_Soboutils.dpowerOf2[3*getJ()];
 		else{
 			value=0.0;
 			for (int offset = 0; offset < 8; offset++) {
