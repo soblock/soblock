@@ -6,17 +6,31 @@ import org.lwjgl.opengl.Display;
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.graphics.GraphicEngine;
 import org.wavecraft.ui.events.UiEvent;
+import org.wavecraft.ui.events.UiEventKeyboardPressed;
+import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.ui.events.UiEventMouseClicked;
 import org.wavecraft.ui.events.UiEventMouseMoved;
 
-public class Mouse {
+
+// singleton 
+
+public class Mouse implements UiEventListener{
 	private double sensitivity=0.01;
 	private Point2d lastMove;
 	private int lastButtonCount; 
-	
-	public Mouse(){
+
+	private static Mouse instance;
+	public static Mouse getInstance(){
+		if (instance == null){
+			instance = new Mouse();
+		}
+		return instance; 
+	}
+	private Mouse(){
 		lastMove = new Point2d(0,0);
+		org.lwjgl.input.Mouse.setGrabbed(true);
+		UiEventMediator.addListener(this);
 	}
 	private void getUpdate(){
 		lastMove.x = sensitivity*org.lwjgl.input.Mouse.getDX() ; 
@@ -30,7 +44,7 @@ public class Mouse {
 			UiEvent eventMoved = new UiEventMouseMoved(lastMove);
 			UiEventMediator.addEvent(eventMoved);
 		}
-		
+
 		// click events
 		while (org.lwjgl.input.Mouse.next()){
 			int buttonId = org.lwjgl.input.Mouse.getEventButton();
@@ -43,8 +57,18 @@ public class Mouse {
 				UiEventMediator.addEvent(eventClicked);
 			}
 		}
-		
+
 	}
-	
-	
+	@Override
+	public void handle(UiEvent e) {
+		if (e instanceof UiEventKeyboardPressed){
+			KeyboardBinding keyBind = ((UiEventKeyboardPressed) e).key;
+			if (keyBind == KeyboardBinding.KEYBOARD_GRAB_MOUSE){
+				org.lwjgl.input.Mouse.setGrabbed(!org.lwjgl.input.Mouse.isGrabbed());
+			}
+		}
+
+	}
+
+
 }

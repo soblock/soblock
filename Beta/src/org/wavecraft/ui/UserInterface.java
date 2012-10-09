@@ -29,7 +29,7 @@ public class UserInterface {
 		UiEventMediator.getUiEventMediator();
 		window= new WindowFrame("WaveCraft Beta");
 		keyboard=new KeyBoard();
-		mouse = new Mouse();
+		mouse = Mouse.getInstance();
 		MenuSelectBlock.getInstance();
 		MenuSelectColorMap.getInstance();
 		ColorMap.getInstance();
