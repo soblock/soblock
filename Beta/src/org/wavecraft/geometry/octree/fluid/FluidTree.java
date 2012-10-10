@@ -64,7 +64,7 @@ public class FluidTree extends DyadicBlock{
 		return sons;
 	}
     public void killMeFather(){
-    	father.sons[this.father.findSonContaining(this)]=null;
+    	//father.sons[this.father.findSonContaining(this)]=null;
     }
 	public void move_fluid_bis_treat_once_every_cell(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
 
@@ -95,8 +95,7 @@ public class FluidTree extends DyadicBlock{
 				if (sons[offset]!=null && sons[offset].isfull ) 
 					full_children+=1;
 
-			if (full_children==8 )//|| (bottom_children_full && full_children==4)) 
-			{value=this.fluidContained(); sons=null; isfull=true;}
+			if (full_children==8 || (bottom_children_full && full_children==4)) {value=this.fluidContained(); sons=null; isfull=true;}
 		}
 	}
 	public void cleanFluidTree(Octree Terran){
@@ -151,16 +150,24 @@ public class FluidTree extends DyadicBlock{
 		if (!is_wall[5]){
 			Coord3i c=new Coord3i( 0,0,-1);
 			value=fill_with_fluid(value,c,Terran);	
-			if (value==0) {this.killMeFather(); return;}
+			
 		}
 
-		if (!is_wall[4]){
+		FluidTree voisin_pz=new FluidTree(this.x,this.y,this.z+1,this.getJ());
+		FluidTree root=this.findTheRoot();
+		voisin_pz=root.smallestBlockContaining(voisin_pz);
+		if (!is_wall[4] && this.value<Math_Soboutils.dpowerOf2[3*this.getJ()] &&voisin_pz.getJ()==this.getJ()){
+
 			Coord3i c=new Coord3i( 0,0,1);
 			double v=-Math_Soboutils.dpowerOf2[3*this.getJ()]+value;
 			value+=-v+fill_with_fluid(v,c,Terran);	
-			if (value==0) {this.killMeFather(); return;}
+			if (!is_wall[5]){
+				 c=new Coord3i( 0,0,-1);
+				value=fill_with_fluid(value,c,Terran);	
+				if (value==0) {this.killMeFather(); return;}
+			}
 		}
-		FluidTree root=this.findTheRoot();
+		
 		Coord3i[] c=new Coord3i[4];
 		c[0]=new Coord3i( 1, 0,0);c[1]=new Coord3i(-1,0,0);
 		c[2]=new Coord3i( 0, 1,0);c[3]=new Coord3i( 0,-1,0);
@@ -174,6 +181,33 @@ public class FluidTree extends DyadicBlock{
 		}
 		if (this.value<1E-5) {this.killMeFather();return;}
 	}
+	
+public void gravityAction(boolean[] is_wall,Octree Terran){
+		
+		
+		if (!is_wall[5]){
+			Coord3i c=new Coord3i( 0,0,-1);
+			value=fill_with_fluid(value,c,Terran);	
+		}
+		FluidTree voisin_pz=new FluidTree(this.x,this.y,this.z+1,this.getJ());
+		FluidTree root=findTheRoot();
+		voisin_pz=root.smallestBlockContaining(voisin_pz);
+		if (!is_wall[4]){// && this.value<Math_Soboutils.dpowerOf2[3*this.getJ()] ){//&&voisin_pz.getJ()==this.getJ()){
+			Coord3i c=new Coord3i( 0,0,1);
+			double v=-Math_Soboutils.dpowerOf2[3*this.getJ()]+value;
+			value+=-v+fill_with_fluid(v,c,Terran);	
+			if (this.value==0) {return;}
+			
+		}
+		if (!is_wall[5]){
+			Coord3i c=new Coord3i( 0,0,-1);
+			value=fill_with_fluid(value,c,Terran);
+		}
+		
+	
+		
+	}
+	
 	public FluidTree findTheRoot(){
 		if (father!=null) return father.findTheRoot();
 		else return this;
@@ -347,12 +381,9 @@ public class FluidTree extends DyadicBlock{
 						-z*Math_Soboutils.dpowerOf2[getJ()];
 				h+= tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]
 						-value/Math_Soboutils.dpowerOf2[2*getJ()];
-			
-				double v=h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]);
-				v*=1.99;//if (v>0) v*=(1+Math_Soboutils.dpowerOf2[2*getJ()]/Math_Soboutils.dpowerOf2[2*tree.getJ()]/10);
-				//else v*=(1-Math_Soboutils.dpowerOf2[2*getJ()]/Math_Soboutils.dpowerOf2[2*tree.getJ()]/10);
 				// cannot add more to this than empty space in this 
-				v=Math.min(v,Math_Soboutils.dpowerOf2[3*getJ()]-value);
+				double v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value
+						,h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]));
 				// cannot remove more the the volume of tree from tree
 				v=Math.min(tree.value, v);
 				// cannot add more in tree than empty space in tree
@@ -523,7 +554,21 @@ public class FluidTree extends DyadicBlock{
 		}
 	}
 
-
+	public FluidTree smallestBlockContaining(FluidTree block){
+		if (this.getJ()==block.getJ()) return this;
+		else{
+			if (value!=0) return this;
+			else{ 
+				if (sons==null) return this;
+				int offset=this.findSonContaining(block);
+				if (offset<0) return this;
+				if (sons[offset]==null){
+					return this;
+				}
+				return sons[offset].getThisBlock(block);
+			}
+		}
+	}
 
 	private void rasterizeInner(FluidTree node, ArrayList<DyadicBlock> raster){
 		if (node.sons==null){

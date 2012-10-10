@@ -1,4 +1,4 @@
-package org.wavecraft.graphics.texture;
+	package org.wavecraft.graphics.texture;
 
 import java.io.IOException;
 import java.util.ArrayList;
