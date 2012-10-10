@@ -95,7 +95,8 @@ public class FluidTree extends DyadicBlock{
 				if (sons[offset]!=null && sons[offset].isfull ) 
 					full_children+=1;
 
-			if (full_children==8 || (bottom_children_full && full_children==4)) {value=this.fluidContained(); sons=null; isfull=true;}
+			if (full_children==8 )//|| (bottom_children_full && full_children==4)) 
+			{value=this.fluidContained(); sons=null; isfull=true;}
 		}
 	}
 	public void cleanFluidTree(Octree Terran){
@@ -346,9 +347,12 @@ public class FluidTree extends DyadicBlock{
 						-z*Math_Soboutils.dpowerOf2[getJ()];
 				h+= tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]
 						-value/Math_Soboutils.dpowerOf2[2*getJ()];
+			
+				double v=h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]);
+				v*=1.99;//if (v>0) v*=(1+Math_Soboutils.dpowerOf2[2*getJ()]/Math_Soboutils.dpowerOf2[2*tree.getJ()]/10);
+				//else v*=(1-Math_Soboutils.dpowerOf2[2*getJ()]/Math_Soboutils.dpowerOf2[2*tree.getJ()]/10);
 				// cannot add more to this than empty space in this 
-				double v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value
-						,h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]));
+				v=Math.min(v,Math_Soboutils.dpowerOf2[3*getJ()]-value);
 				// cannot remove more the the volume of tree from tree
 				v=Math.min(tree.value, v);
 				// cannot add more in tree than empty space in tree
@@ -507,7 +511,7 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public void initializeVolumes(){
-		if (sons==null) value=0;//Math_Soboutils.dpowerOf2[3*getJ()];
+		if (sons==null) value=Math_Soboutils.dpowerOf2[3*getJ()];
 		else{
 			value=0.0;
 			for (int offset = 0; offset < 8; offset++) {

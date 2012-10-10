@@ -198,7 +198,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		double uz = velocity.z;
 	
 
-		double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
+		//double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
 
 		Coord3d position=movingObject.getPosition();
 		double eyex = position.x;
