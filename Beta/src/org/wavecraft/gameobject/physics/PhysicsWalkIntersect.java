@@ -88,7 +88,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 				targetVelocity.add(speedToAdd);
 			}
 		}
-		//System.out.println(targetVelocity.toString());
+		
 
 	}
 
@@ -124,6 +124,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			velocity.add(gravity().scalarMult(dt));
 			velocity.add(nonLinearFriction().scalarMult(dt));
 			movingObject.setSpeed(velocity);
+			System.out.println(velocity.toString());
 			Octree root = GameEngine.getOctree();
 			BoundingBox box = movingObject.getTranslatedBoundingBox();
 			box= box.extrude(velocity.scalarMult(dt));
@@ -197,14 +198,14 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		double uz = velocity.z;
 	
 
-		//double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
+		double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
 
 		Coord3d position=movingObject.getPosition();
 		double eyex = position.x;
 		double eyey = position.y;
 		double eyez = position.z;
 
-		double eps = 0.1;//dxnorm/dt;// eyez+=speed;
+		double eps = 0.15 ;//dxnorm/dt;// eyez+=speed;
 
 
 		for (int i = 0; i < listOfIntersectedLeaf.size(); i++) {
@@ -320,9 +321,9 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 				velocity.z=-shockCoeff*velocitynm1.z;
 			}
 			if (shock_zm && VminBounce<-uz){
-				System.out.println(velocity.toString());
+				//System.out.println(velocity.toString());
 				velocity.z=-bounceCoeff*velocitynm1.z;
-				System.out.println(velocity.toString());
+				//System.out.println(velocity.toString());
 			}
 
 		} else {

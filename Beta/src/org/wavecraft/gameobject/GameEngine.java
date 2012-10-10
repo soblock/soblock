@@ -139,7 +139,7 @@ public class GameEngine {
 		double z0=Math_Soboutils.powerOf2[octree.JMAX-1];
 		
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
-		double zmax =z0*2;
+		double zmax =z0*2 ;
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,zmax);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionFlat(Math.pow(2, Octree.JMAX-1)),modif);

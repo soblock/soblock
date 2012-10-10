@@ -24,6 +24,7 @@ public class PhysicsFreeFlight extends Physics implements UiEventListener{
 			instance = new PhysicsFreeFlight();
 		}
 		instance.scalarSpeedMult =1; // each time we switch on this, reinit value
+		instance.direction.clear();
 		return instance;
 	}
 

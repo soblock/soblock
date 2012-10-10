@@ -137,7 +137,7 @@ public class ModifAdder implements UiEventListener {
 	}
 
 	private void addBlock(DyadicBlock nodeToAdd, int content){
-		double value = -1E20;
+		double value = -1E16	;
 
 		modif.addModif(nodeToAdd, value, content);
 		modif.computeBounds();
@@ -167,7 +167,7 @@ public class ModifAdder implements UiEventListener {
 
 	private void removeBlock(DyadicBlock nodeToRemove){
 		// add modif to to modif save octree
-		double value = 1E20;
+		double value = 1E16;
 		modif.addModif(nodeToRemove, value, 0);
 		modif.computeBounds();
 
