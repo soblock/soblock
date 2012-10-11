@@ -22,7 +22,7 @@ public class FluidTree extends DyadicBlock{
 	protected int content = 0;
 	public double value;
 	boolean isfull=false;
-	boolean hasBeenTreated=false;
+	
 
 
 
@@ -70,7 +70,7 @@ public class FluidTree extends DyadicBlock{
 
 		move_fluid_bis(Terran,observerpos,builder);
 
-		//cleanFluidTree(Terran);
+		cleanFluidTree(Terran);
 	}
 	public void removeUnecessaryKids(){
 		if (sons!=null){
@@ -126,7 +126,7 @@ public class FluidTree extends DyadicBlock{
 					sons[offset].move_fluid_bis(Terran, observerpos,builder);
 				}
 			}
-			this.removeUnecessaryKids();
+			//this.removeUnecessaryKids();
 		}
 		else{
 			double saved=fluidContained();
@@ -141,33 +141,32 @@ public class FluidTree extends DyadicBlock{
 			//if (trop_plein>0) take_care_of_trop_plein(trop_plein, Terran);
 			diffuseFluid(Terran); 
 			
-			if (this.sons==null )isfull=true;
+			if (this.sons==null ) isfull=true;
 		}
 	}
 	public void diffuseFluid( Octree Terran){
 		boolean[] is_wall=nghb_infos(Terran);
-
-		if (!is_wall[5]){
-			Coord3i c=new Coord3i( 0,0,-1);
-			value=fill_with_fluid(value,c,Terran);	
-			
-		}
-
+		FluidTree voisin_mz=new FluidTree(this.x,this.y,this.z-1,this.getJ());
 		FluidTree voisin_pz=new FluidTree(this.x,this.y,this.z+1,this.getJ());
 		FluidTree root=this.findTheRoot();
+		if (!is_wall[5]){
+			Coord3i c=new Coord3i( 0,0,-1);
+			value=fill_with_fluid(value,c,Terran.smallestCellContaining(voisin_mz),root);	
+		}
+		
+		
 		voisin_pz=root.smallestBlockContaining(voisin_pz);
 		if (!is_wall[4] && this.value<Math_Soboutils.dpowerOf2[3*this.getJ()] &&voisin_pz.getJ()==this.getJ()){
 
 			Coord3i c=new Coord3i( 0,0,1);
 			double v=-Math_Soboutils.dpowerOf2[3*this.getJ()]+value;
-			value+=-v+fill_with_fluid(v,c,Terran);	
+			value+=-v+fill_with_fluid(v,c,Terran.smallestCellContaining(voisin_pz),root);	
 			if (!is_wall[5]){
 				 c=new Coord3i( 0,0,-1);
-				value=fill_with_fluid(value,c,Terran);	
-				if (value==0) {this.killMeFather(); return;}
+				value=fill_with_fluid(value,c,Terran.smallestCellContaining(voisin_mz),root);	
 			}
 		}
-		
+		if (value==0)  return;
 		Coord3i[] c=new Coord3i[4];
 		c[0]=new Coord3i( 1, 0,0);c[1]=new Coord3i(-1,0,0);
 		c[2]=new Coord3i( 0, 1,0);c[3]=new Coord3i( 0,-1,0);
@@ -176,44 +175,17 @@ public class FluidTree extends DyadicBlock{
 			if (!is_wall[offset]){	
 				FluidTree voisin=new FluidTree(this.x+c[offset].x,this.y+c[offset].y,this.z+c[offset].z,this.getJ());
 				voisin=root.getThisBlock(voisin);
-				voisin.diffuseIn(this, Terran);
+				voisin.diffuseIn(this, Terran.smallestCellContaining(voisin));
 			}	
 		}
-		if (this.value<1E-5) {this.killMeFather();return;}
-	}
-	
-public void gravityAction(boolean[] is_wall,Octree Terran){
-		
-		
-		if (!is_wall[5]){
-			Coord3i c=new Coord3i( 0,0,-1);
-			value=fill_with_fluid(value,c,Terran);	
-		}
-		FluidTree voisin_pz=new FluidTree(this.x,this.y,this.z+1,this.getJ());
-		FluidTree root=findTheRoot();
-		voisin_pz=root.smallestBlockContaining(voisin_pz);
-		if (!is_wall[4]){// && this.value<Math_Soboutils.dpowerOf2[3*this.getJ()] ){//&&voisin_pz.getJ()==this.getJ()){
-			Coord3i c=new Coord3i( 0,0,1);
-			double v=-Math_Soboutils.dpowerOf2[3*this.getJ()]+value;
-			value+=-v+fill_with_fluid(v,c,Terran);	
-			if (this.value==0) {return;}
-			
-		}
-		if (!is_wall[5]){
-			Coord3i c=new Coord3i( 0,0,-1);
-			value=fill_with_fluid(value,c,Terran);
-		}
-		
-	
-		
+		if (this.value<1E-5) {this.value=0.;}
 	}
 	
 	public FluidTree findTheRoot(){
 		if (father!=null) return father.findTheRoot();
 		else return this;
 	}
-	public double fill_with_fluid(double vol, Coord3i c, Octree Terran){
-		FluidTree root=findTheRoot();
+	public double fill_with_fluid(double vol, Coord3i c, Octree Terran, FluidTree root){
 		FluidTree voisin=new FluidTree(this.x+c.x,this.y+c.y,this.z+c.z,this.getJ());
 		voisin=root.getThisBlock(voisin);
 		double v=vol;
@@ -256,7 +228,6 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 						if (father!=null)father.sons[father.findSonContaining(this)]=null;
 						else value=0;
 						return vol+saved_v;
-
 					}
 					else{
 						this.sons=new FluidTree[8];
@@ -269,22 +240,20 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 			else return vol;
 		}
 		else{
-			int dead_children=0;
 			for (int offset=0; offset<8 && vol>0; offset++){
 				if (sons[offset]!=null){
-					if (sons[offset].are_neighbors(tree_to_empty)) vol=sons[offset].fill_with_fluid(vol,tree_to_empty,Terran);
+					if (sons[offset].are_neighbors(tree_to_empty)) 
+						vol=sons[offset].fill_with_fluid(vol,tree_to_empty,Terran.smallestCellContaining(sons[offset]));
 				}
 				else{
 					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree_to_empty)) {
 						sons[offset]=son;
-						vol=sons[offset].fill_with_fluid(vol,tree_to_empty,Terran);
+						vol=sons[offset].fill_with_fluid(vol,tree_to_empty,Terran.smallestCellContaining(sons[offset]));
 					}						
 				}				
-				if (sons[offset]==null || !(sons[offset].fluidContained()>0)) dead_children++;
 			}
-			if (dead_children==8) sons=null;
 			return vol;
 		}
 	}
@@ -352,7 +321,6 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 			}
 		}
 		else{
-			int dead_children=0;
 			for (int offset=0; offset<8 && vol>0; offset++){
 				if (sons[offset]!=null){
 					vol=sons[offset].fill_this_cube(vol,Terran);
@@ -381,9 +349,11 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 						-z*Math_Soboutils.dpowerOf2[getJ()];
 				h+= tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]
 						-value/Math_Soboutils.dpowerOf2[2*getJ()];
+				double v=h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]);
+				//v*=1+v/Math.min(Math_Soboutils.fpowerOf2[3*tree.getJ()],Math_Soboutils.fpowerOf2[3*this.getJ()]);
+				//v*=1+2*v*v/Math.pow((Math_Soboutils.fpowerOf2[3*tree.getJ()]+Math_Soboutils.fpowerOf2[3*this.getJ()]),2);				
 				// cannot add more to this than empty space in this 
-				double v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value
-						,h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]));
+				v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value,v);
 				// cannot remove more the the volume of tree from tree
 				v=Math.min(tree.value, v);
 				// cannot add more in tree than empty space in tree
@@ -410,23 +380,21 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 			}
 		}
 		else{
-			int dead_children=0;
 			double vol=0;
 			for (int offset=0; offset<8; offset++){
 				if (sons[offset]!=null){
-					if (sons[offset].are_neighbors(tree)) vol+=sons[offset].diffuseIn(tree,Terran);
+					if (sons[offset].are_neighbors(tree)) 
+						vol+=sons[offset].diffuseIn(tree,Terran.smallestCellContaining(sons[offset]));
 				}
 				else{
 					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree)) {
 						sons[offset]=son;
-						vol+=sons[offset].diffuseIn(tree,Terran);
+						vol+=sons[offset].diffuseIn(tree,Terran.smallestCellContaining(sons[offset]));
 					}						
-				}				
-				if (sons[offset]==null || !(sons[offset].fluidContained()>0)) dead_children++;
+				}
 			}
-			if (dead_children==8) sons=null;
 			return vol;
 		}
 	}
@@ -453,7 +421,6 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 				boolean[] exist=Terran.doesThisBlockExist(this);
 				if ( !exist[0]){	
 					value+=v;
-					this.hasBeenTreated=true;
 					return vol-v;
 				}
 				else {
@@ -463,7 +430,6 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 							father.sons[father.findSonContaining(this)]=null;
 						}
 						else value=0;
-
 						return vol+saved_v;
 					}
 					else{
@@ -477,22 +443,20 @@ public void gravityAction(boolean[] is_wall,Octree Terran){
 			else return vol;
 		}
 		else{
-			int dead_children=0;
 			for (int offset=0; offset<8 && vol<0; offset++){
 				if (sons[offset]!=null){
-					if (sons[offset].are_neighbors(tree_to_empty)) vol=sons[offset].removeFluid(vol,tree_to_empty,Terran);
+					if (sons[offset].are_neighbors(tree_to_empty)) 
+						vol=sons[offset].removeFluid(vol,tree_to_empty,Terran.smallestCellContaining(sons[offset]));
 				}
 				else{
 					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree_to_empty)) {
 						sons[offset]=son;
-						vol=sons[offset].removeFluid(vol,tree_to_empty,Terran);
+						vol=sons[offset].removeFluid(vol,tree_to_empty,Terran.smallestCellContaining(sons[offset]));
 					}						
 				}				
-				if (sons[offset]==null || !(sons[offset].fluidContained()>0)) dead_children++;
 			}
-			if (dead_children==8) sons=null;
 			return vol;
 		}
 	}

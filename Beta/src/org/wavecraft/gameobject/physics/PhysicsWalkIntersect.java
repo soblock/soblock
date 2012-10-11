@@ -59,9 +59,6 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			double phi = ((GameObjectMovingOriented) movingObject).getPhi();
 			double ux = (Math.cos(theta) * Math.cos(phi));
 			double uy = (Math.sin(theta) * Math.cos(phi));
-			double uz = (Math.sin(phi));
-			//TODO fucked up bug, don't understand why the commented stuff doesnt work ... If used, in some cases when 
-			/// switch to walk mode, scalarSpeedMult seems not nto be initialized and thus has a extrem. large value ....
 			double scalarSpeed = scalarSpeedMult * scalarSpeedDefault;
 			//System.out.printf("speed %f %f \n",scalarSpeedMult,scalarSpeedDefault);
 //			System.out.printf("velocity : %f %f %f %f \n",ux,uy,uz,scalarSpeed);
@@ -124,7 +121,6 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			velocity.add(gravity().scalarMult(dt));
 			velocity.add(nonLinearFriction().scalarMult(dt));
 			movingObject.setSpeed(velocity);
-			System.out.println(velocity.toString());
 			Octree root = GameEngine.getOctree();
 			BoundingBox box = movingObject.getTranslatedBoundingBox();
 			box= box.extrude(velocity.scalarMult(dt));
