@@ -145,7 +145,7 @@ public class FluidTree extends DyadicBlock{
 		}
 	}
 	public void diffuseFluid( Octree Terran){
-		boolean[] is_wall=nghb_infos(Terran);
+		boolean[] is_wall=nghb_infos_wall();
 		FluidTree voisin_mz=new FluidTree(this.x,this.y,this.z-1,this.getJ());
 		FluidTree voisin_pz=new FluidTree(this.x,this.y,this.z+1,this.getJ());
 		FluidTree root=this.findTheRoot();
@@ -271,7 +271,7 @@ public class FluidTree extends DyadicBlock{
 
 
 
-	public boolean[] nghb_infos(Octree Terran){
+	public boolean[] nghb_infos_wall(){
 		boolean[] ngbh=new boolean[6];
 		Octree neigh=new Octree(this.x,this.y,this.z,this.getJ());
 		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
