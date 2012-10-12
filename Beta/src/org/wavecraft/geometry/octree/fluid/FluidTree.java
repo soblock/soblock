@@ -22,7 +22,7 @@ public class FluidTree extends DyadicBlock{
 	protected int content = 0;
 	public double value;
 	boolean isfull=false;
-	
+
 
 
 
@@ -57,18 +57,18 @@ public class FluidTree extends DyadicBlock{
 	public void initSons(){
 		sons = new FluidTree[8];
 	}
-	
+
 
 
 	public FluidTree[] getSons(){
 		return sons;
 	}
-    public void killMeFather(){
-    	//father.sons[this.father.findSonContaining(this)]=null;
-    }
-	public void move_fluid_bis_treat_once_every_cell(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
+	public void killMeFather(){
+		//father.sons[this.father.findSonContaining(this)]=null;
+	}
+	public void moveFluid(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
 
-		move_fluid_bis(Terran,observerpos,builder);
+		moveFluidBis(Terran,observerpos,builder);
 
 		cleanFluidTree(Terran);
 	}
@@ -113,7 +113,7 @@ public class FluidTree extends DyadicBlock{
 			//if (Terran.smallestCellContaining(this).getJ()>this.getJ()) {value=this.fluidContained(); sons=null; isfull=true;}			
 		}
 	}
-	public void move_fluid_bis(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
+	public void moveFluidBis(Octree Terran,Coord3d observerpos,OctreeBuilder builder ){
 
 		if (value!=0 && sons!=null) System.out.format("echec %n");
 		if (value<0) System.out.format("echec negative value %n");
@@ -123,10 +123,10 @@ public class FluidTree extends DyadicBlock{
 			isfull=false;
 			for (int offset = 0; offset < 8; offset++) {
 				if (sons[offset]!=null ) {
-					sons[offset].move_fluid_bis(Terran, observerpos,builder);
+					sons[offset].moveFluidBis(Terran, observerpos,builder);
 				}
 			}
-			//this.removeUnecessaryKids();
+
 		}
 		else{
 			double saved=fluidContained();
@@ -134,44 +134,23 @@ public class FluidTree extends DyadicBlock{
 				this.sons=null;
 				this.value=saved;
 			}
-			//if (saved<1E-5*Math_Soboutils.fpowerOf2[2*this.getJ()]) {value=0; return;}
 			if (saved<1E-5) {value=0; return;}
-
-			//double trop_plein=fill_this_cube(saved, Terran);
-			//if (trop_plein>0) take_care_of_trop_plein(trop_plein, Terran);
 			diffuseFluid(Terran); 
-			
+
 			if (this.sons==null ) isfull=true;
 		}
 	}
 	public void diffuseFluid( Octree Terran){
 		boolean[] is_wall=nghb_infos_wall();
-		FluidTree voisin_mz=new FluidTree(this.x,this.y,this.z-1,this.getJ());
-		FluidTree voisin_pz=new FluidTree(this.x,this.y,this.z+1,this.getJ());
+
 		FluidTree root=this.findTheRoot();
-		if (!is_wall[5]){
-			Coord3i c=new Coord3i( 0,0,-1);
-			value=fill_with_fluid(value,c,Terran.smallestCellContaining(voisin_mz),root);	
-		}
-		
-		
-		voisin_pz=root.smallestBlockContaining(voisin_pz);
-		if (!is_wall[4] && this.value<Math_Soboutils.dpowerOf2[3*this.getJ()] &&voisin_pz.getJ()==this.getJ()){
-
-			Coord3i c=new Coord3i( 0,0,1);
-			double v=-Math_Soboutils.dpowerOf2[3*this.getJ()]+value;
-			value+=-v+fill_with_fluid(v,c,Terran.smallestCellContaining(voisin_pz),root);	
-			if (!is_wall[5]){
-				 c=new Coord3i( 0,0,-1);
-				value=fill_with_fluid(value,c,Terran.smallestCellContaining(voisin_mz),root);	
-			}
-		}
 		if (value==0)  return;
-		Coord3i[] c=new Coord3i[4];
-		c[0]=new Coord3i( 1, 0,0);c[1]=new Coord3i(-1,0,0);
-		c[2]=new Coord3i( 0, 1,0);c[3]=new Coord3i( 0,-1,0);
+		Coord3i[] c=new Coord3i[6];
+		c[0]=new Coord3i( 1, 0, 0);c[1]=new Coord3i(-1, 0, 0);
+		c[2]=new Coord3i( 0, 1, 0);c[3]=new Coord3i( 0,-1, 0);
+		c[4]=new Coord3i( 0, 0, 1);c[5]=new Coord3i( 0, 0,-1);
 
-		for (int offset=0; offset<4; offset++){
+		for (int offset=5; offset>-1; offset--){
 			if (!is_wall[offset]){	
 				FluidTree voisin=new FluidTree(this.x+c[offset].x,this.y+c[offset].y,this.z+c[offset].z,this.getJ());
 				voisin=root.getThisBlock(voisin);
@@ -180,7 +159,7 @@ public class FluidTree extends DyadicBlock{
 		}
 		if (this.value<1E-5) {this.value=0.;}
 	}
-	
+
 	public FluidTree findTheRoot(){
 		if (father!=null) return father.findTheRoot();
 		else return this;
@@ -227,7 +206,7 @@ public class FluidTree extends DyadicBlock{
 						double saved_v=value;
 						if (father!=null)father.sons[father.findSonContaining(this)]=null;
 						else value=0;
-						return vol+saved_v;
+						return vol;//+saved_v;
 					}
 					else{
 						this.sons=new FluidTree[8];
@@ -273,24 +252,26 @@ public class FluidTree extends DyadicBlock{
 
 	public boolean[] nghb_infos_wall(){
 		boolean[] ngbh=new boolean[6];
+		
+		/// the infos are numbered in a +x,-x,+y,-y,+z,-z
 		Octree neigh=new Octree(this.x,this.y,this.z,this.getJ());
 		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
 		neigh.x+=1;
-		ngbh[0]=(neigh.x<size_max)?false:true;
+		ngbh[1]=(neigh.x<size_max)?false:true;
 		neigh.x-=2;
-		ngbh[1]=(neigh.x>=0)      ?false:true;
+		ngbh[0]=(neigh.x>=0)      ?false:true;
 		neigh.x+=1;
 
 		neigh.y+=1;
-		ngbh[2]=(neigh.y<size_max)?false:true;
+		ngbh[3]=(neigh.y<size_max)?false:true;
 		neigh.y-=2;
-		ngbh[3]=(neigh.y>=0)      ?false:true;
+		ngbh[2]=(neigh.y>=0)      ?false:true;
 		neigh.y+=1;
 
 		neigh.z+=1;
-		ngbh[4]=(neigh.z<size_max)?false:true;
+		ngbh[5]=(neigh.z<size_max)?false:true;
 		neigh.z-=2;
-		ngbh[5]=(neigh.z>=0)      ?false:true;
+		ngbh[4]=(neigh.z>=0)      ?false:true;
 		neigh.z+=1;
 
 		return ngbh;
@@ -313,11 +294,14 @@ public class FluidTree extends DyadicBlock{
 					else value=0;
 					return vol;
 				}
-				else{
-					sons=new FluidTree[8];
-					value=0;
-					return fill_this_cube(vol,Terran);
-				}
+				else 
+					if (this.getJ()>0){
+						sons=new FluidTree[8];
+						value=0;
+						return fill_this_cube(vol,Terran);
+					}
+					else
+						return vol;
 			}
 		}
 		else{
@@ -341,7 +325,7 @@ public class FluidTree extends DyadicBlock{
 
 
 
-	public double diffuseIn(FluidTree tree, Octree Terran){
+	public void diffuseIn(FluidTree tree, Octree Terran){
 		if (sons==null){
 			boolean[] exist=Terran.doesThisBlockExist(this);
 			if ( !exist[0]){
@@ -362,40 +346,33 @@ public class FluidTree extends DyadicBlock{
 				v=Math.max(v,-value);
 				tree.value-=v;
 				value+=v;
-				return -v;
 			}
 			else {
-				if (exist[1]){
-					double saved_v=fluidContained();
-					value=0.;
-					sons=null;
-					tree.value+=saved_v;
-					return saved_v;
-				}
-				else{
+				 if (!exist[1] && this.getJ()>0){
 					this.sons=new FluidTree[8];
-					value=0;
-					return diffuseIn(tree,Terran);
+					double vol=value;
+					value=0.;
+					double trop_plein=this.fill_this_cube(vol, Terran);
+					this.take_care_of_trop_plein(trop_plein, Terran.findTheRoot());
+					diffuseIn(tree,Terran);
 				}
 			}
 		}
 		else{
-			double vol=0;
 			for (int offset=0; offset<8; offset++){
 				if (sons[offset]!=null){
 					if (sons[offset].are_neighbors(tree)) 
-						vol+=sons[offset].diffuseIn(tree,Terran.smallestCellContaining(sons[offset]));
+						sons[offset].diffuseIn(tree,Terran.smallestCellContaining(sons[offset]));
 				}
 				else{
 					FluidTree son=this.initSonAndReturnIt(offset);
 					boolean[] exist=Terran.doesThisBlockExist(son);
 					if ( (!exist[0] || exist[0] && !exist[1]) && son.are_neighbors(tree)) {
 						sons[offset]=son;
-						vol+=sons[offset].diffuseIn(tree,Terran.smallestCellContaining(sons[offset]));
+						sons[offset].diffuseIn(tree,Terran.smallestCellContaining(sons[offset]));
 					}						
 				}
 			}
-			return vol;
 		}
 	}
 	public void initSon(int offset){
@@ -467,12 +444,12 @@ public class FluidTree extends DyadicBlock{
 		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
 		int index=1;
 		FluidTree root=this.findTheRoot();
+		
 		while(trop_plein>0 && h<size_max){
 			Coord3i c=new Coord3i( 0,0,index);
 			FluidTree voisin=new FluidTree(this.x+c.x,this.y+c.y,this.z+c.z,this.getJ());
 			voisin=root.getThisBlock(voisin);
 			double saved=voisin.fluidContained();
-			voisin.sons=null;
 			trop_plein=voisin.fill_this_cube(trop_plein+saved,Terran);
 			h++;
 			index++;

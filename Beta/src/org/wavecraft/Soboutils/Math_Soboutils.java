@@ -29,6 +29,7 @@ public class Math_Soboutils {
 	public static int ithbit(int k,int i) {
 		int ttjm=(int) (Math.pow(2, i-1));
 		return (k%(2*ttjm))/(ttjm); 
+	
 	}
 
 

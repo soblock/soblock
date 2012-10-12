@@ -183,7 +183,7 @@ public class GameEngine {
 		Octree son1= (obstacle.getSons())[2];
 		son1.initSon(1);
 		double dt_fluid =- System.currentTimeMillis();
-		water.move_fluid_bis_treat_once_every_cell(octree,player.position,octreeBuilder);
+		water.moveFluid(octree,player.position,octreeBuilder);
 		dt_fluid+=System.currentTimeMillis();
 		System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
 		

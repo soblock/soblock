@@ -114,6 +114,10 @@ public class Octree extends DyadicBlock{
 			}
 		}
 	}
+	public Octree findTheRoot(){
+		if (father!=null) return father.findTheRoot();
+		else return this;
+	}
 
 	public int findSonContaining(DyadicBlock block) {
 		return Math_Soboutils.ithbit(block.x, this.getJ() - block.getJ()) + 2
