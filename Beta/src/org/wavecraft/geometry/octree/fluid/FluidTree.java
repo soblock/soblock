@@ -483,7 +483,7 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public void initializeVolumes(){
-		if (sons==null) value=Math_Soboutils.dpowerOf2[3*getJ()];
+		if (sons==null) value=0*Math_Soboutils.dpowerOf2[3*getJ()]/5;
 		else{
 			value=0.0;
 			for (int offset = 0; offset < 8; offset++) {

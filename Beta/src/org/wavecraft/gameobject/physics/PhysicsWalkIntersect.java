@@ -180,7 +180,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
 		// / the player is a considered a sphere of radius size_player
-		double playerWidth = 0.35; 
+		double playerWidth = 0.15; 
 		double playerHeightDown = 1.5; // under-the-eye player size
 		double playerHeightUp = 0.30; // up-ther eye player size
 		double size_cell;
@@ -194,14 +194,14 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		double uz = velocity.z;
 	
 
-		//double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
+		double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
 
 		Coord3d position=movingObject.getPosition();
 		double eyex = position.x;
 		double eyey = position.y;
 		double eyez = position.z;
 
-		double eps = 0.15 ;//dxnorm/dt;// eyez+=speed;
+		double eps = 0.1;//dxnorm/dt;// eyez+=speed;
 
 
 		for (int i = 0; i < listOfIntersectedLeaf.size(); i++) {
@@ -323,9 +323,9 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 
 		} else {
-			velocity.x=ux;
-			velocity.y=uy;
-			velocity.z=uz;
+//			velocity.x=ux;
+//			velocity.y=uy;
+//			velocity.z=uz;
 			if (is_blocked_x)
 				velocity.x = 0;
 			if (is_blocked_y)

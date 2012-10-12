@@ -10,6 +10,7 @@ import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.OctreeState;
 import org.wavecraft.geometry.octree.OctreeStateDead;
 import org.wavecraft.geometry.octree.OctreeStateFatherCool;
+import org.wavecraft.geometry.octree.OctreeStateGround;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
 import org.wavecraft.geometry.octree.OctreeUtils;
 import org.wavecraft.geometry.octree.events.OctreeEvent;
@@ -177,7 +178,7 @@ public class ModifAdder implements UiEventListener {
 			if (neighbors[i]!=null){
 				//System.out.println("neigbors : "+ neighbors[i].toString());
 				Octree octreeNeighbor = octree.smallestCellContaining(neighbors[i]);
-				if (!(octreeNeighbor.getState() instanceof OctreeStateDead)){ 
+				if (!(octreeNeighbor.getState() instanceof OctreeStateDead) ){ 
 					OctreeEvent event = new OctreeEvent(octreeNeighbor, OctreeEventKindof.LEAFY);
 					OctreeEventMediator.addEvent(event);
 				}
