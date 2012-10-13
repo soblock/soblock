@@ -141,7 +141,7 @@ public class GraphicEngine {
 		MenuSelectBlock.getInstance().draw();
 		//MenuSelectColorMap.getInstance().draw();
 		ColorMap.getInstance().plotLegend(ColorMap.getInstance().cm);
-		//Console.getInstance().draw();
+		Console.getInstance().draw();
 
 
 		// test window view : 

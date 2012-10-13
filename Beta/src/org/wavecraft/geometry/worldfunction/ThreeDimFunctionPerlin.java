@@ -18,8 +18,8 @@ public class ThreeDimFunctionPerlin implements ThreeDimFunction {
 		this.j = 7;
 		this.perm = randomPermutation(N, gener);
 		this.noise = noise1d(N, gener);
-		this.minVal = -7;
-		this.maxVal = 1;
+		this.minVal = -1;
+		this.maxVal = 7;
 	}
 	
 	public ThreeDimFunctionPerlin(Random gener,int N,int j, double minVal, double maxVal){

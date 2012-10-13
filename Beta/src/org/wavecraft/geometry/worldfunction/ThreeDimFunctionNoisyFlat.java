@@ -19,6 +19,6 @@ public class ThreeDimFunctionNoisyFlat implements ThreeDimFunction {
 	}
 	@Override
 	public double uncertaintyBound(DyadicBlock block) {
-		return noise.uncertaintyBound(block);
+		return 5*noise.uncertaintyBound(block) ;
 	}
 }

@@ -127,19 +127,23 @@ public class Octree extends DyadicBlock{
 
 	}
 
-
-	public ArrayList<Octree> adjacentGroundCells(DyadicBlock block){
+	
+	public ArrayList<Octree> adjacentCells(DyadicBlock block, OctreeState state){
 		// return the list of the cell contained in the octree
-		// that are adjacent to the DyadicBlock bloc
-		ArrayList<Octree> octreeArr = new ArrayList<Octree>();
-		this.adjacentGroundCellsInner(block, octreeArr);
-		return octreeArr;
+				// that are adjacent to the DyadicBlock bloc
+				// and have a state either Ground ore not yet visited
+				ArrayList<Octree> octreeArr = new ArrayList<Octree>();
+				this.adjacentInner(block, octreeArr, state);
+				return octreeArr;
 	}
 
-	private void adjacentGroundCellsInner(DyadicBlock block, ArrayList<Octree> octreeArr){
+	
+
+	private void adjacentInner(DyadicBlock block, ArrayList<Octree> octreeArr, OctreeState state){
+		
 		// check if current node is adjacent
 		if (this.isAdjacentTo(block) || this.contains(block)){
-			if (this.getState() instanceof OctreeStateGround){
+			if (this.getState().getClass() == state.getClass()){
 				if (this.isAdjacentTo(block)){
 					octreeArr.add(this);
 				}
@@ -147,7 +151,35 @@ public class Octree extends DyadicBlock{
 			if (this.getState() instanceof OctreeStateFatherCool ||
 					this.getState() instanceof OctreeStateFatherWorried)  {
 				for (int i = 0;i<8 ;i++){
-					this.getSons()[i].adjacentGroundCellsInner(block, octreeArr);
+					this.getSons()[i].adjacentInner(block, octreeArr,state);
+				}
+			}
+
+		}
+	}
+	
+	public ArrayList<Octree> adjacentGroundNYVCells(DyadicBlock block){
+		// return the list of the cell contained in the octree
+		// that are adjacent to the DyadicBlock bloc
+		// and have a state either Ground ore not yet visited
+		ArrayList<Octree> octreeArr = new ArrayList<Octree>();
+		this.adjacentGroundNYVCellsInner(block, octreeArr);
+		return octreeArr;
+	}
+
+	private void adjacentGroundNYVCellsInner(DyadicBlock block, ArrayList<Octree> octreeArr){
+		// check if current node is adjacent
+		if (this.isAdjacentTo(block) || this.contains(block)){
+			if (this.getState() instanceof OctreeStateGround ||
+					this.getState() instanceof OctreeStateNotYetVisited){
+				if (this.isAdjacentTo(block)){
+					octreeArr.add(this);
+				}
+			}
+			if (this.getState() instanceof OctreeStateFatherCool ||
+					this.getState() instanceof OctreeStateFatherWorried)  {
+				for (int i = 0;i<8 ;i++){
+					this.getSons()[i].adjacentGroundNYVCellsInner(block, octreeArr);
 				}
 			}
 

@@ -21,6 +21,8 @@ import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.geometry.octree.fluid.FluidTree;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionNoisyFlat;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionPerlin;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionPerlinMS;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSinc;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSphere;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
@@ -140,7 +142,9 @@ public class GameEngine {
 		
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
 		double zmax =z0*2 ;
-		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,zmax);
+		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionPerlinMS(),modif);
+
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,z0);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionFlat(Math.pow(2, Octree.JMAX-1)),modif);
 		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionSinc(new Coord3d(512, 512, 512), 100, 100, 256),modif);
@@ -185,7 +189,7 @@ public class GameEngine {
 		double dt_fluid =- System.currentTimeMillis();
 		water.moveFluid(octree,player.position,octreeBuilder);
 		dt_fluid+=System.currentTimeMillis();
-		System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
+		//System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
 		
 		
 	}

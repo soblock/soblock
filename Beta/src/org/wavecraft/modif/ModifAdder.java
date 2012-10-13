@@ -12,6 +12,7 @@ import org.wavecraft.geometry.octree.OctreeStateDead;
 import org.wavecraft.geometry.octree.OctreeStateFatherCool;
 import org.wavecraft.geometry.octree.OctreeStateGround;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
+import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
 import org.wavecraft.geometry.octree.OctreeUtils;
 import org.wavecraft.geometry.octree.events.OctreeEvent;
 import org.wavecraft.geometry.octree.events.OctreeEventKindof;
@@ -138,7 +139,7 @@ public class ModifAdder implements UiEventListener {
 	}
 
 	private void addBlock(DyadicBlock nodeToAdd, int content){
-		double value = -1E16	;
+		double value = -1E16*(1 + Octree.JMAX - nodeToAdd.getJ())	;
 
 		modif.addModif(nodeToAdd, value, content);
 		modif.computeBounds();
@@ -162,13 +163,26 @@ public class ModifAdder implements UiEventListener {
 		nodeToRegenerate.setState(OctreeStateLeaf.getInstance());
 		OctreeEvent event = new OctreeEvent(nodeToRegenerate, OctreeEventKindof.LEAFY);
 		OctreeEventMediator.addEvent(event);
+		
+		// regenerate adjacent 
+		ArrayList<Octree> adjacentLeafCell = octree.adjacentCells(nodeToRegenerate, OctreeStateLeaf.getInstance());
+		
+		
+		
+		for (Octree adjacentCell: adjacentLeafCell){
+			//OctreeEvent event2 = new OctreeEvent(adjacentCell, OctreeEventKindof.LEAFY);
+			//OctreeEventMediator.addEvent(event2);
+			// revisit adjacent cell (they might be useless now)
+			adjacentCell.setState(OctreeStateNotYetVisited.getInstance());
+			Console.getInstance().push(adjacentCell.toString());
+		}
 
 		Console.getInstance().push("ADD "+nodeToAdd.toString());
 	}
 
 	private void removeBlock(DyadicBlock nodeToRemove){
 		// add modif to to modif save octree
-		double value = 1E16;
+		double value = 1E16*(1 + Octree.JMAX - nodeToRemove.getJ())	;
 		modif.addModif(nodeToRemove, value, 0);
 		modif.computeBounds();
 
@@ -201,7 +215,22 @@ public class ModifAdder implements UiEventListener {
 		modif.computeBounds();
 
 		// leafy every ground adjacent cell
-		ArrayList<Octree>adjacentCells= octree.adjacentGroundCells(nodeToRemove);
+		ArrayList<Octree>adjacentCells= octree.adjacentGroundNYVCells(nodeToRemove);
+		// assume the following :
+		// time 0:
+		// a big block bb is splited. one of his son sb is set to notYetVisited.
+		// the user destroy the block adjacent sa to it 
+		// time 1:
+		// sb isvisited. the modif tree does not yet contains so block destruction of sa
+		// so that an octree event of kind killGround is thrown. (but sb is still not yet visited)
+		// the eventMediator handle the request of the user and launch retrieve the list 
+		// of adjacent ground cell (and sb is not in it)... and regenerate them
+		// time 2:
+		// sb is definitely set to ground .... NOT WHAT WE WANT !!!
+		// CONCLUSION :
+		// we need to regenerate every ground AND not yet visited adjacent cells.
+		
+		
 		
 		for (Octree adjacentCell: adjacentCells){
 			OctreeEvent event = new OctreeEvent(adjacentCell, OctreeEventKindof.LEAFY);

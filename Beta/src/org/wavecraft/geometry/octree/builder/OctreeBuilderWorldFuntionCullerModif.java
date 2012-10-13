@@ -1,6 +1,8 @@
 package org.wavecraft.geometry.octree.builder;
 
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.BlockAction;
+
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.octree.Octree;
@@ -140,6 +142,16 @@ public class OctreeBuilderWorldFuntionCullerModif implements OctreeBuilder{
 
 	@Override
 	public boolean isGround(Octree octree) {
+//		// BUG FIX LAURENT 13 10 2012
+//		// l'horrible bug des trous venait d'ici:
+//		// il ne faut pas verifier les conditions dincertitude ici
+//		// car ici on est suppose les avoir deja teste !!
+//		// en particulier on risque de les avoir teste avec la fonction recursive
+//		// avec une precision arbitraire et donc si on refait le test en 
+//		// non recursif la precision risque de ne pas etre suffisante
+//		// alors que l'on a deja fait les test...
+//		// donc on fait BEAUCOUP plus simple on regarde juste si le centre est negatif
+//		
 		ModifOctree cell=modif.smallestCellContainingBlock(octree);
 		double S, bmax,v;
 		if (cell.getJ()>octree.getJ() && cell.sons!=null){
@@ -150,9 +162,18 @@ public class OctreeBuilderWorldFuntionCullerModif implements OctreeBuilder{
 		}
 		double[] minmax =  ThreeDimFunctionUtils.minMaxValuesAtVertices(worldFunction, octree);
 		double vMax=minmax[1]+S+v+bmax;
-		double JumpMax=modif.jumpMax(octree);
-		double Dphi = worldFunction.uncertaintyBound(octree);
-		return ( vMax+JumpMax<-Dphi);
+//		double JumpMax=modif.jumpMax(octree);
+//		if (Math.abs(JumpMax ) >0) System.out.println(JumpMax);
+//		double Dphi = worldFunction.uncertaintyBound(octree);
+//		if (octree.x == 0 && octree.y == 11 && octree.z == 32 && octree.getJ() ==2)
+//		{
+//			System.out.println("WTF");
+//		}
+		//return ( vMax+JumpMax<-Dphi);
+	
+		return (vMax<0);
+		//return (worldFunction.valueAt(octree.center()) < 0);
+		
 	}
 }
 
