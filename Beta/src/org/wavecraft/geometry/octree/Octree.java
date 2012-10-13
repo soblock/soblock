@@ -158,33 +158,6 @@ public class Octree extends DyadicBlock{
 		}
 	}
 	
-	public ArrayList<Octree> adjacentGroundNYVCells(DyadicBlock block){
-		// return the list of the cell contained in the octree
-		// that are adjacent to the DyadicBlock bloc
-		// and have a state either Ground ore not yet visited
-		ArrayList<Octree> octreeArr = new ArrayList<Octree>();
-		this.adjacentGroundNYVCellsInner(block, octreeArr);
-		return octreeArr;
-	}
-
-	private void adjacentGroundNYVCellsInner(DyadicBlock block, ArrayList<Octree> octreeArr){
-		// check if current node is adjacent
-		if (this.isAdjacentTo(block) || this.contains(block)){
-			if (this.getState() instanceof OctreeStateGround ||
-					this.getState() instanceof OctreeStateNotYetVisited){
-				if (this.isAdjacentTo(block)){
-					octreeArr.add(this);
-				}
-			}
-			if (this.getState() instanceof OctreeStateFatherCool ||
-					this.getState() instanceof OctreeStateFatherWorried)  {
-				for (int i = 0;i<8 ;i++){
-					this.getSons()[i].adjacentGroundNYVCellsInner(block, octreeArr);
-				}
-			}
-
-		}
-	}
 
 	public boolean[] doesThisBlockExist(FluidTree tree){
 		Octree tree1=new Octree(tree.x,tree.y,tree.z,tree.getJ());

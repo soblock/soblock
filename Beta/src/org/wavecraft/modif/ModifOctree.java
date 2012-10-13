@@ -12,8 +12,6 @@ import org.wavecraft.geometry.octree.Octree;
 public class ModifOctree extends DyadicBlock {
 	public ModifOctree[] sons = null;
 	public ModifOctree father = null;
-	// need to set the JMAX
-	public static int JMAX = Octree.JMAX;
 	public double value;
 	public double sumAncestors;
 	public double boundMin;
@@ -46,17 +44,12 @@ public class ModifOctree extends DyadicBlock {
 		boundMin = 0.0;
 		boundMax = 0.0;
 		if (sons != null) {
-			//		bound_min = 100000000;
-			//			bound_max = -100000000;
 			for (int offset = 0; offset < 8; offset++) {
 				if (sons[offset] != null) {
 					sons[offset].computeBounds();
-					boundMax = sons[offset].boundMax + sons[offset].value;//?
-					boundMin = sons[offset].boundMin + sons[offset].value;//?
-				} /// ????
-				// laurent 30 juin 2012 : jai commente les deux lignes
-				// precedentes : tu override ces values de toute facon apres...
-				/// 
+					boundMax = sons[offset].boundMax + sons[offset].value;
+					boundMin = sons[offset].boundMin + sons[offset].value;
+				}
 			}
 			for (int offset = 0; offset < 8; offset++) {
 				if (sons[offset] != null) {
@@ -71,11 +64,10 @@ public class ModifOctree extends DyadicBlock {
 				}
 			}
 		}
-		//System.out.format("level %d bound max %f bound min %f \n",this.getJ(),bound_max,bound_min);
 	}
 
 	public void computeSumAncestors() {
-	    if (father == null) sumAncestors = 0; // added by laurent
+	    if (father == null) sumAncestors = 0;
 		if (sons != null) {
 			for (int offset = 0; offset < 8; offset++) {
 				if (sons[offset] != null) {
@@ -151,7 +143,7 @@ public class ModifOctree extends DyadicBlock {
 	}
 
 	public double jumpMax(Octree b) {
-		int size_max = Math_Soboutils.powerOf2[JMAX - b.getJ()];
+		int size_max = Math_Soboutils.powerOf2[Octree.JMAX - b.getJ()];
 		double jumpMax = 0;
 
 		double vMin = minValueAtFrRoot(b);
@@ -187,7 +179,6 @@ public class ModifOctree extends DyadicBlock {
 
 
 	public void addModif(DyadicBlock block,double val,int content){
-		// laurent 4 july 2012
 		if (this.getJ()>block.getJ()){
 			int ind = findSonContainingBlock(block);
 			if (this.sons == null){
@@ -200,9 +191,7 @@ public class ModifOctree extends DyadicBlock {
 						this.subBlock(ind).x, 
 						this.subBlock(ind).y, 
 						this.subBlock(ind).z,this.getJ()-1,content, valueOfMySon, sumAncestorOfMySons);
-				sons[ind].father = this; 
-				//System.out.println(sons[ind].toString());
-				
+				sons[ind].father = this; 				
 			}
 			else {
 				if (sons[ind] == null){
@@ -212,14 +201,14 @@ public class ModifOctree extends DyadicBlock {
 							this.subBlock(ind).z,this.getJ()-1,0,0, sumAncestorOfMySons);
 					sons[ind].father = this;
 				}
-				//System.out.println(sons[ind].toString());
+			
 				sons[ind].addModif(block, val, content);
 				
-				// see alpha 26
 			}
 
 		}
 	}
+	
 	@Override
 	public String toString() {
 		return "ModifOctree [value=" + value + ", sumAncestors=" + sumAncestors

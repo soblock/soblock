@@ -29,7 +29,7 @@ public class Mouse implements UiEventListener{
 	}
 	private Mouse(){
 		lastMove = new Point2d(0,0);
-		org.lwjgl.input.Mouse.setGrabbed(true);
+		org.lwjgl.input.Mouse.setGrabbed(false);
 		UiEventMediator.addListener(this);
 	}
 	private void getUpdate(){

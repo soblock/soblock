@@ -150,8 +150,7 @@ public class OctreeBuilderWorldFuntionCullerModif implements OctreeBuilder{
 //		// avec une precision arbitraire et donc si on refait le test en 
 //		// non recursif la precision risque de ne pas etre suffisante
 //		// alors que l'on a deja fait les test...
-//		// donc on fait BEAUCOUP plus simple on regarde juste si le centre est negatif
-//		
+
 		ModifOctree cell=modif.smallestCellContainingBlock(octree);
 		double S, bmax,v;
 		if (cell.getJ()>octree.getJ() && cell.sons!=null){
@@ -162,18 +161,8 @@ public class OctreeBuilderWorldFuntionCullerModif implements OctreeBuilder{
 		}
 		double[] minmax =  ThreeDimFunctionUtils.minMaxValuesAtVertices(worldFunction, octree);
 		double vMax=minmax[1]+S+v+bmax;
-//		double JumpMax=modif.jumpMax(octree);
-//		if (Math.abs(JumpMax ) >0) System.out.println(JumpMax);
-//		double Dphi = worldFunction.uncertaintyBound(octree);
-//		if (octree.x == 0 && octree.y == 11 && octree.z == 32 && octree.getJ() ==2)
-//		{
-//			System.out.println("WTF");
-//		}
-		//return ( vMax+JumpMax<-Dphi);
-	
 		return (vMax<0);
-		//return (worldFunction.valueAt(octree.center()) < 0);
-		
+	
 	}
 }
 
