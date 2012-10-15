@@ -333,9 +333,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			if (is_blocked_z)
 				velocity.z = 0;
 
-			position.x=eyex;
-			position.y=eyey;
-			position.z=eyez;
+			if(!(is_blocked_x && is_blocked_y && is_blocked_z))
 			avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm);
 		}
 
