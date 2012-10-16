@@ -209,7 +209,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		double eyey = position.y;
 		double eyez = position.z;
 
-		double eps = 0.01;//dxnorm/dt;// eyez+=speed;
+		double eps = 1E-3;//0.01;//dxnorm/dt;// eyez+=speed;
 
 
 
@@ -313,15 +313,10 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 		}
 		if (Math.abs(dt)> eps_dt) {
-			//			System.out.printf("moving %f \n",dt);
-			//			System.out.println(velocity.toString());
-			//			
-			eyex += ux * dt;
-			eyey += uy * dt;
-			eyez += uz * dt;
-			position.x=eyex;
-			position.y=eyey;
-			position.z=eyez;
+					
+			position.x += ux * dt;
+			position.y += uy * dt;
+			position.z += uz * dt;
 			velocity.x=ux;
 			velocity.y=uy;
 			velocity.z=uz;
@@ -336,10 +331,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 
 		} else {
-			//System.out.println(velocity.toString());
-			//			velocity.x=ux;
-			//			velocity.y=uy;
-			//			velocity.z=uz;
+			
 			if (is_blocked_x){
 				//System.out.printf("XXX \n");
 				velocity.x = 0;
