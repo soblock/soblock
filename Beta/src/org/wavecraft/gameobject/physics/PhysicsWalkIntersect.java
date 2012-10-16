@@ -35,7 +35,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 	double shockCoeff=0.5;
 	double bounceCoeff=0.3;
 	double VminBounce=2;
-	
+
 	private static PhysicsWalkIntersect instance;
 	public static PhysicsWalkIntersect getInstance(){
 		if (instance == null){
@@ -61,7 +61,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			double uy = (Math.sin(theta) * Math.cos(phi));
 			double scalarSpeed = scalarSpeedMult * scalarSpeedDefault;
 			//System.out.printf("speed %f %f \n",scalarSpeedMult,scalarSpeedDefault);
-//			System.out.printf("velocity : %f %f %f %f \n",ux,uy,uz,scalarSpeed);
+			//			System.out.printf("velocity : %f %f %f %f \n",ux,uy,uz,scalarSpeed);
 			targetVelocity = new Coord3d(0, 0, 0);
 			// Max 19/09/12: forward/backward: motion only in the x-y plan (should be faster for avoidblock)
 			if (direction.contains(Direction.FORWARD)){
@@ -85,12 +85,12 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 				targetVelocity.add(speedToAdd);
 			}
 		}
-		
+
 
 	}
 
 
-	
+
 	public void frictionAccel(double timeDelta){
 		if (velocity.z==0){
 			velocity.add((targetVelocity.addInNewVector(velocity.scalarMult(-1)).scalarMult(alphaFricitonGround)));
@@ -175,7 +175,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		boolean shock_zm=false;
 		velocitynm1= new Coord3d(velocity);
 		avoid_blocks(listOfIntersectedLeaf, movingObject, dt,shock_zp,shock_zm);
-		
+
 	}
 
 	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
@@ -189,25 +189,35 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		boolean is_blocked_x = false;
 		boolean is_blocked_y = false;
 		boolean is_blocked_z = false;
+		// zero tolerance for dt
+		double eps_dt=1E-5;
+
+		// double precision for the velocity
+		double eps_vel=1E-5;
+		if (Math.abs(velocity.x)<eps_vel) velocity.x=0.;
+		if (Math.abs(velocity.y)<eps_vel) velocity.y=0.;
+		if (Math.abs(velocity.z)<eps_vel) velocity.z=0.;
 		double ux = velocity.x;
 		double uy = velocity.y;
 		double uz = velocity.z;
-	
 
-		double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
+
+		//	double dxnorm=Math.sqrt(velocity.x*velocity.x+velocity.y*velocity.y+velocity.z*velocity.z)*dt;
 
 		Coord3d position=movingObject.getPosition();
 		double eyex = position.x;
 		double eyey = position.y;
 		double eyez = position.z;
 
-		double eps = 0.1;//dxnorm/dt;// eyez+=speed;
+		double eps = 0.01;//dxnorm/dt;// eyez+=speed;
+
+
+
 
 
 		for (int i = 0; i < listOfIntersectedLeaf.size(); i++) {
 			Octree leaf = listOfIntersectedLeaf.get(i);
 			size_cell = Math_Soboutils.dpowerOf2[leaf.getJ()];
-
 
 			// bb of current cell
 			cx_min = leaf.center().x - size_cell / 2;// Math.pow(2,block[i].coord.x);
@@ -222,79 +232,79 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 
 
-			if (ux > 0 && eyex <= cx_min - playerWidth && !is_blocked_x) {
+			if (ux > eps_vel && eyex <= cx_min - playerWidth && !is_blocked_x) {
 				t = (cx_min - playerWidth - eyex) / ux;
 				yf = eyey + t * uy;
 				zf = eyez + t * uz;
 				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth
 						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					tx = Math.max(t - eps / ux, 0);
-					if (tx == 0)
+					if (tx <eps_dt)
 						is_blocked_x = true;
 					dt = Math.min(dt, tx);
 
 				}
 
 			}
-			if (ux < 0 && eyex >= cx_max + playerWidth && !is_blocked_x) {
+			if (ux < -eps_vel && eyex >= cx_max + playerWidth && !is_blocked_x) {
 				t = (cx_max + playerWidth - eyex) / ux;
 				yf = eyey + t * uy;
 				zf = eyez + t * uz;
 				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth
 						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					tx = Math.max(t + eps / ux, 0);
-					if (tx == 0)
+					if (tx <eps_dt)
 						is_blocked_x = true;
 					dt = Math.min(dt, tx);
 
 				}
 			}
-			if (uy > 0 && eyey <= cy_min - playerWidth && !is_blocked_y) {
+			if (uy > eps_vel && eyey <= cy_min - playerWidth && !is_blocked_y) {
 				t = (cy_min - playerWidth - eyey) / uy;
 				xf = eyex + t * ux;
 				zf = eyez + t * uz;
 				if (cx_min - playerWidth <= xf && xf <= cx_max + playerWidth
 						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					ty = Math.max(t - eps / uy, 0);
-					if (ty == 0)
+					if (ty <eps_dt)
 						is_blocked_y = true;
 					dt = Math.min(dt, ty);
 				}
 			}
-			if (uy < 0 && eyey >= cy_max + playerWidth && !is_blocked_y) {
+			if (uy < -eps_vel && eyey >= cy_max + playerWidth && !is_blocked_y) {
 				t = (cy_max + playerWidth - eyey) / uy;
 				xf = eyex + t * ux;
 				zf = eyez + t * uz;
 				if (cx_min - playerWidth <= xf && xf <= cx_max + playerWidth
 						&& cz_min - playerHeightUp <= zf && zf <= cz_max + playerHeightDown) {
 					ty = Math.max(t + eps / uy, 0);
-					if (ty == 0)
+					if (ty <eps_dt)
 						is_blocked_y = true;
 					dt = Math.min(dt, ty);
 				}
 			}
-			if (uz > 0 && eyez <= cz_min - playerHeightUp && !is_blocked_z) {
+			if (uz > eps_vel && eyez <= cz_min - playerHeightUp && !is_blocked_z) {
 				t = (cz_min - playerHeightUp - eyez) / uz;
 				xf = eyex + t * ux;
 				yf = eyey + t * uy;
 				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth && cx_min - playerWidth <= xf
 						&& xf <= cx_max + playerWidth) {
 					tz = Math.max(t - eps / uz, 0);
-					if (tz == 0){
+					if (tz <eps_dt){
 						is_blocked_z = true;
 						shock_zp=true;
 					}
 					dt = Math.min(dt, tz);
 				}
 			}
-			if (uz < 0 && eyez >= cz_max + playerHeightDown && !is_blocked_z) {
+			if (uz < -eps_vel && eyez >= cz_max + playerHeightDown && !is_blocked_z) {
 				t = (cz_max + playerHeightDown - eyez) / uz;
 				xf = eyex + t * ux;
 				yf = eyey + t * uy;
 				if (cy_min - playerWidth <= yf && yf <= cy_max + playerWidth && cx_min - playerWidth <= xf
 						&& xf <= cx_max + playerWidth) {
 					tz = Math.max(t + eps / uz, 0);
-					if (tz == 0){
+					if (tz <eps_dt){
 						is_blocked_z = true;
 						shock_zm=true;
 					}
@@ -302,7 +312,10 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 				}
 			}
 		}
-		if (dt != 0) {
+		if (Math.abs(dt)> eps_dt) {
+			//			System.out.printf("moving %f \n",dt);
+			//			System.out.println(velocity.toString());
+			//			
 			eyex += ux * dt;
 			eyey += uy * dt;
 			eyez += uz * dt;
@@ -323,18 +336,25 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 
 		} else {
-//			velocity.x=ux;
-//			velocity.y=uy;
-//			velocity.z=uz;
-			if (is_blocked_x)
+			//System.out.println(velocity.toString());
+			//			velocity.x=ux;
+			//			velocity.y=uy;
+			//			velocity.z=uz;
+			if (is_blocked_x){
+				//System.out.printf("XXX \n");
 				velocity.x = 0;
-			if (is_blocked_y)
+			}
+			if (is_blocked_y){
+				//System.out.printf("YYY \n");
 				velocity.y = 0;
-			if (is_blocked_z)
+			}
+			if (is_blocked_z){
+				//System.out.printf("ZZZ	 \n");
 				velocity.z = 0;
+			}
 
 			if(!(is_blocked_x && is_blocked_y && is_blocked_z))
-			avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm);
+				avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm);
 		}
 
 	}
