@@ -61,6 +61,8 @@ public class GraphicEngine {
 	private static HUD hud;
 	private static Light light;
 
+
+
 	static ArrayList<Octree> octreeArrMsg ;
 
 	private static VBOFace vboFace = null;
@@ -121,13 +123,13 @@ public class GraphicEngine {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		viewMain.initRendering();
-		
-		
-		  //GL11.glEnable(GL11.GL_FOG);
-		  //GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
-		  //GL11.glFogf(GL11.GL_FOG_START, 48.f);
-		  //GL11.glFogf(GL11.GL_FOG_END, 256.f);
-		
+
+
+		//GL11.glEnable(GL11.GL_FOG);
+		//GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
+		//GL11.glFogf(GL11.GL_FOG_START, 48.f);
+		//GL11.glFogf(GL11.GL_FOG_END, 256.f);
+
 		double t1 = System.currentTimeMillis();
 		innerRender();
 
@@ -136,12 +138,12 @@ public class GraphicEngine {
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
-		hud.draw();
+		//hud.draw();
 
 		MenuSelectBlock.getInstance().draw();
 		//MenuSelectColorMap.getInstance().draw();
-		ColorMap.getInstance().plotLegend(ColorMap.getInstance().cm);
-		Console.getInstance().draw();
+		//ColorMap.getInstance().plotLegend(ColorMap.getInstance().cm);
+		//Console.getInstance().draw();
 
 
 		// test window view : 
@@ -186,22 +188,12 @@ public class GraphicEngine {
 
 		vboFace.draw();
 
-		
 
-		
 
-		FluidTree fluidTreeExample = new FluidTree(0, 0, 0, 8);
-		FluidTree fluidTreeExample1 = new FluidTree(0, 0, 0, 0);
-		FluidTree fluidTreeExample2 = new FluidTree(0, 0, 1, 0);
-		fluidTreeExample.initSon(7);
-		fluidTreeExample.initializeVolumes();
-		
-		//fluidTreeExample.getSons()[1]=fluidTreeExample2;
-//		fluidTreeExample1.value = 1;
-//		fluidTreeExample2.value = 1;
-		FluidTreeRenderer.renderTexture(GameEngine.getWater());
 
-		
+
+
+
 		Light.disableLights();
 
 		light.draw();
