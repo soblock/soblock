@@ -68,6 +68,8 @@ public class TestCraft  implements UiEventListener {
 				quitNotification = true;
 				System.out.println("quiting application");
 				break;
+			default:
+				break;
 			}
 		}
 	}

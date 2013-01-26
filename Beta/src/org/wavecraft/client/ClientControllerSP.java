@@ -9,7 +9,6 @@ import org.wavecraft.graphics.GraphicEngine;
 import org.wavecraft.graphics.hud.HUD;
 import org.wavecraft.graphics.hud.HUDBuilder;
 import org.wavecraft.graphics.view.ViewBuilder;
-import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifAdder;
 import org.wavecraft.modif.ModifOctree;
 

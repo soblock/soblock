@@ -1,7 +1,7 @@
 package org.wavecraft.geometry.octree.builder;
 
 
-import org.wavecraft.geometry.DyadicBlock;
+
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.cullingpriority.Culler;
@@ -9,7 +9,7 @@ import org.wavecraft.geometry.octree.cullingpriority.CullerPosition;
 import org.wavecraft.geometry.octree.cullingpriority.OctreePriorityFunction;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionUtils;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
-import org.wavecraft.modif.ModifOctree;
+
 
 public class OctreeBuilderWorldFuntionCuller implements OctreeBuilder{
 	private WorldFunction worldFunction;

@@ -8,16 +8,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.client.Timer;
-import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.Coord3d;
-import org.wavecraft.geometry.DyadicBlock;
-import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
-import org.wavecraft.graphics.renderer.octree.BlockRendererTexture;
-import org.wavecraft.graphics.texture.MegaTexture;
 
 
 
@@ -123,12 +116,5 @@ public class Light {
 		GL11.glDisable(GL11.GL_LIGHTING);
 	}
 	
-	private static FloatBuffer floatBuffer(float a, float b, float c, float d) {
-		float[] data = new float[]{a,b,c,d};
-		FloatBuffer fb = BufferUtils.createFloatBuffer(data.length);
-		fb.put(data);
-		fb.flip();
-		return fb;
-	}
 
 }

@@ -186,6 +186,8 @@ public class OctreeRendererLines implements UiEventListener {
 				default:
 					break;
 				}
+			default:
+				break;
 
 
 			}

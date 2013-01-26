@@ -9,6 +9,7 @@ import org.wavecraft.geometry.octree.Octree;
 
 
 
+@SuppressWarnings("serial")
 public class ModifOctree extends DyadicBlock {
 	public ModifOctree[] sons = null;
 	public ModifOctree father = null;

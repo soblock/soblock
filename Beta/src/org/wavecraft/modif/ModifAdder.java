@@ -2,18 +2,15 @@ package org.wavecraft.modif;
 
 import java.util.ArrayList;
 
-import org.wavecraft.Soboutils.Math_Soboutils;
+
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.OctreeState;
-import org.wavecraft.geometry.octree.OctreeStateDead;
 import org.wavecraft.geometry.octree.OctreeStateFatherCool;
 import org.wavecraft.geometry.octree.OctreeStateGround;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
 import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
-import org.wavecraft.geometry.octree.OctreeUtils;
 import org.wavecraft.geometry.octree.events.OctreeEvent;
 import org.wavecraft.geometry.octree.events.OctreeEventKindof;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;

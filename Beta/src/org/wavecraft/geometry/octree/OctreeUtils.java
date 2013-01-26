@@ -2,7 +2,7 @@ package org.wavecraft.geometry.octree;
 
 import java.util.ArrayList;
 
-import org.wavecraft.geometry.Coord3d;
+
 
 public class OctreeUtils {
 	public static ArrayList<Octree> bufferize(Octree root){

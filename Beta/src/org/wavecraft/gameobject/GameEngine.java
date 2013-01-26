@@ -1,41 +1,28 @@
 package org.wavecraft.gameobject;
 
 
-import java.util.ArrayList;
+
 import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.physics.Physics;
-import org.wavecraft.gameobject.physics.PhysicsFreeFlight;
+
 import org.wavecraft.gameobject.physics.PhysicsWrapper;
-import org.wavecraft.geometry.Coord3d;
+
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.OctreeState;
-import org.wavecraft.geometry.octree.OctreeUtils;
 import org.wavecraft.geometry.octree.builder.OctreeBuilder;
 import org.wavecraft.geometry.octree.builder.OctreeBuilderBuilder;
 import org.wavecraft.geometry.octree.builder.OctreeUpdater;
-import org.wavecraft.geometry.octree.builder.OctreeUpdaterPartial;
 import org.wavecraft.geometry.octree.builder.OctreeUpdaterPriority;
 import org.wavecraft.geometry.octree.events.OctreeEventListenerBasic;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.geometry.octree.fluid.FluidTree;
-import org.wavecraft.geometry.worldfunction.ThreeDimFunctionNoisyFlat;
-import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
-import org.wavecraft.geometry.worldfunction.ThreeDimFunctionPerlin;
-import org.wavecraft.geometry.worldfunction.ThreeDimFunctionPerlinMS;
-import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSinc;
-import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSphere;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.events.UiEventMediator;
-import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.Soboutils.Math_Soboutils;
 
-// for the water debuging part ...
-
-import org.wavecraft.graphics.renderer.octree.FluidTreeRenderer;
 
 // this class is the main game engine class
 // it should not be aware of graphics or ui package and must
@@ -49,7 +36,6 @@ public class GameEngine {
 	private static Octree octree;
 	private static FluidTree water;
 	private static ModifOctree modif;
-	//private static Octree octreeLastUpdatePosition;
 	private static OctreeBuilder octreeBuilder;
 	private static OctreeUpdater octreeUpdater;
 
@@ -71,14 +57,9 @@ public class GameEngine {
 	private GameEngine(){
 		player = new Player();
 
-		if (Octree.JMAX == 10){
-			player.position.x = 450;
-			player.position.x = 380;
-			player.position.z = 816;
-		}
-		player.position.x=Math.pow(2,octree.JMAX-1);//95;
-		player.position.y=Math.pow(2,octree.JMAX-1);
-		player.position.z=Math.pow(2,octree.JMAX);
+		player.position.x=Math.pow(2,Octree.JMAX-1);//95;
+		player.position.y=Math.pow(2,Octree.JMAX-1);
+		player.position.z=Math.pow(2,Octree.JMAX);
 		
 		if (Octree.JMAX == 10){
 			player.position.x = 450;
@@ -86,12 +67,7 @@ public class GameEngine {
 			player.position.z = 816;
 		}
 
-		//player.position.x = 0;
-		//player.position.y = 0;
-		//player.position.z = 0;
-		
 		new Math_Soboutils();
-		
 		
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
@@ -107,35 +83,12 @@ public class GameEngine {
 		modif.computeBounds();
 		modif.sumAncestors = 0;
 		modif.computeSumAncestors();
-		//Octree son1 = new Octree(son.coord.subCoord(7),Octree.JMAX-2,4);
 
 
-
-
-		//octreeBuilder = OctreeBuilderBuilder.getFlatlandGeoCulling(0.5);
-		//octreeBuilder = OctreeBuilderBuilder.getSphereNoculling(new Coord3d(50, 50, 50), 50);
-		//octreeBuilder = OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(600, 600, 600), 500);
-		////	octreeBuilder = OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(16, 1, 1), 4);
-		//				Coord3d center = new Coord3d(0,0,0);
-		//				double scale = 40;
-		//				double deltaz = 200;
-		//				double Z0 = 10;
-		//octreeBuilder = OctreeBuilderBuilder.getSincNoCulling(center, scale, deltaz, Z0);
-		//octreeBuilder = OctreeBuilderBuilder.getSincGeoCulling(center, scale, deltaz, Z0);
-		//octreeBuilder = OctreeBuilderBuilder.getPerlinGeoCulling();
-		//octreeBuilder = OctreeBuilderBuilder.getPerlinMSGeoCulling();
-
-		double z0=Math_Soboutils.powerOf2[octree.JMAX-1];
-		
-		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionNoisyFlat(z0),modif);
-		double zmax =z0*2 ;
-		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionPerlinMS(),modif);
+		double z0=Math_Soboutils.powerOf2[Octree.JMAX-1];
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,z0);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
-		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionFlat(Math.pow(2, Octree.JMAX-1)),modif);
-		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionSinc(new Coord3d(512, 512, 512), 100, 100, 256),modif);
-		//octreeBuilder = OctreeBuilderBuilder.getGeoCullingUniformFromThreeDimFunctionWithModif(new ThreeDimFunctionSphere(new Coord3d(256, 256, 256), 256),modif);
 		
 		OctreeEventMediator.getInstance();
 		OctreeEventListenerBasic oelb = new OctreeEventListenerBasic();
@@ -173,11 +126,8 @@ public class GameEngine {
 		obstacle.initSon(2);
 		Octree son1= (obstacle.getSons())[2];
 		son1.initSon(1);
-		double dt_fluid =- System.currentTimeMillis();
-		water.moveFluid(octree,player.position,octreeBuilder);
-		dt_fluid+=System.currentTimeMillis();
-		//System.out.printf("time to move fluid %f |||| volme of fluid %f \n",dt_fluid,water.fluidContained());
 		
+		water.moveFluid(octree,player.position,octreeBuilder);
 		
 	}
 

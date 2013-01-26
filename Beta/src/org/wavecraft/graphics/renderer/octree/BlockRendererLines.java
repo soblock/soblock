@@ -1,23 +1,7 @@
 package org.wavecraft.graphics.renderer.octree;
 
-
-
 import org.lwjgl.opengl.GL11;
-import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
-import org.wavecraft.geometry.Face;
-import org.wavecraft.geometry.octree.OctreeState;
-import org.wavecraft.geometry.octree.OctreeStateDead;
-import org.wavecraft.geometry.octree.OctreeStateFatherCool;
-import org.wavecraft.geometry.octree.OctreeStateFatherWorried;
-import org.wavecraft.geometry.octree.OctreeStateGround;
-import org.wavecraft.geometry.octree.OctreeStateLeaf;
-import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
-import org.wavecraft.modif.ModifOctree;
-import org.wavecraft.ui.events.UiEvent;
-import org.wavecraft.ui.events.UiEventKeyboardPressed;
-import org.wavecraft.ui.events.UiEventListener;
-import org.wavecraft.ui.events.UiEventMediator;
 
 // singleton
 public class BlockRendererLines {

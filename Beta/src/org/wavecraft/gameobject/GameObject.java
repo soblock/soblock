@@ -15,11 +15,9 @@ public class GameObject {
 	public Coord3d getPosition(){
 		return position;
 	}
-	
 	public BoundingBox getBoundingBox(){
 		return boundingBox;
 	}
-	
 	public BoundingBox getTranslatedBoundingBox(){
 		return boundingBox.translate(position);
 	}

@@ -1,7 +1,6 @@
 package org.wavecraft.graphics.hud;
 
 import org.lwjgl.opengl.GL11;
-import org.wavecraft.client.Timer;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
 import org.wavecraft.stats.Graph;

@@ -15,10 +15,9 @@ import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 import org.wavecraft.geometry.worldfunction.WorldFunctionWrapper;
 import org.wavecraft.graphics.renderer.octree.BlockColorerLines;
-import org.wavecraft.graphics.renderer.octree.ColorMap;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
-import org.wavecraft.modif.ModifAdder;
+
 
 public class MenuSelectColorMap  {
 

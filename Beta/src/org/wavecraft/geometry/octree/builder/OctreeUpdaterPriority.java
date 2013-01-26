@@ -1,13 +1,11 @@
 package org.wavecraft.geometry.octree.builder;
 
-import java.util.ArrayList;
+
 
 import org.wavecraft.client.Timer;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.OctreeState;
-import org.wavecraft.geometry.octree.OctreeStateDead;
 import org.wavecraft.geometry.octree.OctreeStateFatherCool;
-import org.wavecraft.geometry.octree.OctreeStateFatherWorried;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
 import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
@@ -26,7 +24,6 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 	private int nFamily;
 	private Octree[][] bins;
 	private int[] binPos;
-	private int[] binCapacity;
 	private double maxPriority ;
 
 	private Octree octree;
@@ -37,7 +34,7 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 	private double percentageOfUpdate = 1/1.0;
 	private double nFrameWithoutUpdate = 1;
 
-	@SuppressWarnings("unchecked")
+	
 	public OctreeUpdaterPriority(Octree octree, OctreeBuilder builder){
 		this.octree = octree;
 		this.builder = builder;
@@ -48,7 +45,6 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 		
 		bins = new Octree[nBins*nFamily][];
 		binPos = new int[nBins*nFamily];
-		binCapacity = new int[nBins*nFamily];
 		for (int i = 0 ; i<nBins*nFamily ; i++){
 			int initCapacity = 1000000;
 			bins[i] = new Octree[initCapacity];
@@ -118,16 +114,11 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 			int iBin = 0;// indice of the bin
 			int iNode = 0;// indice of the node inside the bin
 			while (budget > 0 && iBin < nBins){
-				//if (iNode<bins[iBin  + nBins*iFamily ].size()){
 				if (iNode<binPos[iBin  + nBins*iFamily ]){
-					//Octree node = bins[iBin  + nBins*iFamily].get(iNode);
 					Octree node = bins[iBin  + nBins*iFamily][iNode];
 					double res =node.getState().internalJob(node, builder);
 					budget -= res;
 					iNode++;
-					if (res>0){
-						//System.out.format("%d %d %f %s %s %n ",iNode,iBin,budget,node.toString2(),node.getState().getClass().toString());
-					}
 				}
 				else{
 					iNode = 0;
@@ -154,9 +145,6 @@ public class OctreeUpdaterPriority implements OctreeUpdater {
 			double t4 = System.currentTimeMillis();
 			OctreeEventMediator.notifyAllListener();
 			double t5 = System.currentTimeMillis();
-			if (Timer.getNframe()%10 == 0) {
-				//System.out.format("empty %f put %f process %f  event %f %n",t2 - t1, t3 - t2, t4 -t3, t5 - t4);
-			}
 			Profiler.getInstance().push("OctreeEmptyBins", t2-t1, Timer.getCurrT());
 			Profiler.getInstance().push("OctreeputNodeInBins", t3-t2, Timer.getCurrT());
 			Profiler.getInstance().push("OctreeProcessBins", t4-t3, Timer.getCurrT());

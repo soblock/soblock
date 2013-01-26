@@ -53,6 +53,8 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 				geoCullCoefficient++;
 				System.out.println(geoCullCoefficient);
 				break;
+			default:
+				break;
 			}
 			geoCullCoefficient = Math.max(minCullingCoefficient, geoCullCoefficient);
 			geoCullCoefficient = Math.min(maxCullingCoefficient, geoCullCoefficient);

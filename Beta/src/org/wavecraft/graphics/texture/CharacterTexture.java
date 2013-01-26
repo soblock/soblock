@@ -1,7 +1,6 @@
 package org.wavecraft.graphics.texture;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -95,10 +94,8 @@ public class CharacterTexture {
 
 	public byte[] getBooleanMatrix(int i){
 		byte[] img=new byte[h*w];
-
 		for (int y = 0;y<h;y++)
 			for (int x = 0;x<w;x++){
-				byte bb = value[3*(x+ 512*y)];
 				img[x+w*y] = (byte) (value[3*(x + offsetx + i*w + 512*y)] + 1);
 			}
 		return img;

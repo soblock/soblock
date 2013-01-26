@@ -1,7 +1,7 @@
 package org.wavecraft.ui.menu;
 
 
-import org.lwjgl.opengl.GL11;
+
 import org.wavecraft.graphics.hud.TextRenderer;
 import org.wavecraft.graphics.view.WindowSize;
 

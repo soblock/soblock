@@ -154,6 +154,8 @@ public class BlockColorerLines implements UiEventListener{
 				default:
 					break;
 				}
+			default:
+				break;
 
 			}
 		}

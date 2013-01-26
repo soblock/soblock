@@ -3,7 +3,7 @@ package org.wavecraft.geometry;
 
 
 import javax.vecmath.Point3d;
-import javax.vecmath.Tuple3d;
+
 
 @SuppressWarnings("serial")
 public class Coord3d extends Point3d{

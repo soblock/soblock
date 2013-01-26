@@ -1,10 +1,10 @@
 package org.wavecraft.client;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.graphics.GraphicEngine;
-import org.wavecraft.modif.BlockGrabber;
 import org.wavecraft.modif.ModifAdder;
 
 import org.wavecraft.stats.Profiler;
@@ -90,10 +90,12 @@ public class WaveCraftSP implements UiEventListener {
 			switch (eventKeyboard.key) {
 			case KEYBOARD_APP_CLOSE:
 				Date date = new Date();
-				String dateStr= date.toGMTString();
+				String dateStr = DateFormat.getDateInstance().format(date);
 				Profiler.getInstance().writeLogInFile("wavecraft_profiler_output"+dateStr);
 				quitNotification = true;
 				System.out.println("quiting application");
+				break;
+			default:
 				break;
 			}
 		}

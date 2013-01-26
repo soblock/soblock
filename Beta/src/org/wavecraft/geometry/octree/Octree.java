@@ -2,13 +2,11 @@ package org.wavecraft.geometry.octree;
 
 import java.util.ArrayList;
 
-import org.lwjgl.Sys;
 import org.wavecraft.Soboutils.Math_Soboutils;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.events.OctreeEvent;
 import org.wavecraft.geometry.octree.events.OctreeEventKindof;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
-import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.geometry.octree.fluid.FluidTree;
 
 

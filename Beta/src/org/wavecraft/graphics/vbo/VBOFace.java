@@ -2,7 +2,6 @@ package org.wavecraft.graphics.vbo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.wavecraft.client.Timer;
 import org.wavecraft.geometry.DyadicBlock;

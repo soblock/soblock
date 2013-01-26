@@ -3,13 +3,11 @@ package org.wavecraft.graphics.renderer;
 import java.util.ArrayList;
 
 import org.wavecraft.geometry.Coord3i;
-import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.graphics.texture.CharacterTexture;
 
 public class DyadicBlockString {
 
-	private static DyadicBlockString instance;
 
 	private static ArrayList<Octree> byteArrToOctreeArr(byte[] byteArr, int w,int h,int material,Coord3i ci){
 

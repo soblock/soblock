@@ -1,7 +1,6 @@
 package org.wavecraft.geometry.worldfunction;
 
 import org.wavecraft.geometry.Coord3d;
-import org.wavecraft.geometry.Coord3i;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.Octree;
 

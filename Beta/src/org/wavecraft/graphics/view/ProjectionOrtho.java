@@ -1,9 +1,5 @@
 package org.wavecraft.graphics.view;
 
-import org.wavecraft.ui.events.UiEvent;
-import org.wavecraft.ui.events.UiEventListener;
-import org.wavecraft.ui.events.UiEventMediator;
-import org.wavecraft.ui.events.UiEventWindowResized;
 import org.lwjgl.opengl.GL11;
 
 
@@ -21,7 +17,6 @@ public class ProjectionOrtho implements Projection {
 	}
 
 	public ProjectionOrtho(double xmr,double xMr, double ymr, double yMr){
-		
 		this.xmr = xmr;
 		this.xMr = xMr;
 		this.ymr = ymr;

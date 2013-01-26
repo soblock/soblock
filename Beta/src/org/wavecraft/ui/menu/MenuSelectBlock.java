@@ -2,12 +2,10 @@ package org.wavecraft.ui.menu;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
-import org.wavecraft.modif.ModifAdder;
 
 
 public class MenuSelectBlock {

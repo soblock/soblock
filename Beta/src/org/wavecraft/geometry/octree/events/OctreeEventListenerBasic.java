@@ -1,7 +1,6 @@
 package org.wavecraft.geometry.octree.events;
 
 import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.OctreeState;
 import org.wavecraft.geometry.octree.OctreeStateDead;
 import org.wavecraft.geometry.octree.OctreeStateFatherCool;
 import org.wavecraft.geometry.octree.OctreeStateFatherWorried;

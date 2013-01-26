@@ -2,7 +2,7 @@ package org.wavecraft.geometry.octree.fluid;
 
 import java.util.ArrayList;
 
-import org.lwjgl.Sys;
+
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.Octree;
 
@@ -203,7 +203,6 @@ public class FluidTree extends DyadicBlock{
 				}
 				else {
 					if (exist[1]){
-						double saved_v=value;
 						if (father!=null)father.sons[father.findSonContaining(this)]=null;
 						else value=0;
 						return vol;//+saved_v;

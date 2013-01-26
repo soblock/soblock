@@ -1,9 +1,9 @@
 package org.wavecraft.geometry.octree.builder;
 
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.BlockAction;
 
-import org.wavecraft.geometry.DyadicBlock;
+
+
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.cullingpriority.Culler;

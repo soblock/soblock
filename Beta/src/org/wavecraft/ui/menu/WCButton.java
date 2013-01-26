@@ -10,7 +10,6 @@ import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.ui.events.UiEventMouseClicked;
-import org.wavecraft.ui.events.UiEventWindowResized;
 
 public class WCButton implements UiEventListener{
 

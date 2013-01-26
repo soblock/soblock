@@ -2,9 +2,7 @@ package org.wavecraft.ui;
 
 import javax.vecmath.Point2d;
 
-import org.lwjgl.opengl.Display;
 import org.wavecraft.geometry.Coord2d;
-import org.wavecraft.graphics.GraphicEngine;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;
@@ -18,7 +16,7 @@ import org.wavecraft.ui.events.UiEventMouseMoved;
 public class Mouse implements UiEventListener{
 	private double sensitivity=0.01;
 	private Point2d lastMove;
-	private int lastButtonCount; 
+	 
 
 	private static Mouse instance;
 	public static Mouse getInstance(){
