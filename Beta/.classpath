@@ -2,7 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/lwjgl-2.6/jar/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-2.6/jar/lwjgl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/Users/lolosifre/Dropbox/workspace/LWJGL/javadoc/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Beta/lib/lwjgl-2.6/native/macosx"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/lwjgl-2.6/jar/lwjgl_util.jar"/>
 	<classpathentry kind="lib" path="lib/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/vecmath-1.5.1.jar"/>
