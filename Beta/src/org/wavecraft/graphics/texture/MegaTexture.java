@@ -16,7 +16,7 @@ public class MegaTexture {
 	private static MegaTexture instance = null;
 
 	private MegaTexture(){
-		String filename = "data/terrain4.png";
+		String filename = "terrain4.png";
 
 		try {
 			texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream(filename));

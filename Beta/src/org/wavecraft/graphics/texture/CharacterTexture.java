@@ -22,7 +22,7 @@ public class CharacterTexture {
 	private ArrayList<byte[]> img_db;
 
 	private CharacterTexture(){
-		String filenamechar = "data/char.png";
+		String filenamechar = "char.png";
 		try {
 			character = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(filenamechar));
 		} catch (IOException e) {
