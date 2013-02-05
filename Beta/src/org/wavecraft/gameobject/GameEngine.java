@@ -8,6 +8,10 @@ import org.wavecraft.gameobject.physics.Physics;
 import org.wavecraft.gameobject.physics.PhysicsWrapper;
 
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
+import org.wavecraft.geometry.blocktree.BlocktreeUpdater;
+import org.wavecraft.geometry.blocktree.BlocktreeUpdaterSimple;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.builder.OctreeBuilder;
 import org.wavecraft.geometry.octree.builder.OctreeBuilderBuilder;
@@ -38,6 +42,9 @@ public class GameEngine {
 	private static ModifOctree modif;
 	private static OctreeBuilder octreeBuilder;
 	private static OctreeUpdater octreeUpdater;
+	
+	private static Blocktree blocktree;
+	private static BlocktreeUpdater blockTreeUpdater;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){
@@ -85,7 +92,7 @@ public class GameEngine {
 		modif.computeSumAncestors();
 
 
-		double z0=Math_Soboutils.powerOf2[Octree.JMAX-1];
+		double z0=Math_Soboutils.powerOf2[Octree.JMAX]/2;
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,z0);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
@@ -96,9 +103,12 @@ public class GameEngine {
 		//octreeUpdater = new OctreeUpdaterPartial(octree,octreeBuilder);
 		octreeUpdater = new OctreeUpdaterPriority(octree, octreeBuilder);
 		
-		water = new FluidTree(0,0,0,Octree.JMAX,4);
-		water.initSon(6);
-		water.initializeVolumes();
+		//water = new FluidTree(0,0,0,Octree.JMAX,4);
+		//water.initSon(6);
+		//water.initializeVolumes();
+		
+		
+		
 	}
 
 	public static void update(){
@@ -127,8 +137,8 @@ public class GameEngine {
 		Octree son1= (obstacle.getSons())[2];
 		son1.initSon(1);
 		
-		water.moveFluid(octree,player.position,octreeBuilder);
-		
+		//water.moveFluid(octree,player.position,octreeBuilder);
+		blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, null);
 	}
 
 	public static Octree getOctree(){
@@ -136,6 +146,14 @@ public class GameEngine {
 	}
 	public static FluidTree getWater(){
 		return water;
+	}
+
+	public static Blocktree getBlocktree() {
+		return blocktree;
+	}
+
+	public static void setBlocktree(Blocktree blocktree) {
+		GameEngine.blocktree = blocktree;
 	}
 
 

@@ -1,8 +1,9 @@
 package org.wavecraft.graphics.renderer.octree;
 
-import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11.*;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.OctreeState;
 import org.wavecraft.geometry.octree.OctreeStateDead;
@@ -38,13 +39,13 @@ public class BlockColorerLines implements UiEventListener{
 		COLORINTERSECTPLAYERBB,
 		COLORCOLORMAP
 	}
-	
+
 	public void setFunForColorMap(ThreeDimFunction fun, double vmin, double vmax){
 		this.functionForColormap = fun;
 		this.vminForColormap = vmin;
 		this.vmaxForColormap = vmax;
 	}
-	
+
 	private BlockColorerLines(){
 		colorMode = ColorMode.COLORSTATE;
 		functionForColormap = new ThreeDimFunctionFlat(0);
@@ -57,7 +58,7 @@ public class BlockColorerLines implements UiEventListener{
 				functionForColormap = ((WorldFunctionWrapper) wf).getThreeDimFunction();
 				vminForColormap = -64;
 				vmaxForColormap = 64;
-				
+
 				ThreeDimContent content = ((WorldFunctionWrapper) wf).getThreeDimContent();
 				if (content instanceof ThreeDimContentBiome){
 					functionForColormap = ((ThreeDimContentBiome) content).humidity;
@@ -65,9 +66,9 @@ public class BlockColorerLines implements UiEventListener{
 					vmaxForColormap = 0.4;
 				}
 			}
-			
+
 		}
-		
+
 		UiEventMediator.addListener(this);
 	}
 	public static BlockColorerLines getInstance(){
@@ -76,19 +77,19 @@ public class BlockColorerLines implements UiEventListener{
 		}
 		return instance;
 	}
-	
+
 
 	public void setColor(DyadicBlock block){
 		if (block instanceof ModifOctree){
 			double val = ((ModifOctree) block).value;
 			if (val<0){
-				GL11.glColor3d(1, 1, 0);
+				glColor3d(1, 1, 0);
 			}
 			if (val==0){
-				GL11.glColor3d(1, 1, 1);
+				glColor3d(1, 1, 1);
 			}
 			if (val>0){
-				GL11.glColor3d(1, 0, 0);
+				glColor3d(1, 0, 0);
 			}
 
 		}
@@ -97,31 +98,31 @@ public class BlockColorerLines implements UiEventListener{
 			switch (colorMode) {
 			case COLORSTATE:
 				if (state instanceof OctreeStateNotYetVisited){
-					GL11.glColor3d(0.5,0.5,0.5);
+					glColor3d(0.5,0.5,0.5);
 				}
 				if (state instanceof OctreeStateLeaf){
-					GL11.glColor3d(1,1,1);
+					glColor3d(1,1,1);
 				}
 				if (state instanceof OctreeStateDead){
-					GL11.glColor3d(1,0,0);
+					glColor3d(1,0,0);
 				}
 				if (state instanceof OctreeStateGround){
-					GL11.glColor3d(1,1,0);
+					glColor3d(1,1,0);
 				}
 				if (state instanceof OctreeStateFatherWorried){
-					GL11.glColor3d(1,0.5,0.5);
+					glColor3d(1,0.5,0.5);
 				}
 				if (state instanceof OctreeStateFatherCool){
-					GL11.glColor3d(0,1,0);
+					glColor3d(0,1,0);
 				}
 				break;
 
 			case COLORINTERSECTPLAYERBB :
 				if (GameEngine.getPlayer().getTranslatedBoundingBox().intersects(block)){
-					GL11.glColor3d(1, 0, 0);
+					glColor3d(1, 0, 0);
 				}
 				else{
-					GL11.glColor3d(0.3, 0.3, 0.3);
+					glColor3d(0.3, 0.3, 0.3);
 				}
 				break;
 
@@ -132,6 +133,46 @@ public class BlockColorerLines implements UiEventListener{
 			default:
 				break;
 			}
+		}
+		if (block instanceof Blocktree){
+			switch (colorMode) {
+			case COLORSTATE:
+				switch (((Blocktree) block).getState()) {
+				case FATHER:
+					glColor3d(0,1,0);
+					break;
+				case DEAD_GROUND:
+					glColor3d(0.8,0.6,0.6);
+					break;
+				case DEAD_AIR:
+					glColor3d(0.3,0.3,1);
+					break;
+				case GRAND_FATHER:
+					glColor3d(0.5, 0.5, 0.5);
+					break;
+				case PATRIARCH:
+					glColor3d(0.3, 0.3, 0.3);
+					break;
+				case LEAF:
+					glColor3d(1, 1, 1);
+				}
+			case COLORINTERSECTPLAYERBB :
+				if (GameEngine.getPlayer().getTranslatedBoundingBox().intersects(block)){
+					glColor3d(1, 0, 0);
+				}
+				else{
+					glColor3d(0.3, 0.3, 0.3);
+				}
+				break;
+
+			case COLORCOLORMAP :
+				double v = functionForColormap.valueAt(block.center());
+				ColorMap.getInstance().setColor(v, vminForColormap, vmaxForColormap);
+				break;
+			default:
+				break;
+			}
+
 		}
 	}
 	@Override

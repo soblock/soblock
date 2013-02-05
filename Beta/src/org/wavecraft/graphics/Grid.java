@@ -4,8 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 public class Grid {
 	
-	private static int N = 2048;
-	private static int offset = 16;
+	private static int N = 1024;
+	private static int offset = 1;
 
 	public static void draw(){
 		

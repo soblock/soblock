@@ -33,7 +33,8 @@ public class WaveCraftSP implements UiEventListener {
 	private static boolean quitNotification = false;
 
 	public static void main(String[] args) {
-		WaveCraftSP wsp = new WaveCraftSP();
+		//WaveCraftSP wsp = new WaveCraftSP();
+		WaveCraftSP wsp = new WaveCraftBlockTreeSP();
 		wsp.init();		
 		while(!(quitNotification)){
 			wsp.logic();

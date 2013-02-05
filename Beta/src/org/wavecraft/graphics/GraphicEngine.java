@@ -18,6 +18,7 @@ import org.wavecraft.graphics.renderer.DyadicBlockString;
 import org.wavecraft.graphics.renderer.GameObjectRenderer;
 import org.wavecraft.graphics.renderer.GameObjectRendererBuilder;
 import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
+import org.wavecraft.graphics.renderer.octree.BlocktreRendererLines;
 import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.graphics.vbo.VBOFace;
@@ -89,6 +90,7 @@ public class GraphicEngine {
 
 		viewMain.initRendering();
 
+		
 
 		//GL11.glEnable(GL11.GL_FOG);
 		//GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
@@ -124,8 +126,9 @@ public class GraphicEngine {
 
 	public static void innerRender() {
 		// GL11.glFlush();
-		// Grid.draw();
+		 Grid.draw();
 		// GL11.glFlush();
+		BlocktreRendererLines.render(GameEngine.getBlocktree());
 
 		Octree octree = new Octree(0, 0, 0, 0);
 		octree.setContent(8);

@@ -20,10 +20,10 @@ public class OctreeStateFatherWorried extends OctreeState{
 		}
 		return state;
 	}
-//	@Override
-//	public void update(Octree octree, OctreeBuilder builder) {
-//		
-//	}
+	//	@Override
+	//	public void update(Octree octree, OctreeBuilder builder) {
+	//		
+	//	}
 	@Override
 	public float internalJob(Octree octree, OctreeBuilder builder) {
 		// TODO Auto-generated method stub
@@ -37,18 +37,17 @@ public class OctreeStateFatherWorried extends OctreeState{
 			if (sons[offset].getState() instanceof OctreeStateGround){
 				groundSons++;
 			}
-			
 		}
-		
+
 		if (deadSons == 8){
 			// commit suicide
 			OctreeEvent event = new OctreeEvent(octree, OctreeEventKindof.KILL);
 			OctreeEventMediator.addEvent(event);
 		}
 		if (groundSons == 8){
-		// commit suicide
-		OctreeEvent event = new OctreeEvent(octree, OctreeEventKindof.KILLGROUND);
-		OctreeEventMediator.addEvent(event);
+			// commit suicide
+			OctreeEvent event = new OctreeEvent(octree, OctreeEventKindof.KILLGROUND);
+			OctreeEventMediator.addEvent(event);
 		}
 		//else{
 		if (deadSons <8 && groundSons< 8) {
@@ -57,6 +56,6 @@ public class OctreeStateFatherWorried extends OctreeState{
 		}
 		return 0;
 	}
-	
-	
+
+
 }
