@@ -147,15 +147,17 @@ public class BlockColorerLines implements UiEventListener{
 				case DEAD_AIR:
 					glColor3d(0.3,0.3,1);
 					break;
+				case PATRIARCH:
+					glColor3d(0, 0, 0);
+					break;
 				case GRAND_FATHER:
 					glColor3d(0.5, 0.5, 0.5);
 					break;
-				case PATRIARCH:
-					glColor3d(0.3, 0.3, 0.3);
-					break;
 				case LEAF:
 					glColor3d(1, 1, 1);
+					break;
 				}
+				break;
 			case COLORINTERSECTPLAYERBB :
 				if (GameEngine.getPlayer().getTranslatedBoundingBox().intersects(block)){
 					glColor3d(1, 0, 0);

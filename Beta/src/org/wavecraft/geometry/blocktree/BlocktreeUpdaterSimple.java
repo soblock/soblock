@@ -19,28 +19,53 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 	}
 
 	private void updateInner(Blocktree node){
-		switch (root.getState()) {
+		switch (node.getState()) {
 		case GRAND_FATHER:
-			if (builder.shouldSplitGreatFatherToPatriarch(node)){
+			
+			if (node.getJ()>BLOCK_LOG_SIZE && builder.shouldSplitGreatFatherToPatriarch(node)){
 				split(node);
 			}
 			break;
 
+		case PATRIARCH:
+			for (Blocktree son : node.getSons()){
+				updateInner(son);
+			}
+			break;
 		default:
 			break;
 		}
 	}
 
 	private void split(Blocktree greatFather){
-
+		splitInner(greatFather, greatFather);
+		greatFather.setState(PATRIARCH);
+		for (Blocktree son : greatFather.getSons()){
+			if (son.getState()==FATHER){ 
+				son.setState(GRAND_FATHER);
+			}
+		}
 	}
 
 	private void splitInner(Blocktree node, Blocktree greatFather){
-		if (node.getJ() > greatFather.getJ() - BLOCK_LOG_SIZE ){
+		if (node.getJ() >= greatFather.getJ() - BLOCK_LOG_SIZE ){
+
 			node.setState(FATHER);
-			node.initSons();
+			if (!node.hasSons()){
+				node.initSons();
+			}
 			for (Blocktree son : node.getSons()){
-				splitInner(son, greatFather);
+				if (builder.isIntersectingSurface(son)){
+					son.setState(LEAF);
+					splitInner(son, greatFather);
+				} else {
+					if (builder.isGround(son)){
+						son.setState(DEAD_GROUND);
+					} else {
+						son.setState(DEAD_AIR);
+					}
+				}
+
 			}
 			int numberOfDeadAirSons = 0;
 			int numberOfDeadGroundSons = 0;
@@ -66,7 +91,9 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 				node.killSons();
 				node.setState(DEAD_GROUND);
 			}
+
 		}
+
 	}
 
 }

@@ -13,6 +13,7 @@ public class BlocktreRendererLines {
 	}
 	
 	private static void renderInner(Blocktree node){
+		BlockColorerLines.getInstance().setColor(node);
 		BlockRendererLines.getInstance().afterGLLines(node);
 		if (node.hasSons()){
 			for (Blocktree son : node.getSons()){

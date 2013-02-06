@@ -9,7 +9,9 @@ import org.wavecraft.gameobject.physics.PhysicsWrapper;
 
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.Blocktree.State;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
+import org.wavecraft.geometry.blocktree.BlocktreeBuilderAdapter;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdater;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdaterSimple;
 import org.wavecraft.geometry.octree.Octree;
@@ -107,7 +109,13 @@ public class GameEngine {
 		//water.initSon(6);
 		//water.initializeVolumes();
 		
-		
+
+		//blockTreeUpdater = new BOctreeBuilderBuilder.getFlatlandGeoCulling(z0);
+		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(0.1));
+		BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
+		blocktree = new Blocktree(0,0,0,5);
+		blocktree.setState(State.GRAND_FATHER);
+		blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
 		
 	}
 
@@ -138,7 +146,8 @@ public class GameEngine {
 		son1.initSon(1);
 		
 		//water.moveFluid(octree,player.position,octreeBuilder);
-		blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, null);
+		
+		blockTreeUpdater.update();
 	}
 
 	public static Octree getOctree(){
@@ -152,9 +161,7 @@ public class GameEngine {
 		return blocktree;
 	}
 
-	public static void setBlocktree(Blocktree blocktree) {
-		GameEngine.blocktree = blocktree;
-	}
+	
 
 
 

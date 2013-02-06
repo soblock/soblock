@@ -1,34 +1,37 @@
 package org.wavecraft.geometry.blocktree;
 
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.builder.OctreeBuilder;
 
 public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 
 	private OctreeBuilder builder;
+	
+	
+	public BlocktreeBuilderAdapter(OctreeBuilder builder){
+		this.builder = builder;
+	}
 
 	@Override
-	public boolean isAir(DyadicBlock block) {
+	public boolean isGround(DyadicBlock block) {
 		// TODO :
-		return false;
+		return builder.isGround(new Octree(block, null));
 	}
 
 	@Override
 	public boolean isIntersectingSurface(DyadicBlock block) {
-		// TODO Auto-generated method stub
-		return false;
+		return !builder.isOutsideDomainOfInterest(new Octree(block, null));
 	}
 
 	@Override
 	public boolean shouldSplitGreatFatherToPatriarch(DyadicBlock block) {
-		// TODO Auto-generated method stub
-		return false;
+		return !builder.cull(new Octree(block, null));
 	}
 
 	@Override
 	public boolean shouldMergePatriarchIntoGreatFather(DyadicBlock block) {
-		// TODO Auto-generated method stub
-		return false;
+		return builder.cull(new Octree(block, null));
 	}
 	
 

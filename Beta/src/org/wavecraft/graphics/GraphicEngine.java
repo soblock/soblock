@@ -56,6 +56,7 @@ public class GraphicEngine {
 		// vboFace = new VBOFace(3*64000); // can go up to 6 * 64000 on macbook
 		// pro
 		vboFace = new VBOFace(8096, 32, VboMode.V3N3T2); // can go up to 6 *
+		//vboFace = new VBOFace(8096, 8, VboMode.V3N3T2); // can go up to 6 *
 		// 64000 on macbook
 		// pro
 		OctreeEventMediator.addListener(vboFace);
@@ -84,6 +85,7 @@ public class GraphicEngine {
 	}
 
 	public static void render() {
+		double t1 = System.currentTimeMillis();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -97,15 +99,12 @@ public class GraphicEngine {
 		//GL11.glFogf(GL11.GL_FOG_START, 48.f);
 		//GL11.glFogf(GL11.GL_FOG_END, 256.f);
 
-		double t1 = System.currentTimeMillis();
+		
 		innerRender();
-
-		double t2 = System.currentTimeMillis()-t1;
-		Profiler.getInstance().push("render", t2,Timer.getCurrT());
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
-		//hud.draw();
+		hud.draw();
 
 		MenuSelectBlock.getInstance().draw();
 		//MenuSelectColorMap.getInstance().draw();
@@ -118,9 +117,13 @@ public class GraphicEngine {
 		viewWindowCoord.initRendering();
 
 
-		//Profiler.getInstance().display();
+		Profiler.getInstance().display();
 		// GL11.glFlush();
 		Display.update();
+
+
+		double t2 = System.currentTimeMillis()-t1;
+		Profiler.getInstance().push("render", t2,Timer.getCurrT());
 
 	}
 
