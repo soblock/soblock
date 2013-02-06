@@ -111,7 +111,8 @@ public class OctreeBuilderWorldFuntionCuller implements OctreeBuilder{
 		double[] minmax =  ThreeDimFunctionUtils.minMaxValuesAtVertices(worldFunction, octree);
 		double vMax=minmax[1];
 		double Dphi = worldFunction.uncertaintyBound(octree);
-		return (  vMax<-Dphi);
+		//return (  vMax<-Dphi);
+		return (  vMax<0);
 		
 	}
 }

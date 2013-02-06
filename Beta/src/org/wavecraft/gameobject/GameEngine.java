@@ -7,6 +7,7 @@ import org.wavecraft.gameobject.physics.Physics;
 
 import org.wavecraft.gameobject.physics.PhysicsWrapper;
 
+import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
@@ -112,11 +113,14 @@ public class GameEngine {
 
 		//blockTreeUpdater = new BOctreeBuilderBuilder.getFlatlandGeoCulling(z0);
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(0.1));
-		BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
-		blocktree = new Blocktree(0,0,0,5);
+		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(16.1));
+		WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
+		BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
+		
+		blocktree = new Blocktree(0,0,0,10);
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
-		
+		((BlocktreeUpdaterSimple) blockTreeUpdater).init();
 	}
 
 	public static void update(){

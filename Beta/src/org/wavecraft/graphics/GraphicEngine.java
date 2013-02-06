@@ -55,8 +55,8 @@ public class GraphicEngine {
 		light = new Light();
 		// vboFace = new VBOFace(3*64000); // can go up to 6 * 64000 on macbook
 		// pro
-		vboFace = new VBOFace(8096, 32, VboMode.V3N3T2); // can go up to 6 *
-		//vboFace = new VBOFace(8096, 8, VboMode.V3N3T2); // can go up to 6 *
+		//vboFace = new VBOFace(8096, 32, VboMode.V3N3T2); // can go up to 6 *
+		vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
 		// 64000 on macbook
 		// pro
 		OctreeEventMediator.addListener(vboFace);

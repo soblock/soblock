@@ -7,7 +7,7 @@ import org.wavecraft.geometry.octree.Octree;
 public class WaveCraftBlockTreeSP extends WaveCraftSP{
 
 	@Override protected void init(){
-		//Octree.JMAX=0;
+		Octree.JMAX=0;
 		super.init();
 		
 	}
