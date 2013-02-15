@@ -1,6 +1,10 @@
 package org.wavecraft.geometry.octree.cullingpriority;
 
+import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.Coord3d;
+import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.Blocktree.State;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.OctreeStateFatherCool;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
@@ -30,7 +34,7 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 	public boolean cull(Octree octree) {
 		return (octree.getJ()==0 || octree.center().distance(position) > thres(octree.getJ()));
 	}
-	
+
 	public double thres(int J){
 		int J0 = 7;
 		if (J<J0){
@@ -63,29 +67,59 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 	}
 
 	@Override
-	public double priority(Octree node) {
-		// TODO Auto-generated method stub
-		double p = 0;
-		if (node.getState() instanceof OctreeStateLeaf ){ 
-			if (node.getJ() == 0) return 100000000;
-			//p = node.center().distance(position)/node.edgeLentgh();
-			double ttj = node.edgeLentgh();
-			p = node.distance(position)/(ttj);
+	public double priority(DyadicBlock block) {
+		
+		if (block instanceof Octree){
+			Octree node = (Octree) block;
+			double p = 0;
+			if (node.getState() instanceof OctreeStateLeaf ){ 
+				if (node.getJ() == 0) return 100000000;
+				//p = node.center().distance(position)/node.edgeLentgh();
+				double ttj = node.edgeLentgh();
+				synchronized (GameEngine.class) {
+					p = node.distance(position)/(ttj);
+				}
+			}
+			if (node.getState() instanceof OctreeStateNotYetVisited){
+				//p = node.center().distance(position)/node.edgeLentgh() ;
+				p = 0;
+				//double ttj = node.edgeLentgh();
+				//p = node.distance(position)/(ttj);
+			}
+			if (node.getState() instanceof OctreeStateFatherCool){
+				//p = 0;
+				synchronized (GameEngine.class) {
+					p = node.edgeLentgh()/(node.distance(position)+1);
+				}
+				//p = node.center().distance(position)/node.edgeLentgh() ;
+				//p =  node.edgeLentgh() / node.center().distance(position);
+			}
+			return p;
 		}
-		if (node.getState() instanceof OctreeStateNotYetVisited){
-			//p = node.center().distance(position)/node.edgeLentgh() ;
-			p = 0;
-			//double ttj = node.edgeLentgh();
-			//p = node.distance(position)/(ttj);
+		if (block instanceof Blocktree){
+			Blocktree node = (Blocktree) block;
+			double p = 0;
+			switch (node.getState()) {
+			case GRAND_FATHER:
+				synchronized (GameEngine.class) {
+					p = node.edgeLentgh()/(node.distance(position)+1);
+				}
+				break;
+
+			case PATRIARCH:
+				synchronized (GameEngine.class) {
+					p = node.distance(position)/node.edgeLentgh();
+				}
+
+
+				break;
+			default:
+				break;
+			}
+			return p;
 		}
-		if (node.getState() instanceof OctreeStateFatherCool){
-			//p = 0;
-			p = node.edgeLentgh()/(node.distance(position)+1);
-			//p = node.center().distance(position)/node.edgeLentgh() ;
-			//p =  node.edgeLentgh() / node.center().distance(position);
-		}
-			
-		return p;
+		return 0;
+
 	}
 
 }

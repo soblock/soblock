@@ -1,5 +1,5 @@
 package org.wavecraft.geometry.blocktree;
 
 public interface BlocktreeUpdater {
-	public void update();
+	public void update(Blocktree root);
 }

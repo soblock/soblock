@@ -4,21 +4,19 @@ import static org.wavecraft.geometry.blocktree.Blocktree.State.*;
 
 public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 
-	private BlocktreeBuilder builder;
-	private Blocktree root;
+	protected BlocktreeBuilder builder;
 	private int BLOCK_LOG_SIZE = 3;
 
-	public BlocktreeUpdaterSimple(Blocktree root, BlocktreeBuilder builder){
-		this.root = root;
+	public BlocktreeUpdaterSimple(BlocktreeBuilder builder){
 		this.builder = builder;
 	}
 
 	@Override
-	public void update() {
+	public void update(Blocktree root) {
 		updateInner(root);
 	}
 
-	private void updateInner(Blocktree node){
+	protected void updateInner(Blocktree node){
 		switch (node.getState()) {
 		case GRAND_FATHER:
 			if (node.getJ()>BLOCK_LOG_SIZE && builder.shouldSplitGreatFatherToPatriarch(node)){
@@ -40,18 +38,18 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 		}
 	}
 
-	public void init(){
+	public void init(Blocktree root){
 		root.setState(LEAF);
-		initInner(root);
+		initInner(root, root);
 		root.setState(GRAND_FATHER);
 	}
 
-	public void initInner(Blocktree node){
+	public void initInner(Blocktree root, Blocktree node){
 		if (node.getJ()>= root.getJ() - BLOCK_LOG_SIZE ){
 			splitLeaf(node);
 			if (node.getState()==FATHER){
 				for (Blocktree son : node.getSons()){
-					initInner(son);
+					initInner(root, son);
 				}
 			}
 		}
@@ -117,6 +115,7 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 			for (Blocktree son : leaf.getSons()){
 				if (builder.isIntersectingSurface(son)){
 					son.setState(LEAF);
+					son.setContent(builder.contentAt(son));
 				} else {
 					if (builder.isGround(son)){
 						son.setState(DEAD_GROUND);
@@ -159,6 +158,7 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 		}
 	}
 
+	
 
 
 

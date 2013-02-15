@@ -33,6 +33,16 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 	public boolean shouldMergePatriarchIntoGreatFather(DyadicBlock block) {
 		return builder.cull(new Octree(block, null));
 	}
+
+	@Override
+	public int contentAt(DyadicBlock block) {
+		return builder.contentAt(block);
+	}
+
+	@Override
+	public double priority(DyadicBlock block) {
+		return builder.priority(block);
+	}
 	
 
 

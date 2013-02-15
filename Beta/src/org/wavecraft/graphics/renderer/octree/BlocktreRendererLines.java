@@ -11,7 +11,7 @@ public class BlocktreRendererLines {
 		renderInner(root);
 		glEnd();
 	}
-	
+
 	private static void renderInner(Blocktree node){
 		BlockColorerLines.getInstance().setColor(node);
 		BlockRendererLines.getInstance().afterGLLines(node);
@@ -20,6 +20,7 @@ public class BlocktreRendererLines {
 				renderInner(son);
 			}
 		}
+
 	}
 
 }

@@ -2,6 +2,7 @@ package org.wavecraft.geometry.octree.builder;
 
 
 
+import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.cullingpriority.Culler;
@@ -89,8 +90,8 @@ public class OctreeBuilderWorldFuntionCuller implements OctreeBuilder{
 	}
 
 	@Override
-	public double priority(Octree octree) {
-		return priorityFun.priority(octree);
+	public double priority(DyadicBlock block) {
+		return priorityFun.priority(block);
 	}
 
 	@Override
@@ -114,6 +115,11 @@ public class OctreeBuilderWorldFuntionCuller implements OctreeBuilder{
 		//return (  vMax<-Dphi);
 		return (  vMax<0);
 		
+	}
+
+	@Override
+	public int contentAt(DyadicBlock block) {
+		return worldFunction.contentAt(block);
 	}
 }
 

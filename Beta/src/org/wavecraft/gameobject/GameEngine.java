@@ -11,6 +11,7 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
+import org.wavecraft.geometry.blocktree.BlockTreeUpdaterMaxPriority;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderAdapter;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdater;
@@ -45,9 +46,10 @@ public class GameEngine {
 	private static ModifOctree modif;
 	private static OctreeBuilder octreeBuilder;
 	private static OctreeUpdater octreeUpdater;
-	
+
 	private static Blocktree blocktree;
-	private static BlocktreeUpdater blockTreeUpdater;
+	private static BlockTreeUpdaterMaxPriority blockTreeUpdater;
+	private static BlocktreeUpdaterSimple blockTreeUpdaterSimple;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){
@@ -55,7 +57,7 @@ public class GameEngine {
 		}
 		return gameEngine;
 	}
-	
+
 	public static OctreeBuilder getOctreeBuilder(){
 		return octreeBuilder;
 	}
@@ -70,7 +72,7 @@ public class GameEngine {
 		player.position.x=Math.pow(2,Octree.JMAX-1);//95;
 		player.position.y=Math.pow(2,Octree.JMAX-1);
 		player.position.z=Math.pow(2,Octree.JMAX);
-		
+
 		if (Octree.JMAX == 10){
 			player.position.x = 450;
 			player.position.x = 380;
@@ -78,7 +80,7 @@ public class GameEngine {
 		}
 
 		new Math_Soboutils();
-		
+
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
 		UiEventMediator.addListener(player);
@@ -88,8 +90,8 @@ public class GameEngine {
 		octree = new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		modif =new ModifOctree(0,0,0,Octree.JMAX,5,0.);
 
-		
-		
+
+
 		modif.computeBounds();
 		modif.sumAncestors = 0;
 		modif.computeSumAncestors();
@@ -99,42 +101,65 @@ public class GameEngine {
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,z0);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
-		
+
 		OctreeEventMediator.getInstance();
 		OctreeEventListenerBasic oelb = new OctreeEventListenerBasic();
 		OctreeEventMediator.addListener(oelb);
 		//octreeUpdater = new OctreeUpdaterPartial(octree,octreeBuilder);
 		octreeUpdater = new OctreeUpdaterPriority(octree, octreeBuilder);
-		
+
 		//water = new FluidTree(0,0,0,Octree.JMAX,4);
 		//water.initSon(6);
 		//water.initializeVolumes();
-		
+
 
 		//blockTreeUpdater = new BOctreeBuilderBuilder.getFlatlandGeoCulling(z0);
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(0.1));
-		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(16.1));
-		WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
-		BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
+		BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
+		//WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
+		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
+
+		blocktree = new Blocktree(0,0,0,8);
 		
-		blocktree = new Blocktree(0,0,0,10);
 		blocktree.setState(State.GRAND_FATHER);
-		blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
-		((BlocktreeUpdaterSimple) blockTreeUpdater).init();
+		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(blockTreeBuilder);
+		blockTreeUpdaterSimple.init(blocktree);
+		
+		
+		//blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
+		blockTreeUpdater = new BlockTreeUpdaterMaxPriority(blockTreeBuilder);
+		
+		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
+		//((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
+		//blockTreeUpdater.update(blocktree);
+		
+		
+		Thread updateThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true){
+					((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
+				}
+			}
+		});
+		//updateThread.start();
 	}
 
 	public static void update(){
 		double dt = Timer.getDt();
-		
-		
-		
+
+
+
 		double t1 = System.currentTimeMillis();
-		physicsPlayer.move(player, dt);
+		synchronized (GameEngine.class) {
+			physicsPlayer.move(player, dt);
+		}
+		
 		double dt_phys = System.currentTimeMillis()-t1;
 		Profiler.getInstance().push("physicPlayer", dt_phys,Timer.getCurrT());
 
 
-		
+
 		//double t2 = System.currentTimeMillis();
 		if (Timer.getNframe()%1 == 0){
 			octreeUpdater.updateOctree();
@@ -142,16 +167,21 @@ public class GameEngine {
 		// this function is being profiled in more detail
 		//double dt_octreeUpdater = System.currentTimeMillis()-t2;
 		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
-		
+
 		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 		Octree obstacle=new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		obstacle.initSon(2);
 		Octree son1= (obstacle.getSons())[2];
 		son1.initSon(1);
-		
+
 		//water.moveFluid(octree,player.position,octreeBuilder);
+
+//		synchronized (GameEngine.class) {
+//			((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
+//			blockTreeUpdater.update(blocktree);
+//		}
 		
-		blockTreeUpdater.update();
+		blockTreeUpdaterSimple.update(blocktree);
 	}
 
 	public static Octree getOctree(){
@@ -166,6 +196,8 @@ public class GameEngine {
 	}
 
 	
+
+
 
 
 

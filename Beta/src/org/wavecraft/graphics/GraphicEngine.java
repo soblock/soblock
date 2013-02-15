@@ -74,7 +74,7 @@ public class GraphicEngine {
 			vboFace.pushNode(octreeArrMsg.get(i));
 		}
 
-	
+
 	}
 
 	public static GraphicEngine getGraphicEngine() {
@@ -92,14 +92,14 @@ public class GraphicEngine {
 
 		viewMain.initRendering();
 
-		
+
 
 		//GL11.glEnable(GL11.GL_FOG);
 		//GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
 		//GL11.glFogf(GL11.GL_FOG_START, 48.f);
 		//GL11.glFogf(GL11.GL_FOG_END, 256.f);
 
-		
+
 		innerRender();
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -129,9 +129,13 @@ public class GraphicEngine {
 
 	public static void innerRender() {
 		// GL11.glFlush();
-		 Grid.draw();
+		Grid.draw();
 		// GL11.glFlush();
+
+
 		BlocktreRendererLines.render(GameEngine.getBlocktree());
+
+
 
 		Octree octree = new Octree(0, 0, 0, 0);
 		octree.setContent(8);

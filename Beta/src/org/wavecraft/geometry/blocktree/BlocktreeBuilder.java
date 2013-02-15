@@ -8,5 +8,7 @@ public interface BlocktreeBuilder {
 	public boolean isIntersectingSurface(DyadicBlock block);
 	public boolean shouldSplitGreatFatherToPatriarch(DyadicBlock block);
 	public boolean shouldMergePatriarchIntoGreatFather(DyadicBlock block);
+	public int contentAt(DyadicBlock block);
+	public abstract double priority(DyadicBlock block);
 
 }
