@@ -68,7 +68,7 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 
 	@Override
 	public double priority(DyadicBlock block) {
-		
+
 		if (block instanceof Octree){
 			Octree node = (Octree) block;
 			double p = 0;
@@ -101,16 +101,11 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 			double p = 0;
 			switch (node.getState()) {
 			case GRAND_FATHER:
-				synchronized (GameEngine.class) {
-					p = node.edgeLentgh()/(node.distance(position)+1);
-				}
+				p = geoCullCoefficient*node.edgeLentgh()/(node.distance(position)+1);
 				break;
 
 			case PATRIARCH:
-				synchronized (GameEngine.class) {
-					p = node.distance(position)/node.edgeLentgh();
-				}
-
+				p = 1/(geoCullCoefficient*node.edgeLentgh()/(node.distance(position)+1));
 
 				break;
 			default:

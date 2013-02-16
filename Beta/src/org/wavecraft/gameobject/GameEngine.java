@@ -121,11 +121,13 @@ public class GameEngine {
 		//blockTreeUpdater = new BOctreeBuilderBuilder.getFlatlandGeoCulling(z0);
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(0.1));
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
-		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
+		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
 		//WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
-		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
-
-		blocktree = new Blocktree(0,0,0,8);
+		//BlocktreeBuilderAdapter blockTreeBuilder
+		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
+		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(0, 0, 0), 512));
+		
+		blocktree = new Blocktree(0,0,0,10);
 
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);

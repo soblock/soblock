@@ -26,12 +26,14 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 
 	@Override
 	public boolean shouldSplitGreatFatherToPatriarch(DyadicBlock block) {
-		return !builder.cull(new Octree(block, null));
+		//return !builder.cull(new Octree(block, null));
+		return priority(block)>1;
 	}
 
 	@Override
 	public boolean shouldMergePatriarchIntoGreatFather(DyadicBlock block) {
-		return builder.cull(new Octree(block, null));
+		//return builder.cull(new Octree(block, null));
+		return priority(block)>1;
 	}
 
 	@Override
