@@ -126,35 +126,35 @@ public class GameEngine {
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
 
 		blocktree = new Blocktree(0,0,0,8);
-		
+
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
 		blockTreeUpdaterSimple.init(blocktree);
-		
-		
+
+
 		//blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
 		blockTreeUpdater = new BlockTreeUpdaterMaxPriority(builder);
-		
+
 		refiner = new BlockTreeRefiner();
 		Thread refinerThread = new Thread(refiner);
 		refinerThread.start();
-		
+
 		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
 		//((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
 		//blockTreeUpdater.update(blocktree);
-		
-		
-//		Thread updateThread = new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				while (true){
-//					((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
-//				}
-//			}
-//		});
-		
-		
-		
+
+
+		//		Thread updateThread = new Thread(new Runnable() {
+		//			@Override
+		//			public void run() {
+		//				while (true){
+		//					((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
+		//				}
+		//			}
+		//		});
+
+
+
 		//updateThread.start();
 	}
 
@@ -167,7 +167,7 @@ public class GameEngine {
 		synchronized (GameEngine.class) {
 			physicsPlayer.move(player, dt);
 		}
-		
+
 		double dt_phys = System.currentTimeMillis()-t1;
 		Profiler.getInstance().push("physicPlayer", dt_phys,Timer.getCurrT());
 
@@ -189,15 +189,13 @@ public class GameEngine {
 
 		//water.moveFluid(octree,player.position,octreeBuilder);
 
-//		synchronized (GameEngine.class) {
-//			((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
-//			blockTreeUpdater.update(blocktree);
-//		}
-		
-		
+
+
+
+
+		// the refiner has finished, copy the results in the current tree.
 		if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
 			Blocktree nodeToCopy = refiner.getNodeToRefine();
-			System.out.println(nodeToCopy);
 			if (nodeToCopy.getJ() == blocktree.getJ()){
 				blocktree = nodeToCopy;
 			} else {
@@ -205,13 +203,24 @@ public class GameEngine {
 			}
 			refiner.setState(BlockTreeRefiner.State.NO_JOB);
 		}
-		
-		//blockTreeUpdaterSimple.update(blocktree);
-		Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, State.GRAND_FATHER);
+
+
+		// the refiner has nothing to do : give him a new job
 		if (refiner.getState() ==  BlockTreeRefiner.State.NO_JOB){
-			refiner.setNodeToRefine(nodeToUpdate);
-			refiner.setBuilder(builder);
-			refiner.setState(BlockTreeRefiner.State.READY_TO_PROCESS_JOB);
+			Blocktree.State nextUpdateState;
+			if (Math.random()>0.5){
+				nextUpdateState = State.GRAND_FATHER;
+			}
+			else {
+				nextUpdateState = State.PATRIARCH;
+			}
+			Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, nextUpdateState);
+			//System.out.println("next state tu update " + nextUpdateState +"node to update" + nodeToUpdate);
+			if (nodeToUpdate!=null){
+				refiner.setNodeToRefine(nodeToUpdate);
+				refiner.setBuilder(builder);
+				refiner.setState(BlockTreeRefiner.State.READY_TO_PROCESS_JOB);
+			}
 		}
 	}
 
@@ -226,7 +235,7 @@ public class GameEngine {
 		return blocktree;
 	}
 
-	
+
 
 
 

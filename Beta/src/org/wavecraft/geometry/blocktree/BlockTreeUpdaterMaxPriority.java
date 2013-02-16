@@ -60,18 +60,12 @@ public class BlockTreeUpdaterMaxPriority extends BlocktreeUpdaterSimple {
 	public Blocktree getArgMaxPriorityPerState(Blocktree root, Blocktree.State state){
 		BlocktreeAndValue currentMaxAndArgMax = new BlocktreeAndValue();
 		getArgMaxPriorityPerStateInner(root, currentMaxAndArgMax, state);
-		//if (currentMaxAndArgMax.node!=null){
-		//	System.out.println("max priority node for state"+state.toString()+
-		//		" is "+currentMaxAndArgMax.value 
-		//	+ currentMaxAndArgMax.node.toString());
-		//}
 		return currentMaxAndArgMax.node;
 	}
 
 	private void getArgMaxPriorityPerStateInner(Blocktree node, BlocktreeAndValue currentMaxAndArgMax, Blocktree.State state){
 		if (node.getState() == State.PATRIARCH || node.getState() == State.GRAND_FATHER){
-			//if (node.getState()==state){
-			if (true){
+			if (node.getState()==state){
 				double p = builder.priority(node);
 				if (p>currentMaxAndArgMax.value){
 					currentMaxAndArgMax.value = p;
@@ -81,6 +75,7 @@ public class BlockTreeUpdaterMaxPriority extends BlocktreeUpdaterSimple {
 			for (Blocktree son : node.getSons()){
 				getArgMaxPriorityPerStateInner(son, currentMaxAndArgMax, state);
 			}
+
 		}
 
 	}

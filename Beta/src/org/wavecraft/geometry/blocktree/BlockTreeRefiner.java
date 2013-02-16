@@ -26,7 +26,7 @@ public class BlockTreeRefiner implements Runnable {
 	@Override
 	public void run() {
 		while (true){
-			System.out.println(getState());
+			//System.out.println(getState());
 			if (getState() == State.READY_TO_PROCESS_JOB) {
 				setState(State.PROCESSING_JOB);
 				BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
@@ -35,7 +35,7 @@ public class BlockTreeRefiner implements Runnable {
 			}
 			else {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

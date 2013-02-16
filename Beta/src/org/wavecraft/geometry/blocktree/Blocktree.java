@@ -39,6 +39,7 @@ public class Blocktree extends DyadicBlock{
 			safeThis.sons = new Blocktree[8];
 			for (int offset = 0; offset<8; offset++){
 				safeThis.sons[offset] = this.sons[offset].cloneRecursively();
+				safeThis.sons[offset].setFather(safeThis);
 			}
 		}
 		return safeThis;
@@ -114,5 +115,11 @@ public class Blocktree extends DyadicBlock{
 	public void killSons(){
 		this.sons = null;
 	}
+
+	public void setFather(Blocktree father) {
+		this.father = father;
+	}
+	
+	
 	
 }
