@@ -2,6 +2,8 @@ package org.wavecraft.gameobject;
 
 
 
+import java.text.Normalizer.Form;
+
 import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.physics.Physics;
 
@@ -11,6 +13,7 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
+import org.wavecraft.geometry.blocktree.BlockTreeRefiner;
 import org.wavecraft.geometry.blocktree.BlockTreeUpdaterMaxPriority;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderAdapter;
@@ -50,6 +53,8 @@ public class GameEngine {
 	private static Blocktree blocktree;
 	private static BlockTreeUpdaterMaxPriority blockTreeUpdater;
 	private static BlocktreeUpdaterSimple blockTreeUpdaterSimple;
+	private static BlockTreeRefiner refiner;
+	private static BlocktreeBuilder builder;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){
@@ -115,33 +120,41 @@ public class GameEngine {
 
 		//blockTreeUpdater = new BOctreeBuilderBuilder.getFlatlandGeoCulling(z0);
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(0.1));
-		BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
+		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
+		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
 		//WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
 		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
 
 		blocktree = new Blocktree(0,0,0,8);
 		
 		blocktree.setState(State.GRAND_FATHER);
-		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(blockTreeBuilder);
+		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
 		blockTreeUpdaterSimple.init(blocktree);
 		
 		
 		//blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
-		blockTreeUpdater = new BlockTreeUpdaterMaxPriority(blockTreeBuilder);
+		blockTreeUpdater = new BlockTreeUpdaterMaxPriority(builder);
+		
+		refiner = new BlockTreeRefiner();
+		Thread refinerThread = new Thread(refiner);
+		refinerThread.start();
 		
 		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
 		//((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
 		//blockTreeUpdater.update(blocktree);
 		
 		
-		Thread updateThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true){
-					((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
-				}
-			}
-		});
+//		Thread updateThread = new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				while (true){
+//					((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
+//				}
+//			}
+//		});
+		
+		
+		
 		//updateThread.start();
 	}
 
@@ -181,7 +194,25 @@ public class GameEngine {
 //			blockTreeUpdater.update(blocktree);
 //		}
 		
-		blockTreeUpdaterSimple.update(blocktree);
+		
+		if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
+			Blocktree nodeToCopy = refiner.getNodeToRefine();
+			System.out.println(nodeToCopy);
+			if (nodeToCopy.getJ() == blocktree.getJ()){
+				blocktree = nodeToCopy;
+			} else {
+				nodeToCopy.becomeSonOfMyFather();
+			}
+			refiner.setState(BlockTreeRefiner.State.NO_JOB);
+		}
+		
+		//blockTreeUpdaterSimple.update(blocktree);
+		Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, State.GRAND_FATHER);
+		if (refiner.getState() ==  BlockTreeRefiner.State.NO_JOB){
+			refiner.setNodeToRefine(nodeToUpdate);
+			refiner.setBuilder(builder);
+			refiner.setState(BlockTreeRefiner.State.READY_TO_PROCESS_JOB);
+		}
 	}
 
 	public static Octree getOctree(){

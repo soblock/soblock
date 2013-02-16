@@ -16,15 +16,6 @@ public class BlockTreeUpdaterMaxPriority extends BlocktreeUpdaterSimple {
 	private Blocktree nodeReplacer;
 
 
-	@Override 
-	public void update(Blocktree root){
-		if (nodeToReplace != null){
-			nodeToReplace.replaceMeWtih(nodeReplacer);
-			System.out.println("node "+nodeToReplace); ////////////////////
-			nodeToReplace = null;
-			nodeReplacer = null;
-		}
-	}
 
 
 	/**
@@ -66,7 +57,7 @@ public class BlockTreeUpdaterMaxPriority extends BlocktreeUpdaterSimple {
 		}
 	}
 
-	private Blocktree getArgMaxPriorityPerState(Blocktree root, Blocktree.State state){
+	public Blocktree getArgMaxPriorityPerState(Blocktree root, Blocktree.State state){
 		BlocktreeAndValue currentMaxAndArgMax = new BlocktreeAndValue();
 		getArgMaxPriorityPerStateInner(root, currentMaxAndArgMax, state);
 		//if (currentMaxAndArgMax.node!=null){

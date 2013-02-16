@@ -16,7 +16,7 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 		updateInner(root);
 	}
 
-	protected void updateInner(Blocktree node){
+	public void updateInner(Blocktree node){
 		switch (node.getState()) {
 		case GRAND_FATHER:
 			if (node.getJ()>BLOCK_LOG_SIZE && builder.shouldSplitGreatFatherToPatriarch(node)){

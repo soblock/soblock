@@ -45,13 +45,13 @@ public class Blocktree extends DyadicBlock{
 	}
 	
 	/**
-	 * replaces this with the provided safeThis in my father
-	 * @param safeThis
-	 * a safe copy of this (typically obtained with cloneRecusively)
+	 * replaces this with the provided illegitimateChild in my father.
+	 * To be used on a copy of a node, typically obtained with cloneRecusively
+	 * and updated in a separate thread
 	 */
-	public void replaceMeWtih(Blocktree safeThis){
+	public void becomeSonOfMyFather(){
 		if (father!=null){
-			father.sons[this.offset()] = safeThis;
+			father.sons[this.offset()] = this;
 		}
 		else {
 			try {
@@ -62,6 +62,8 @@ public class Blocktree extends DyadicBlock{
 			}
 		}
 	}
+	
+	
 	
 	@Override
 	public String toString() {
