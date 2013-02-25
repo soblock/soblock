@@ -11,5 +11,5 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.wavecraft.client.WaveCraftSP"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Beta"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx2048m"/>
 </launchConfiguration>

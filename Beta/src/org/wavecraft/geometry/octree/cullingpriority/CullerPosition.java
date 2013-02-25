@@ -19,7 +19,7 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 	private Coord3d position;
 	private double geoCullCoefficient = 1;
 	private final static double minCullingCoefficient = 1;
-	private final static double maxCullingCoefficient = 64;
+	private final static double maxCullingCoefficient = 512;
 	public CullerPosition(){
 		position = new Coord3d(0, 0, 0);
 		UiEventMediator.addListener(this);

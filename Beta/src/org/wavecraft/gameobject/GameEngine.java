@@ -2,7 +2,7 @@ package org.wavecraft.gameobject;
 
 
 
-import java.text.Normalizer.Form;
+
 
 import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.physics.Physics;
@@ -126,7 +126,7 @@ public class GameEngine {
 		//BlocktreeBuilderAdapter blockTreeBuilder
 		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
 		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(0, 0, 0), 512));
-		
+
 		blocktree = new Blocktree(0,0,0,10);
 
 		blocktree.setState(State.GRAND_FATHER);
@@ -175,12 +175,12 @@ public class GameEngine {
 
 
 
-		//double t2 = System.currentTimeMillis();
+		double t2 = System.currentTimeMillis();
 		if (Timer.getNframe()%1 == 0){
 			octreeUpdater.updateOctree();
 		}
 		// this function is being profiled in more detail
-		//double dt_octreeUpdater = System.currentTimeMillis()-t2;
+		double dt_octreeUpdater = System.currentTimeMillis()-t2;
 		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
 
 		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
@@ -193,35 +193,36 @@ public class GameEngine {
 
 
 
+		if (true){
 
-
-		// the refiner has finished, copy the results in the current tree.
-		if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
-			Blocktree nodeToCopy = refiner.getNodeToRefine();
-			if (nodeToCopy.getJ() == blocktree.getJ()){
-				blocktree = nodeToCopy;
-			} else {
-				nodeToCopy.becomeSonOfMyFather();
+			// the refiner has finished, copy the results in the current tree.
+			if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
+				Blocktree nodeToCopy = refiner.getNodeToRefine();
+				if (nodeToCopy.getJ() == blocktree.getJ()){
+					blocktree = nodeToCopy;
+				} else {
+					nodeToCopy.becomeSonOfMyFather();
+				}
+				refiner.setState(BlockTreeRefiner.State.NO_JOB);
 			}
-			refiner.setState(BlockTreeRefiner.State.NO_JOB);
-		}
 
 
-		// the refiner has nothing to do : give him a new job
-		if (refiner.getState() ==  BlockTreeRefiner.State.NO_JOB){
-			Blocktree.State nextUpdateState;
-			if (Math.random()>0.5){
-				nextUpdateState = State.GRAND_FATHER;
-			}
-			else {
-				nextUpdateState = State.PATRIARCH;
-			}
-			Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, nextUpdateState);
-			//System.out.println("next state tu update " + nextUpdateState +"node to update" + nodeToUpdate);
-			if (nodeToUpdate!=null){
-				refiner.setNodeToRefine(nodeToUpdate);
-				refiner.setBuilder(builder);
-				refiner.setState(BlockTreeRefiner.State.READY_TO_PROCESS_JOB);
+			// the refiner has nothing to do : give him a new job
+			if (refiner.getState() ==  BlockTreeRefiner.State.NO_JOB){
+				Blocktree.State nextUpdateState;
+				if (Math.random()>0.5){
+					nextUpdateState = State.GRAND_FATHER;
+				}
+				else {
+					nextUpdateState = State.PATRIARCH;
+				}
+				Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, nextUpdateState);
+				//System.out.println("next state tu update " + nextUpdateState +"node to update" + nodeToUpdate);
+				if (nodeToUpdate!=null){
+					refiner.setNodeToRefine(nodeToUpdate);
+					refiner.setBuilder(builder);
+					refiner.setState(BlockTreeRefiner.State.READY_TO_PROCESS_JOB);
+				}
 			}
 		}
 	}
