@@ -32,7 +32,7 @@ import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.modif.ModifOctree;
-import org.wavecraft.Soboutils.Math_Soboutils;
+import org.wavecraft.Soboutils.MathSoboutils;
 
 
 // this class is the main game engine class
@@ -84,7 +84,7 @@ public class GameEngine {
 			player.position.z = 816;
 		}
 
-		new Math_Soboutils();
+		new MathSoboutils();
 
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
@@ -102,7 +102,7 @@ public class GameEngine {
 		modif.computeSumAncestors();
 
 
-		double z0=Math_Soboutils.powerOf2[Octree.JMAX]/2;
+		double z0=MathSoboutils.powerOf2[Octree.JMAX]/2;
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,z0);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);

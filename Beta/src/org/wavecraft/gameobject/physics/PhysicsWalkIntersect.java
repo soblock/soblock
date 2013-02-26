@@ -3,7 +3,7 @@ package org.wavecraft.gameobject.physics;
 //import Coord3d;
 
 
-import org.wavecraft.Soboutils.Math_Soboutils;
+import org.wavecraft.Soboutils.MathSoboutils;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -217,7 +217,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 		for (int i = 0; i < listOfIntersectedLeaf.size(); i++) {
 			Octree leaf = listOfIntersectedLeaf.get(i);
-			size_cell = Math_Soboutils.dpowerOf2[leaf.getJ()];
+			size_cell = MathSoboutils.dpowerOf2[leaf.getJ()];
 
 			// bb of current cell
 			cx_min = leaf.center().x - size_cell / 2;// Math.pow(2,block[i].coord.x);

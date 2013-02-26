@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.Octree;
 
-import org.wavecraft.Soboutils.Math_Soboutils;
+import org.wavecraft.Soboutils.MathSoboutils;
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.Coord3i;
 
@@ -194,7 +194,7 @@ public class FluidTree extends DyadicBlock{
 
 	public double fill_with_fluid(double vol, FluidTree tree_to_empty, Octree Terran){
 		if (sons==null){
-			double v=Math.min(vol,Math_Soboutils.dpowerOf2[3*this.getJ()]-value);
+			double v=Math.min(vol,MathSoboutils.dpowerOf2[3*this.getJ()]-value);
 			if (v>0){
 				boolean[] exist=Terran.doesThisBlockExist(this);
 				if ( !exist[0]){	
@@ -237,12 +237,12 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public boolean are_neighbors(FluidTree tree){
-		if(  (x  )*Math_Soboutils.powerOf2[getJ()]==(tree.x+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (x+1)*Math_Soboutils.powerOf2[getJ()]==(tree.x  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (y  )*Math_Soboutils.powerOf2[getJ()]==(tree.y+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (y+1)*Math_Soboutils.powerOf2[getJ()]==(tree.y  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (z  )*Math_Soboutils.powerOf2[getJ()]==(tree.z+1)*Math_Soboutils.powerOf2[tree.getJ()]) return true;
-		if(  (z+1)*Math_Soboutils.powerOf2[getJ()]==(tree.z  )*Math_Soboutils.powerOf2[tree.getJ()]) return true;
+		if(  (x  )*MathSoboutils.powerOf2[getJ()]==(tree.x+1)*MathSoboutils.powerOf2[tree.getJ()]) return true;
+		if(  (x+1)*MathSoboutils.powerOf2[getJ()]==(tree.x  )*MathSoboutils.powerOf2[tree.getJ()]) return true;
+		if(  (y  )*MathSoboutils.powerOf2[getJ()]==(tree.y+1)*MathSoboutils.powerOf2[tree.getJ()]) return true;
+		if(  (y+1)*MathSoboutils.powerOf2[getJ()]==(tree.y  )*MathSoboutils.powerOf2[tree.getJ()]) return true;
+		if(  (z  )*MathSoboutils.powerOf2[getJ()]==(tree.z+1)*MathSoboutils.powerOf2[tree.getJ()]) return true;
+		if(  (z+1)*MathSoboutils.powerOf2[getJ()]==(tree.z  )*MathSoboutils.powerOf2[tree.getJ()]) return true;
 		return false;
 	}
 
@@ -254,7 +254,7 @@ public class FluidTree extends DyadicBlock{
 		
 		/// the infos are numbered in a +x,-x,+y,-y,+z,-z
 		Octree neigh=new Octree(this.x,this.y,this.z,this.getJ());
-		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
+		int size_max=MathSoboutils.powerOf2[JMAX-this.getJ()];
 		neigh.x+=1;
 		ngbh[1]=(neigh.x<size_max)?false:true;
 		neigh.x-=2;
@@ -279,7 +279,7 @@ public class FluidTree extends DyadicBlock{
 
 	public double fill_this_cube(double vol, Octree Terran){
 		if (sons==null){
-			double v=Math.max(0,Math.min(vol,Math_Soboutils.dpowerOf2[3*this.getJ()]));
+			double v=Math.max(0,Math.min(vol,MathSoboutils.dpowerOf2[3*this.getJ()]));
 			boolean[] exist=Terran.doesThisBlockExist(this);
 			if ( !exist[0]){	
 				value=v;
@@ -328,19 +328,19 @@ public class FluidTree extends DyadicBlock{
 		if (sons==null){
 			boolean[] exist=Terran.doesThisBlockExist(this);
 			if ( !exist[0]){
-				double h=  tree.z*Math_Soboutils.dpowerOf2[tree.getJ()]
-						-z*Math_Soboutils.dpowerOf2[getJ()];
-				h+= tree.value/Math_Soboutils.dpowerOf2[2*tree.getJ()]
-						-value/Math_Soboutils.dpowerOf2[2*getJ()];
-				double v=h/(1/Math_Soboutils.dpowerOf2[2*getJ()]+1/Math_Soboutils.dpowerOf2[2*tree.getJ()]);
+				double h=  tree.z*MathSoboutils.dpowerOf2[tree.getJ()]
+						-z*MathSoboutils.dpowerOf2[getJ()];
+				h+= tree.value/MathSoboutils.dpowerOf2[2*tree.getJ()]
+						-value/MathSoboutils.dpowerOf2[2*getJ()];
+				double v=h/(1/MathSoboutils.dpowerOf2[2*getJ()]+1/MathSoboutils.dpowerOf2[2*tree.getJ()]);
 				//v*=1+v/Math.min(Math_Soboutils.fpowerOf2[3*tree.getJ()],Math_Soboutils.fpowerOf2[3*this.getJ()]);
 				//v*=1+2*v*v/Math.pow((Math_Soboutils.fpowerOf2[3*tree.getJ()]+Math_Soboutils.fpowerOf2[3*this.getJ()]),2);				
 				// cannot add more to this than empty space in this 
-				v=Math.min(Math_Soboutils.dpowerOf2[3*getJ()]-value,v);
+				v=Math.min(MathSoboutils.dpowerOf2[3*getJ()]-value,v);
 				// cannot remove more the the volume of tree from tree
 				v=Math.min(tree.value, v);
 				// cannot add more in tree than empty space in tree
-				v=Math.max(v,(-Math_Soboutils.dpowerOf2[3*tree.getJ()]+tree.value));
+				v=Math.max(v,(-MathSoboutils.dpowerOf2[3*tree.getJ()]+tree.value));
 				// cannot remove more the the volume of this from this
 				v=Math.max(v,-value);
 				tree.value-=v;
@@ -440,7 +440,7 @@ public class FluidTree extends DyadicBlock{
 
 	public double take_care_of_trop_plein(double trop_plein,Octree Terran){
 		int h=this.z+1;
-		int size_max=Math_Soboutils.powerOf2[JMAX-this.getJ()];
+		int size_max=MathSoboutils.powerOf2[JMAX-this.getJ()];
 		int index=1;
 		FluidTree root=this.findTheRoot();
 		
@@ -463,10 +463,10 @@ public class FluidTree extends DyadicBlock{
 		return (sons!=null);
 	}
 	public int findSonContaining(FluidTree block) {
-		return Math_Soboutils.ithbit(block.x, this.getJ() - block.getJ()) + 2
-				* Math_Soboutils.ithbit(block.y, this.getJ() - block.getJ())
+		return MathSoboutils.ithbit(block.x, this.getJ() - block.getJ()) + 2
+				* MathSoboutils.ithbit(block.y, this.getJ() - block.getJ())
 				+ 4
-				* Math_Soboutils.ithbit(block.z, this.getJ() - block.getJ());
+				* MathSoboutils.ithbit(block.z, this.getJ() - block.getJ());
 
 	}
 	public double fluidContained(){
@@ -482,7 +482,7 @@ public class FluidTree extends DyadicBlock{
 	}
 
 	public void initializeVolumes(){
-		if (sons==null) value=0*Math_Soboutils.dpowerOf2[3*getJ()]/5;
+		if (sons==null) value=0*MathSoboutils.dpowerOf2[3*getJ()]/5;
 		else{
 			value=0.0;
 			for (int offset = 0; offset < 8; offset++) {

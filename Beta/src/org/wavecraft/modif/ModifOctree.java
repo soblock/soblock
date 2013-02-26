@@ -4,7 +4,7 @@ package org.wavecraft.modif;
 
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Coord3i;
-import org.wavecraft.Soboutils.Math_Soboutils;
+import org.wavecraft.Soboutils.MathSoboutils;
 import org.wavecraft.geometry.octree.Octree;
 
 
@@ -81,9 +81,9 @@ public class ModifOctree extends DyadicBlock {
 	}
 
 	public int findSonContainingBlock(DyadicBlock block) {
-		return Math_Soboutils.ithbit(block.x, this.getJ() - block.getJ()) + 
-		2 * Math_Soboutils.ithbit(block.y, this.getJ() - block.getJ())
-		+ 4 * Math_Soboutils.ithbit(block.z, this.getJ() - block.getJ());
+		return MathSoboutils.ithbit(block.x, this.getJ() - block.getJ()) + 
+		2 * MathSoboutils.ithbit(block.y, this.getJ() - block.getJ())
+		+ 4 * MathSoboutils.ithbit(block.z, this.getJ() - block.getJ());
 
 	}
 
@@ -144,7 +144,7 @@ public class ModifOctree extends DyadicBlock {
 	}
 
 	public double jumpMax(Octree b) {
-		int size_max = Math_Soboutils.powerOf2[Octree.JMAX - b.getJ()];
+		int size_max = MathSoboutils.powerOf2[Octree.JMAX - b.getJ()];
 		double jumpMax = 0;
 
 		double vMin = minValueAtFrRoot(b);

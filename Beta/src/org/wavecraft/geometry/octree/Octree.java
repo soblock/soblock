@@ -2,7 +2,7 @@ package org.wavecraft.geometry.octree;
 
 import java.util.ArrayList;
 
-import org.wavecraft.Soboutils.Math_Soboutils;
+import org.wavecraft.Soboutils.MathSoboutils;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.octree.events.OctreeEvent;
 import org.wavecraft.geometry.octree.events.OctreeEventKindof;
@@ -117,13 +117,7 @@ public class Octree extends DyadicBlock{
 		else return this;
 	}
 
-	public int findSonContaining(DyadicBlock block) {
-		return Math_Soboutils.ithbit(block.x, this.getJ() - block.getJ()) + 2
-		* Math_Soboutils.ithbit(block.y, this.getJ() - block.getJ())
-		+ 4
-		* Math_Soboutils.ithbit(block.z, this.getJ() - block.getJ());
 
-	}
 
 	
 	public ArrayList<Octree> adjacentCells(DyadicBlock block, OctreeState state){

@@ -4,11 +4,12 @@ package org.wavecraft.geometry.blocktree;
 
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.octree.Octree;
 
 
 @SuppressWarnings("serial")
 public class Blocktree extends DyadicBlock{
-	
+
 	public enum State{
 		PATRIARCH,
 		GRAND_FATHER,
@@ -17,15 +18,15 @@ public class Blocktree extends DyadicBlock{
 		DEAD_AIR,
 		LEAF;
 	}
-	
+
 	private State state;
 	private Blocktree[] sons;
 	private Blocktree father;
 	private int content;
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * returns a recursive copy of the blocktree and its sons.
 	 * use it to safely modify a tree inside a separate thread 
@@ -44,7 +45,7 @@ public class Blocktree extends DyadicBlock{
 		}
 		return safeThis;
 	}
-	
+
 	/**
 	 * replaces this with the provided illegitimateChild in my father.
 	 * To be used on a copy of a node, typically obtained with cloneRecusively
@@ -63,9 +64,9 @@ public class Blocktree extends DyadicBlock{
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	@Override
 	public String toString() {
 		return "Blocktree"+ super.toString() +"[state=" + state + ", sons=" 
@@ -99,7 +100,7 @@ public class Blocktree extends DyadicBlock{
 	public void setContent(int content){
 		this.content = content;
 	}
-	
+
 	public void initSons(){
 		sons = new Blocktree[8];
 		for (int offset = 0; offset<8; offset++){
@@ -111,7 +112,7 @@ public class Blocktree extends DyadicBlock{
 	public boolean hasSons(){
 		return sons!=null;
 	}
-	
+
 	public void killSons(){
 		this.sons = null;
 	}
@@ -119,7 +120,20 @@ public class Blocktree extends DyadicBlock{
 	public void setFather(Blocktree father) {
 		this.father = father;
 	}
-	
-	
-	
+
+	public Blocktree smallestCellContaining(DyadicBlock block) {
+		if (this.equals(block))
+			return this;
+		else {
+			if (this.contains(block)){
+				if (hasSons()){
+					int offset = findSonContaining(block);
+					return sons[offset].smallestCellContaining(block);
+				}
+			}
+		}
+		return null;
+	}
+
+
 }

@@ -1,5 +1,6 @@
 package org.wavecraft.geometry;
 
+import org.wavecraft.Soboutils.MathSoboutils;
 import org.wavecraft.geometry.octree.Octree;
 
 
@@ -20,7 +21,7 @@ public class DyadicBlock extends Coord3i {
 		double dz = (ttj*(z+0.5) - pos.z);
 		return dx*dx + dy*dy + dz*dz;
 	}
-	
+
 	public double distance(Coord3d pos){
 		double ttj = Math.pow(2, J);
 		double dx = (ttj*(x+0.5) - pos.x);
@@ -28,7 +29,7 @@ public class DyadicBlock extends Coord3i {
 		double dz = (ttj*(z+0.5) - pos.z);
 		return Math.sqrt(dx*dx + dy*dy + dz*dz);
 	}
-	
+
 	public int getJ() {
 		return J;
 	}
@@ -95,7 +96,7 @@ public class DyadicBlock extends Coord3i {
 		}
 		return block;
 	}
-	
+
 	public int offset(){
 		return 4*(this.z%2) + 2*(this.y%2) + (this.x%2);
 	}
@@ -136,7 +137,7 @@ public class DyadicBlock extends Coord3i {
 		faces[5] = new Face(coord, J, 3,this);
 		return faces;
 	}
-	
+
 	public double nearestIntersectedFaceDistance(Coord3d origin, Coord3d vector){
 		Face[] faces = getFaces();
 		double dmin = 10E20;
@@ -148,7 +149,7 @@ public class DyadicBlock extends Coord3i {
 		}
 		return dmin;
 	}
-	
+
 	public Face nearestIntersectedFace(Coord3d origin, Coord3d vector){
 		Face[] faces = getFaces();
 		double dmin = 10E20;
@@ -167,12 +168,12 @@ public class DyadicBlock extends Coord3i {
 			return null;
 		}
 	}
-	
-	
+
+
 	public boolean doesIntersectLine(Coord3d origin, Coord3d vector){
 		return nearestIntersectedFaceDistance(origin, vector)<10E20;
 	}
-	
+
 	public DyadicBlock neighbor(int dx,int dy,int dz){
 		int maxn = (int)(Math.pow(2, Octree.JMAX - J ));
 		int xn = x + dx;
@@ -198,7 +199,7 @@ public class DyadicBlock extends Coord3i {
 		neighbors[5] = neighbor(0, 0, -1);
 		return neighbors;
 	}
-	
+
 	public DyadicBlock ancestor(int J){
 		if (J < this.J){
 			return null;
@@ -208,7 +209,7 @@ public class DyadicBlock extends Coord3i {
 			return new DyadicBlock(x/div, y/div, z/div, J);
 		}
 	}
-	
+
 	public boolean isAdjacentTo(DyadicBlock block){
 		DyadicBlock biggerBlock =  (block.getJ()< this.getJ())?this:block;
 		DyadicBlock smallerBlock = (block.getJ()>=this.getJ())?this:block;
@@ -227,7 +228,7 @@ public class DyadicBlock extends Coord3i {
 		if (0 <= offsetz && offsetz < step ) zeroOffset++;
 		return (validOffset == 1 && zeroOffset == 2);
 	}
-	
+
 	public boolean contains(DyadicBlock block){
 		if (this.getJ() < block.getJ()) {
 			return false;
@@ -237,6 +238,22 @@ public class DyadicBlock extends Coord3i {
 				block.y/step == this.y && 
 				block.z/step == this.z );
 	}
-	
-	
+
+	/**
+	 * @param block
+	 * @return the sons'id that contain the block or -1 otherwise
+	 */
+	public int findSonContaining(DyadicBlock block) {
+		// check that block is a subblock of me
+		if (this.contains(block)){
+			return MathSoboutils.ithbit(block.x, this.getJ() - block.getJ()) + 2
+					* MathSoboutils.ithbit(block.y, this.getJ() - block.getJ())
+					+ 4
+					* MathSoboutils.ithbit(block.z, this.getJ() - block.getJ());
+		} 
+		else {
+			return -1;
+		}
+	}
+
 }

@@ -65,7 +65,7 @@ public class ModifAdder implements UiEventListener {
 		if (best == null){return null;}
 		// find best face
 		Face face = best.nearestIntersectedFace(GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
-		DyadicBlock nodeToAdd = face.getNeighbor();
+		DyadicBlock nodeToAdd = face.getBlockInFrontOf();
 		nodeToAdd = nodeToAdd.ancestor(targetJ);
 		return nodeToAdd;
 	}

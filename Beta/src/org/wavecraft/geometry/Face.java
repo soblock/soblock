@@ -159,7 +159,11 @@ public class Face {
 		return intersectionSignedDistance(origin, vector)<10E20;
 	}
 
-	public DyadicBlock getNeighbor() {
+	/**
+	 * 
+	 * @return the block in front of the face (not the one which owns the face, the other)
+	 */
+	public DyadicBlock getBlockInFrontOf() {
 		DyadicBlock block = null ;
 		switch (normal) {
 		case -1 :
