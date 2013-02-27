@@ -21,6 +21,7 @@ import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
 import org.wavecraft.graphics.renderer.octree.BlocktreRendererLines;
 import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
 import org.wavecraft.graphics.texture.MegaTexture;
+import org.wavecraft.graphics.vbo.VBOBlocktreePool;
 import org.wavecraft.graphics.vbo.VBOFace;
 import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
 import org.wavecraft.graphics.view.View;
@@ -55,7 +56,7 @@ public class GraphicEngine {
 		light = new Light();
 		// vboFace = new VBOFace(3*64000); // can go up to 6 * 64000 on macbook
 		// pro
-		vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
+		vboFace = new VBOFace(8096, 4*32, VboMode.V3N3T2); // can go up to 6 *
 		//vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
 		// 64000 on macbook
 		// pro
@@ -133,7 +134,7 @@ public class GraphicEngine {
 		// GL11.glFlush();
 
 
-		BlocktreRendererLines.render(GameEngine.getBlocktree());
+		//BlocktreRendererLines.render(GameEngine.getBlocktree());
 
 
 
@@ -180,6 +181,8 @@ public class GraphicEngine {
 	public static void update() {
 		double t1 = System.currentTimeMillis();
 		vboFace.update();
+		VBOBlocktreePool.getInstance().unloadAll();
+		VBOBlocktreePool.getInstance().uploadAll();
 		double t2 = System.currentTimeMillis();
 		Profiler.getInstance().push("updateVBO", t2-t1, Timer.getCurrT());
 	}

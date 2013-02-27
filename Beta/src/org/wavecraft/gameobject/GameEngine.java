@@ -29,6 +29,7 @@ import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.geometry.octree.fluid.FluidTree;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
+import org.wavecraft.graphics.vbo.VBOBlocktreePool;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.modif.ModifOctree;
@@ -139,7 +140,7 @@ public class GameEngine {
 
 		refiner = new BlockTreeRefiner();
 		Thread refinerThread = new Thread(refiner);
-		refinerThread.start();
+		//refinerThread.start();
 
 		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
 		//((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
@@ -193,11 +194,12 @@ public class GameEngine {
 
 
 
-		if (true){
+		if (false){
 
 			// the refiner has finished, copy the results in the current tree.
 			if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
 				Blocktree nodeToCopy = refiner.getNodeToRefine();
+				refiner.doInMainThreadWhenDone();
 				if (nodeToCopy.getJ() == blocktree.getJ()){
 					blocktree = nodeToCopy;
 				} else {

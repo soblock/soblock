@@ -35,6 +35,10 @@ public class VBOBlockTreeGrandFather {
 	public int getDataSize(){
 		return data.length;
 	}
+	
+	public void render(){
+		vboWrapper.draw();
+	}
 
 	
 }

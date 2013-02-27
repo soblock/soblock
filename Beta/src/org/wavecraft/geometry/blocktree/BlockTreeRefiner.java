@@ -1,5 +1,8 @@
 package org.wavecraft.geometry.blocktree;
 
+import org.wavecraft.graphics.vbo.VBOBlockTreeGrandFather;
+import org.wavecraft.graphics.vbo.VBOBlocktreePool;
+
 
 
 
@@ -16,6 +19,7 @@ public class BlockTreeRefiner implements Runnable {
 	private Blocktree nodeToRefine;
 	private BlocktreeBuilder builder;
 	private State state;
+	private VBOBlockTreeGrandFather vbo;
 	
 	public BlockTreeRefiner(){
 		state = State.NO_JOB;
@@ -30,7 +34,17 @@ public class BlockTreeRefiner implements Runnable {
 			if (getState() == State.READY_TO_PROCESS_JOB) {
 				setState(State.PROCESSING_JOB);
 				BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
+				Blocktree.State initialStateOfNode = getNodeToRefine().getState();
 				updater.updateInner(getNodeToRefine());
+				switch (initialStateOfNode) {
+				case GRAND_FATHER:
+					vbo = new VBOBlockTreeGrandFather(nodeToRefine);
+					break;
+
+				default:
+					vbo = null;
+					break;
+				}
 				setState(State.FINISHED);
 			}
 			else {
@@ -44,6 +58,10 @@ public class BlockTreeRefiner implements Runnable {
 		
 	}
 
+	public synchronized VBOBlockTreeGrandFather getVbo() {
+		return vbo;
+	}
+
 	public synchronized Blocktree getNodeToRefine() {
 		return nodeToRefine;
 	}
@@ -52,7 +70,7 @@ public class BlockTreeRefiner implements Runnable {
 		this.nodeToRefine = nodeToRefine.cloneRecursively();
 	}
 
-	public State getState() {
+	public synchronized State getState() {
 		return state;
 	}
 
@@ -68,6 +86,13 @@ public class BlockTreeRefiner implements Runnable {
 		return builder;
 	}
 
+	public void doInMainThreadWhenDone(){
+		if (vbo !=null){
+			VBOBlocktreePool.getInstance().put(getNodeToRefine(), getVbo());
+		} else {
+			VBOBlocktreePool.getInstance().prepareToUnload(getNodeToRefine());
+		}
+	}
 
 	
 
