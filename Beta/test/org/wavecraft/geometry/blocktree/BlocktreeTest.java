@@ -8,6 +8,8 @@ import static org.wavecraft.geometry.blocktree.Blocktree.State.LEAF;
 
 import org.junit.Test;
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Blocktree.State;
+import org.wavecraft.geometry.octree.builder.OctreeBuilderBuilder;
 
 public class BlocktreeTest {
 
@@ -31,6 +33,29 @@ public class BlocktreeTest {
 		query = new DyadicBlock(8, 0, 0, 0);
 		retrieved = blockTree.smallestCellContaining(query);
 		assertTrue(retrieved == null);
+		
 	}
+	
+	@Test
+	public void testContains(){
+		Blocktree big = new Blocktree(0, 0, 0, 1);
+		Blocktree small = new Blocktree(-1, 0, 0, 0);
+		
+		assertFalse(big.contains(small));
+		
+		Blocktree blocktree = new Blocktree(0, 0, 0, 5);
+		BlocktreeBuilder builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(16.5));
+		
+
+		blocktree.setState(State.GRAND_FATHER);
+		BlocktreeUpdaterSimple blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
+		blockTreeUpdaterSimple.init(blocktree);
+		
+
+		DyadicBlock block = new DyadicBlock(0, 0, 3, 2);
+		assertTrue(blocktree.smallestCellContaining(block) != null);
+	}
+	
+	
 
 }

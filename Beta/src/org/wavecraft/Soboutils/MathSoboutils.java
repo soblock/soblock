@@ -31,6 +31,17 @@ public class MathSoboutils {
 	}
 
 
+	/**
+	 * true floor division 
+	 * @param a
+	 * @param b
+	 * @return a divided by b
+	 */
+	public static int divideFloor(int a, int b){
+		int div = a/b;
+		int signum = 1 | ((a ^ b) >> (Integer.SIZE - 1));
+		return (signum < 0) ? div + signum : div;
+	}
 
 
 	public static double[] minMaxValues(double[] values){

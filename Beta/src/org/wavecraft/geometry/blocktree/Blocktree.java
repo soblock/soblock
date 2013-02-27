@@ -1,11 +1,6 @@
 package org.wavecraft.geometry.blocktree;
 
-
-
-import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
-import org.wavecraft.geometry.octree.Octree;
-
 
 @SuppressWarnings("serial")
 public class Blocktree extends DyadicBlock{
@@ -127,8 +122,11 @@ public class Blocktree extends DyadicBlock{
 		else {
 			if (this.contains(block)){
 				if (hasSons()){
-					int offset = findSonContaining(block);
+					int offset = this.findSonContaining(block);
 					return sons[offset].smallestCellContaining(block);
+				}
+				else {
+					return this;
 				}
 			}
 		}

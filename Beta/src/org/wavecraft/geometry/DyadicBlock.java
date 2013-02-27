@@ -234,9 +234,12 @@ public class DyadicBlock extends Coord3i {
 			return false;
 		}
 		int step = (int) Math.pow(2, this.getJ()- block.getJ());
-		return (block.x/step == this.x &&
-				block.y/step == this.y && 
-				block.z/step == this.z );
+		int xDiv = MathSoboutils.divideFloor(block.x, step);
+		int yDiv = MathSoboutils.divideFloor(block.y, step);
+		int zDiv = MathSoboutils.divideFloor(block.z, step);
+		return (xDiv == this.x &&
+				yDiv == this.y && 
+				zDiv == this.z );
 	}
 
 	/**

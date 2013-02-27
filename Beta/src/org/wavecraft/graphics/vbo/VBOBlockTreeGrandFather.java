@@ -3,6 +3,7 @@ package org.wavecraft.graphics.vbo;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
@@ -21,12 +22,18 @@ public class VBOBlockTreeGrandFather {
 		putAllFaceInHashetInner(blockTree, allFaces);
 	}
 
+	public static Set<Face> allNonDoublonFaceByCheckingDoublonInHashSet(Blocktree root){
+		HashSet<Face> allFaces = new HashSet<Face>();
+		putAllFaceInHashetInner(root, allFaces);
+		return allFaces;
+	}
+	
 	/**
 	 * method of removing the doublon by checking if the reverse face is not in the hashset
 	 * @param node
 	 * @param allFaces
 	 */
-	public static void putAllFaceInHashetInner(Blocktree node, HashSet<Face> allFaces){
+	private static void putAllFaceInHashetInner(Blocktree node, HashSet<Face> allFaces){
 		switch (node.getState()) {
 		case FATHER: case GRAND_FATHER:
 			for (Blocktree son : node.getSons()){
@@ -52,7 +59,7 @@ public class VBOBlockTreeGrandFather {
 		}
 	}
 
-	private static List<Face> allNonDoublonFaceByCheckingNeigbhorsInTree(Blocktree root){
+	public static List<Face> allNonDoublonFaceByCheckingNeigbhorsInTree(Blocktree root){
 		List<Face> allFaces = new ArrayList<Face>();
 		allNonDoublonFaceByCheckingNeigbhorsInTreeInner(root, root, allFaces);
 		return allFaces;
@@ -75,6 +82,8 @@ public class VBOBlockTreeGrandFather {
 						allFaces.add(face);
 						break;
 					}
+				} else {
+					allFaces.add(face);
 				}
 			}
 			break;
