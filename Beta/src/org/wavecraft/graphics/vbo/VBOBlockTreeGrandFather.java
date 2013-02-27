@@ -1,24 +1,39 @@
 package org.wavecraft.graphics.vbo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.graphics.rasterizer.BlocktreeRasterizer;
+import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
 
+/**
+ * convert a blocktree into a vertex buffer object
+ * @author laurentsifre
+ *
+ */
 public class VBOBlockTreeGrandFather {
 
-
 	private VBOWrapper vboWrapper;
-	private Blocktree blocktree;
+	private float[] data;
 
 	public VBOBlockTreeGrandFather(Blocktree blockTree){
 		// put all face in hashset
-		this.blocktree = blockTree;
-
+		List<Face> allFacesFusionFast = BlocktreeRasterizer.allNonDoublonFaceFusionFast(blockTree);
+		data = FaceToArray.toArrayV3N3T2(allFacesFusionFast);
+		vboWrapper = new VBOWrapper(VboMode.V3N3T2);
+	}
+	
+	public void uploadToGrahpicCard(){
+		vboWrapper.initFromFloat(data);
+	}
+	
+	public void unloadFromGraphicCard(){
+		vboWrapper.delete();
+	}
+	
+	public int getDataSize(){
+		return data.length;
 	}
 
 	

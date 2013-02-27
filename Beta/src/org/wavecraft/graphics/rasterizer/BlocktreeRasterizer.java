@@ -97,7 +97,7 @@ public class BlocktreeRasterizer {
 				smallestNodeContainingBlockInFrontOfFace.getState() != DEAD_GROUND));
 	}
 	
-	private static List<Face> allNonDoublonFaceFusionFast(Blocktree root){
+	public static List<Face> allNonDoublonFaceFusionFast(Blocktree root){
 		// first pass : check for doublon using the check reverse face belongs to hashset
 		Set<Face> allFacesFast = allNonDoublonFaceByCheckingDoublonInHashSet(root);
 		List<Face> allFaces = new ArrayList<Face>();

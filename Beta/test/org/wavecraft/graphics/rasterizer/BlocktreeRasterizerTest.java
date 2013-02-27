@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.lwjgl.Sys;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
@@ -101,6 +102,7 @@ public class BlocktreeRasterizerTest {
 		double t1 = System.currentTimeMillis();
 		Set<Face> allFaces = null;
 		List<Face> allFaceCheckNeighbors = null;
+		List<Face> allFacesFusion = null;
 		for (int i = 0; i<nRun ; i++){
 			 allFaces = BlocktreeRasterizer.allNonDoublonFaceByCheckingDoublonInHashSet(blocktree);
 		}
@@ -109,13 +111,20 @@ public class BlocktreeRasterizerTest {
 			allFaceCheckNeighbors = BlocktreeRasterizer.allNonDoublonFaceByCheckingNeigbhorsInTree(blocktree);
 		}
 		double t3 = System.currentTimeMillis();
+		for (int i = 0; i<nRun ; i++){
+			allFacesFusion = BlocktreeRasterizer.allNonDoublonFaceFusionFast(blocktree);
+		}
+		double t4 = System.currentTimeMillis();
 		
 		System.out.println("large scale hash set method "+(t2-t1));
 		System.out.println("large scale check neighbor method "+(t3-t2));
+		System.out.println("large scale fast fusion method " + (t4-t3));
 		System.out.println("number of face for hash set method "+ allFaces.size());
 		System.out.println("number of face for neighbor "+ allFaceCheckNeighbors.size());
+		System.out.println("number of face for fusion fast "+ allFacesFusion.size());
 		// 8*8*2 + 8*4 = 160
 		// 8*8 + 8*4 = 96 : the first method is faster but computes more face...
+		
 		
 		
 	}

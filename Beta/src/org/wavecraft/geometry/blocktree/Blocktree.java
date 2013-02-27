@@ -22,6 +22,10 @@ public class Blocktree extends DyadicBlock{
 
 
 
+	public int getContent() {
+		return content;
+	}
+
 	/**
 	 * returns a recursive copy of the blocktree and its sons.
 	 * use it to safely modify a tree inside a separate thread 

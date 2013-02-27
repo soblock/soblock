@@ -1,7 +1,11 @@
 package org.wavecraft.graphics.vbo;
 
+import java.util.List;
+
 import org.wavecraft.geometry.Coord3d;
+import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
+import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.graphics.texture.MegaTexture;
 
 public class FaceToArray {
@@ -52,7 +56,7 @@ public class FaceToArray {
 
 	public static float[] toArrayV3N3T2(Face face, int id){
 		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
-		
+
 		float txmin = textCoord[0];
 		float txmax = textCoord[1];
 		float tymin = textCoord[2];
@@ -120,11 +124,11 @@ public class FaceToArray {
 		}
 		return null;
 	}
-	
+
 
 	public static float[] toArrayV3N3T2partlyFilledbis(Face face, int id,float w){
 		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
-		
+
 		float txmin = textCoord[0];
 		float txmax = textCoord[1];
 		float tymin = textCoord[2];
@@ -194,7 +198,7 @@ public class FaceToArray {
 	}
 	public static float[] toArrayV3N3T2partlyFilled(Face face, int id,float heightOfFluid){
 		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
-		
+
 		float txmin = textCoord[0];
 		float txmax = textCoord[1];
 		float tymin = textCoord[2];
@@ -264,4 +268,25 @@ public class FaceToArray {
 	}
 
 
+	public static float[] toArrayV3N3T2(List<Face> faces){
+		int dataSz = ( 3 + 3 + 2) * 4 * faces.size();
+		float[] data = new float[dataSz];
+
+		for (int i = 0; i < faces.size(); i++){
+			Face face = faces.get(i);
+
+			int offset = i*(3 + 3 + 2)*4;
+			DyadicBlock block = face.getFather();
+			int content = 0;
+			if (block instanceof Blocktree){
+				content = ((Blocktree) block).getContent();
+			}
+			float[] dataFace = toArrayV3N3T2(face, content);
+			for (int k = 0; k < dataFace.length; k++){
+				data[offset + k] = dataFace[k]; 
+			}
+		}
+		return data;
+
+	}
 }
