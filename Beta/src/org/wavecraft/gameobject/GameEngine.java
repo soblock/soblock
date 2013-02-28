@@ -105,7 +105,7 @@ public class GameEngine {
 
 		double z0=MathSoboutils.powerOf2[Octree.JMAX]/2;
 
-		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512,512);
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 
 		OctreeEventMediator.getInstance();

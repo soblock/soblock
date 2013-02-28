@@ -39,13 +39,10 @@ public class ThreeDimContentBiome implements ThreeDimContent{
 	double dT=0;
 	double Tmin=-40;
 	double Tmax=Tmin+75;
-	//size of the smallest bloc in meter: if the smallest bloc is 1m*1m*1m, then on a level 14 
-	// (altitude between -8000 and +8000), since everything is metric system (m,s,Kg,J...)
-	// it should be realistic..
-	// so maybe the following is ok
-	double size_bloc=Math.pow(2,14-Octree.JMAX);
+	
+	double size_bloc;
 
-	public ThreeDimContentBiome(double Z0,double Zmax, ThreeDimFunction function){
+	public ThreeDimContentBiome(double Z0,double Zmax, ThreeDimFunction function, int J){
 		g_over_R=9.81/287.105;
 		z0=Z0;
 		initialize_Perlin_maps();
@@ -55,6 +52,11 @@ public class ThreeDimContentBiome implements ThreeDimContent{
 		initialize_soils_proportions();
 		initialize_climates();
 		this.function = function;
+		//size of the smallest bloc in meter: if the smallest bloc is 1m*1m*1m, then on a level 14 
+		// (altitude between -8000 and +8000), since everything is metric system (m,s,Kg,J...)
+		// it should be realistic..
+		// so maybe the following is ok
+		size_bloc=Math.pow(2,14-J);
 	}
 
 	public void initialize_Perlin_maps(){

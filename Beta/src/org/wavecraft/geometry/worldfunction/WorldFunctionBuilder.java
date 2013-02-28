@@ -25,9 +25,9 @@ public class WorldFunctionBuilder {
 		return new WorldFunctionWrapper(new ThreeDimContentConstant(), new ThreeDimFunctionPerlinMS());
 	}
 	
-	public static WorldFunction getWorldFunctionNoisyFlastNoisyContent(double z0,double zmax){
+	public static WorldFunction getWorldFunctionNoisyFlastNoisyContent(double z0,double zmax, int J){
 		ThreeDimFunction function = new ThreeDimFunctionNoisyFlat(z0);
-		ThreeDimContent content = new ThreeDimContentBiome(z0, zmax, function);
+		ThreeDimContent content = new ThreeDimContentBiome(z0, zmax, function, J);
 		return new WorldFunctionWrapper(content, function);
 	}
 }
