@@ -131,7 +131,7 @@ public class GameEngine {
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(0, 0, 0), 512));
 
-		blocktree = new Blocktree(0,0,0,12);
+		blocktree = new Blocktree(0,0,0,10);
 
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
