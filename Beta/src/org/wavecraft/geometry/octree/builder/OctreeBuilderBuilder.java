@@ -22,6 +22,11 @@ public class OctreeBuilderBuilder {
 		return new OctreeBuilderWorldFuntionCullerModif(wf,modif, culler);
 	}
 	
+	public static OctreeBuilder getBuilder(WorldFunction wf){
+		Culler culler = new CullerPosition(GameEngine.getPlayer().getPosition());
+		return new OctreeBuilderWorldFuntionCuller(wf, culler);
+	}
+	
 	public static OctreeBuilder getGeoCullingUniformFromThreeDimFunctionWithModif(ThreeDimFunction fun,ModifOctree modif){
 		WorldFunction wfun = new WorldFunctionWrapper(new ThreeDimContentConstant(), fun);
 		Culler culler = new CullerPosition(GameEngine.getPlayer().getPosition());

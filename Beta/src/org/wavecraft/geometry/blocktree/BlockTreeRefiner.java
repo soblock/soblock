@@ -46,7 +46,17 @@ public class BlockTreeRefiner implements Runnable {
 				setState(State.PROCESSING_JOB);
 				BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
 				Blocktree.State initialStateOfNode = getNodeToRefine().getState();
-				updater.updateInner(getNodeToRefine());
+				//updater.updateInner(getNodeToRefine());
+				switch (initialStateOfNode) {
+				case GRAND_FATHER:
+					updater.splitAllLeaf(getNodeToRefine());
+					break;
+
+				case PATRIARCH:
+					updater.mergeAllLeaf(getNodeToRefine());
+				default:
+					break;
+				}
 				switch (initialStateOfNode) {
 				case GRAND_FATHER:
 					if (getNodeToRefine().getState() == Blocktree.State.PATRIARCH){ // the node has been split : prepare to unload it
@@ -67,10 +77,10 @@ public class BlockTreeRefiner implements Runnable {
 					break;
 
 				case PATRIARCH:
-					if (getNodeToRefine().getState() == Blocktree.State.GRAND_FATHER){ // the node has been merged : unload it
+					if (getNodeToRefine().getState() == Blocktree.State.GRAND_FATHER){ // the node has been merged : upload it
 						VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine);
 						vbo = nextVbo;
-						vboState = StateVBO.UNLOAD_ME_UPLOAD_SONS;
+						vboState = StateVBO.UPLOAD_ME_UNLOAD_SONS;
 					}
 					break;
 				default:

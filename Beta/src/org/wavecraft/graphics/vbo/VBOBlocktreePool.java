@@ -50,8 +50,8 @@ public class VBOBlocktreePool {
 			VBOBlockTreeGrandFather vbo = toUpload.get(blocktree);
 			vbo.uploadToGrahpicCard();
 			uploaded.put(blocktree, vbo);
-			System.out.println("upload "+blocktree);
-			System.out.println("data size " + vbo.getDataSize());
+			//System.out.println("uPload "+blocktree);
+			
 		}
 		toUpload.clear();
 	}
@@ -62,9 +62,10 @@ public class VBOBlocktreePool {
 			if (vbo != null){
 				vbo.unloadFromGraphicCard();
 				uploaded.remove(blocktree);
-				System.out.println("unload "+blocktree);
-			} else {
-				int wtf = 1;
+				//System.out.println("uNload "+blocktree);
+			} 
+			else {
+				//System.out.println("did not retrieve" + blocktree);
 			}
 		}
 		toUnload.clear();

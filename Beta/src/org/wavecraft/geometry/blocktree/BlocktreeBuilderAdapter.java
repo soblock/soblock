@@ -27,7 +27,8 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 	@Override
 	public boolean shouldSplitGreatFatherToPatriarch(DyadicBlock block) {
 		//return !builder.cull(new Octree(block, null));
-		return priority(block)>1;
+		return (block.getJ()>BlocktreeUpdaterSimple.BLOCK_LOG_SIZE && priority(block)>1);
+		
 	}
 
 	@Override
@@ -43,6 +44,7 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 
 	@Override
 	public double priority(DyadicBlock block) {
+		if (block.getJ()<=BlocktreeUpdaterSimple.BLOCK_LOG_SIZE ) {return 0;}
 		return builder.priority(block);
 	}
 	

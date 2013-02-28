@@ -105,7 +105,7 @@ public class GameEngine {
 
 		double z0=MathSoboutils.powerOf2[Octree.JMAX]/2;
 
-		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(z0,z0);
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512,512);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 
 		OctreeEventMediator.getInstance();
@@ -126,9 +126,12 @@ public class GameEngine {
 		//WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
 		//BlocktreeBuilderAdapter blockTreeBuilder
 		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
-		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(0, 0, 0), 512));
+		OctreeBuilder ob2 = OctreeBuilderBuilder.getBuilder(wf);
+		builder = new BlocktreeBuilderAdapter(ob2);
+		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
+		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(0, 0, 0), 512));
 
-		blocktree = new Blocktree(0,0,0,10);
+		blocktree = new Blocktree(0,0,0,12);
 
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
@@ -198,8 +201,8 @@ public class GameEngine {
 
 			// the refiner has finished, copy the results in the current tree.
 			if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
-				Blocktree nodeToCopy = refiner.getNodeToRefine();
 				refiner.doInMainThreadWhenDone();
+				Blocktree nodeToCopy = refiner.getNodeToRefine();
 				if (nodeToCopy.getJ() == blocktree.getJ()){
 					blocktree = nodeToCopy;
 				} else {
@@ -219,7 +222,7 @@ public class GameEngine {
 					nextUpdateState = State.PATRIARCH;
 				}
 				Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, nextUpdateState);
-				//System.out.println("next state tu update " + nextUpdateState +"node to update" + nodeToUpdate);
+				//System.out.println("next state tu update " + nextUpdateState +"node to update " + nodeToUpdate);
 				if (nodeToUpdate!=null){
 					refiner.setNodeToRefine(nodeToUpdate);
 					refiner.setBuilder(builder);

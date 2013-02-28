@@ -5,7 +5,7 @@ import static org.wavecraft.geometry.blocktree.Blocktree.State.*;
 public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 
 	protected BlocktreeBuilder builder;
-	private int BLOCK_LOG_SIZE = 2;
+	public static int BLOCK_LOG_SIZE = 4;
 
 	public BlocktreeUpdaterSimple(BlocktreeBuilder builder){
 		this.builder = builder;
@@ -86,7 +86,7 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 
 	}
 
-	private void splitAllLeaf(Blocktree greatFather){
+	public void splitAllLeaf(Blocktree greatFather){
 		splitAllLeafInner(greatFather, greatFather);
 		greatFather.setState(PATRIARCH);
 		for (Blocktree son : greatFather.getSons()){
@@ -128,7 +128,7 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 		}
 	}
 
-	private void mergeAllLeaf(Blocktree patriarch){
+	public void mergeAllLeaf(Blocktree patriarch){
 		mergeAllLeafInner(patriarch, patriarch);
 		patriarch.setState(GRAND_FATHER);
 		for (Blocktree son : patriarch.getSons()){
@@ -141,6 +141,7 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 	private void mergeAllLeafInner(Blocktree patriarch, Blocktree node){
 		if (node.getJ()>= patriarch.getJ() - BLOCK_LOG_SIZE ){
 			if (node.hasSons()){
+				node.setState(FATHER);
 				for (Blocktree son : node.getSons()) {
 					mergeAllLeafInner(patriarch, son);
 				}
@@ -151,10 +152,10 @@ public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 		}
 	}
 
-	private void mergeLeaf(Blocktree father){
-		if (father.getState()==FATHER){
-			father.killSons();
-			father.setState(LEAF);
+	private void mergeLeaf(Blocktree mayHaveSons){
+		if (mayHaveSons.hasSons()){
+			mayHaveSons.killSons();
+			mayHaveSons.setState(LEAF);
 		}
 	}
 
