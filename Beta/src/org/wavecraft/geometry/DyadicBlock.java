@@ -112,6 +112,7 @@ public class DyadicBlock extends Coord3i {
 		return (x*15485867)^(y*15485927)^(z*15485941)^(J*15485989); 
 	}
 
+	@Override
 	public boolean equals(Object o){
 		if (o instanceof DyadicBlock){
 			DyadicBlock o2 = (DyadicBlock) o;

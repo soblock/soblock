@@ -56,7 +56,7 @@ public class GraphicEngine {
 		light = new Light();
 		// vboFace = new VBOFace(3*64000); // can go up to 6 * 64000 on macbook
 		// pro
-		vboFace = new VBOFace(8096, 4*32, VboMode.V3N3T2); // can go up to 6 *
+		vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
 		//vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
 		// 64000 on macbook
 		// pro
@@ -134,7 +134,7 @@ public class GraphicEngine {
 		// GL11.glFlush();
 
 
-		//BlocktreRendererLines.render(GameEngine.getBlocktree());
+		BlocktreRendererLines.render(GameEngine.getBlocktree());
 
 
 
@@ -164,6 +164,7 @@ public class GraphicEngine {
 
 
 
+		VBOBlocktreePool.getInstance().render();
 
 
 

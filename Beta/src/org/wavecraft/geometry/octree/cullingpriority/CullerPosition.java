@@ -17,7 +17,7 @@ import org.wavecraft.ui.events.UiEventMediator;
 public class CullerPosition implements Culler, OctreePriorityFunction, UiEventListener{
 
 	private Coord3d position;
-	private double geoCullCoefficient = 32;
+	private double geoCullCoefficient = 1;
 	private final static double minCullingCoefficient = 1;
 	private final static double maxCullingCoefficient = 512;
 	public CullerPosition(){

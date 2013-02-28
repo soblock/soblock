@@ -31,7 +31,7 @@ public class BlocktreeRasterizer {
 	 */
 	private static void putAllFaceInHashetInner(Blocktree node, HashSet<Face> allFaces){
 		switch (node.getState()) {
-		case FATHER: case GRAND_FATHER:
+		case FATHER: case GRAND_FATHER: case PATRIARCH :
 			for (Blocktree son : node.getSons()){
 				putAllFaceInHashetInner(son, allFaces);
 			}

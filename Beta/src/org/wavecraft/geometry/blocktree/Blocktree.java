@@ -1,9 +1,22 @@
 package org.wavecraft.geometry.blocktree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.wavecraft.geometry.DyadicBlock;
 
 @SuppressWarnings("serial")
 public class Blocktree extends DyadicBlock{
+//
+//	@Override
+//	public int hashCode() {
+//		return super.hashCode();
+//	}
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		return super.equals(obj);
+//	}
 
 	public enum State{
 		PATRIARCH,
@@ -137,5 +150,48 @@ public class Blocktree extends DyadicBlock{
 		return null;
 	}
 
+	@Override
+	public int hashCode() {
+		
+		int result = super.hashCode();
+		
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Blocktree other = (Blocktree) obj;
+		return (x==other.x && y==other.y && z==other.z && getJ()==other.getJ()); 
+	}
+	
+	/**
+	 * 
+	 * @param state
+	 */
+	public List<Blocktree> listOfSonsOfStateGrandFather(){
+		List<Blocktree> allSons = new ArrayList<Blocktree>();
+		this.listOfSonsOfStateGrandFatherInner(allSons);
+		return allSons;
+	}
+
+	private void listOfSonsOfStateGrandFatherInner(List<Blocktree> allSons) {
+		if (this.state == State.GRAND_FATHER){
+			allSons.add(this);
+		}
+		if (this.state == State.GRAND_FATHER || this.state == State.PATRIARCH){
+			for (Blocktree son : this.getSons()){
+				son.listOfSonsOfStateGrandFatherInner(allSons);
+			}
+		}
+	}
+
+
+	
 
 }

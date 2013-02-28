@@ -140,7 +140,7 @@ public class GameEngine {
 
 		refiner = new BlockTreeRefiner();
 		Thread refinerThread = new Thread(refiner);
-		//refinerThread.start();
+		refinerThread.start();
 
 		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
 		//((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
@@ -194,7 +194,7 @@ public class GameEngine {
 
 
 
-		if (false){
+		if (true){
 
 			// the refiner has finished, copy the results in the current tree.
 			if (refiner.getState() == BlockTreeRefiner.State.FINISHED){

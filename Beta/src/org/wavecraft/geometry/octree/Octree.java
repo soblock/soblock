@@ -14,7 +14,7 @@ import org.wavecraft.geometry.octree.fluid.FluidTree;
 @SuppressWarnings("serial")
 // put every thing application-specific ( fluid, modif etc... ) in state
 public class Octree extends DyadicBlock{
-	public static int JMAX = 10;
+	public static int JMAX = 0;
 	protected Octree[] sons = null;
 	protected Octree father = null;
 	protected OctreeState state = null;
