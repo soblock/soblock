@@ -30,6 +30,7 @@ public class BlockTreeRefiner implements Runnable {
 	private State state;
 	private VBOBlockTreeGrandFather vbo;
 	private List<VBOBlockTreeGrandFather> vboSons;
+	private List<Blocktree> sonsBefore;
 	
 	public BlockTreeRefiner(){
 		state = State.NO_JOB;
@@ -54,6 +55,7 @@ public class BlockTreeRefiner implements Runnable {
 					break;
 
 				case PATRIARCH:
+					sonsBefore = getNodeToRefine().listOfSonsOfStateGrandFather();
 					updater.mergeAllLeaf(getNodeToRefine());
 				default:
 					break;
@@ -89,7 +91,7 @@ public class BlockTreeRefiner implements Runnable {
 					break;
 				}
 				double t3 = System.currentTimeMillis();
-				System.out.println("refine "+ (t2-t1)+ " faces "+(t3-t2));
+				//System.out.println("refine "+ (t2-t1)+ " faces "+(t3-t2));
 				setState(State.FINISHED);
 			}
 			else {
@@ -139,7 +141,7 @@ public class BlockTreeRefiner implements Runnable {
 		switch (vboState) {
 		case UPLOAD_ME_UNLOAD_SONS:
 			VBOBlocktreePool.getInstance().put(getNodeToRefine(), getVbo());
-			for (Blocktree grandsons : nodeToRefine.listOfSonsOfStateGrandFather()){
+			for (Blocktree grandsons : sonsBefore){
 				VBOBlocktreePool.getInstance().prepareToUnload(grandsons);
 			}
 			break;
