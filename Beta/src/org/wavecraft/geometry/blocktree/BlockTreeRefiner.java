@@ -43,6 +43,7 @@ public class BlockTreeRefiner implements Runnable {
 		while (true){
 			//System.out.println(getState());
 			if (getState() == State.READY_TO_PROCESS_JOB) {
+				double t1 = System.currentTimeMillis();
 				setState(State.PROCESSING_JOB);
 				BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
 				Blocktree.State initialStateOfNode = getNodeToRefine().getState();
@@ -57,6 +58,7 @@ public class BlockTreeRefiner implements Runnable {
 				default:
 					break;
 				}
+				double t2 = System.currentTimeMillis();
 				switch (initialStateOfNode) {
 				case GRAND_FATHER:
 					if (getNodeToRefine().getState() == Blocktree.State.PATRIARCH){ // the node has been split : prepare to unload it
@@ -86,6 +88,8 @@ public class BlockTreeRefiner implements Runnable {
 				default:
 					break;
 				}
+				double t3 = System.currentTimeMillis();
+				System.out.println("refine "+ (t2-t1)+ " faces "+(t3-t2));
 				setState(State.FINISHED);
 			}
 			else {

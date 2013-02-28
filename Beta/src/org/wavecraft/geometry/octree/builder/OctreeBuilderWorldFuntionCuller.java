@@ -34,9 +34,9 @@ public class OctreeBuilderWorldFuntionCuller implements OctreeBuilder{
 	}
 	@Override
 	public boolean isOutsideDomainOfInterest(Octree octree) {
-		//return isOutsideDomainOfInterestSinglePrecision(octree);
+		return isOutsideDomainOfInterestSinglePrecision(octree);
 
-		return isOutsideDomainOfInterestArbitrayPrecision(octree, 3);
+		//return isOutsideDomainOfInterestArbitrayPrecision(octree, 3);
 	}
 
 

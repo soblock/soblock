@@ -222,7 +222,7 @@ public class GameEngine {
 					nextUpdateState = State.PATRIARCH;
 				}
 				Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, nextUpdateState);
-				//System.out.println("next state tu update " + nextUpdateState +"node to update " + nodeToUpdate);
+				System.out.println("next state tu update " + nextUpdateState +"node to update " + nodeToUpdate);
 				if (nodeToUpdate!=null){
 					refiner.setNodeToRefine(nodeToUpdate);
 					refiner.setBuilder(builder);
