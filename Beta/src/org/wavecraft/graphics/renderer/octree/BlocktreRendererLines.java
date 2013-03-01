@@ -57,10 +57,12 @@ public class BlocktreRendererLines implements UiEventListener {
 		default:
 			break;
 		}
-		
-		if (node.hasSons()){
-			for (Blocktree son : node.getSons()){
-				renderInner(son);
+
+		if (drawMode!=DrawMode.DRAWNOTHING){
+			if (node.hasSons()){
+				for (Blocktree son : node.getSons()){
+					renderInner(son);
+				}
 			}
 		}
 
