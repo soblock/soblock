@@ -50,6 +50,7 @@ public class KeyBoard {
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_Y),KeyboardBinding.KEYBOARD_SPEED_UP3);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_U),KeyboardBinding.KEYBOARD_SPEED_UP4);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_O),KeyboardBinding.KEYBOARD_SWITCH_OCTREEDRAW);
+		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_V),KeyboardBinding.KEYBOARD_SWITCH_VBORAW);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_P),KeyboardBinding.KEYBOARD_SWITCH_COLOR);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_L),KeyboardBinding.KEYBOARD_CULLING_INCREASE);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_BACKSLASH),KeyboardBinding.KEYBOARD_CULLING_DECREASE);

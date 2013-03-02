@@ -19,8 +19,6 @@ public class BlocktreRendererLines implements UiEventListener {
 		DRAWALL,
 		DRAWLEAF,
 		DRAWNOTHING,
-		TEXTURED,
-		MODIF;
 	}
 	public static BlocktreRendererLines getInstance(){
 		if (instance == null){
@@ -30,7 +28,7 @@ public class BlocktreRendererLines implements UiEventListener {
 	}
 
 	private BlocktreRendererLines(){
-		drawMode = DrawMode.DRAWALL;
+		drawMode = DrawMode.DRAWLEAF;
 		UiEventMediator.addListener(this);
 	}
 
@@ -38,7 +36,10 @@ public class BlocktreRendererLines implements UiEventListener {
 	public static void render(Blocktree root){
 		getInstance();
 		glBegin(GL_LINES);
-		renderInner(root);
+
+		if (drawMode!=DrawMode.DRAWNOTHING){
+			renderInner(root);
+		}
 		glEnd();
 	}
 
@@ -58,15 +59,14 @@ public class BlocktreRendererLines implements UiEventListener {
 			break;
 		}
 
-		if (drawMode!=DrawMode.DRAWNOTHING){
-			if (node.hasSons()){
-				for (Blocktree son : node.getSons()){
-					renderInner(son);
-				}
+		if (node.hasSons()){
+			for (Blocktree son : node.getSons()){
+				renderInner(son);
 			}
 		}
-
 	}
+
+
 
 	@Override
 	public void handle(UiEvent e) {
@@ -83,14 +83,9 @@ public class BlocktreRendererLines implements UiEventListener {
 					drawMode = DrawMode.DRAWNOTHING;
 					break;
 				case DRAWNOTHING:
-					drawMode = DrawMode.TEXTURED;
-					break;
-				case TEXTURED:
-					drawMode = DrawMode.MODIF;
-					break;
-				case MODIF :
 					drawMode = DrawMode.DRAWALL;
 					break;
+
 				default:
 					break;
 				}

@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.ui.KeyboardBinding;
+import org.wavecraft.ui.events.UiEvent;
+import org.wavecraft.ui.events.UiEventKeyboardPressed;
+import org.wavecraft.ui.events.UiEventListener;
+import org.wavecraft.ui.events.UiEventMediator;
 
 /**
  * singleton
@@ -12,16 +17,20 @@ import org.wavecraft.geometry.blocktree.Blocktree;
  * @author laurentsifre
  *
  */
-public class VBOBlocktreePool {
+public class VBOBlocktreePool implements UiEventListener{
+
+	private enum State{
+		DRAW_NOTHING,
+		DRAW_ALL,
+		DRAW_SMALL
+	}
 
 	private static VBOBlocktreePool instance;
 
-
+	private State state = State.DRAW_ALL;
 
 	private HashMap<Blocktree, VBOBlockTreeGrandFather> uploaded;
-
 	private HashMap<Blocktree, VBOBlockTreeGrandFather> toUpload;
-
 	private List<Blocktree> toUnload;
 
 	public static VBOBlocktreePool getInstance(){
@@ -32,6 +41,8 @@ public class VBOBlocktreePool {
 	}
 
 	private VBOBlocktreePool(){
+		state = State.DRAW_ALL;
+		UiEventMediator.getUiEventMediator().add(this);
 		uploaded = new HashMap<Blocktree, VBOBlockTreeGrandFather>();
 		toUpload = new HashMap<Blocktree, VBOBlockTreeGrandFather>();
 		toUnload = new ArrayList<Blocktree>();
@@ -51,7 +62,7 @@ public class VBOBlocktreePool {
 			vbo.uploadToGrahpicCard();
 			uploaded.put(blocktree, vbo);
 			//System.out.println("uPload "+blocktree);
-			
+
 		}
 		toUpload.clear();
 	}
@@ -72,9 +83,50 @@ public class VBOBlocktreePool {
 	}
 
 	public void render(){
-		for (Blocktree blocktree : uploaded.keySet()){
-			VBOBlockTreeGrandFather vbo = uploaded.get(blocktree);
-			vbo.render();
+		switch (state) {
+		case DRAW_ALL:
+			for (Blocktree blocktree : uploaded.keySet()){
+				VBOBlockTreeGrandFather vbo = uploaded.get(blocktree);
+				vbo.render();
+			}
+			break;
+
+		case DRAW_SMALL:
+			for (Blocktree blocktree : uploaded.keySet()){
+				if (blocktree.getJ()<=4){
+					VBOBlockTreeGrandFather vbo = uploaded.get(blocktree);
+					vbo.render();
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
+	@Override
+	public void handle(UiEvent e) {
+		if (e instanceof UiEventKeyboardPressed){
+			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_SWITCH_VBORAW){
+				switch (state) {
+				case DRAW_ALL:
+					state = State.DRAW_SMALL;
+					break;
+					
+				case DRAW_SMALL:
+					state = State.DRAW_NOTHING;
+					break;
+
+				case DRAW_NOTHING:
+					state = State.DRAW_ALL;
+					break;
+				default:
+					break;
+				}
+			}
+
 		}
 	}
 

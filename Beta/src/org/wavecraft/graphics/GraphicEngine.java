@@ -130,7 +130,7 @@ public class GraphicEngine {
 
 	public static void innerRender() {
 		// GL11.glFlush();
-		Grid.draw();
+		//Grid.draw();
 		// GL11.glFlush();
 
 
@@ -174,9 +174,7 @@ public class GraphicEngine {
 		light.draw();
 
 
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 
 	public static void update() {
