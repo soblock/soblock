@@ -54,8 +54,85 @@ public class FaceToArray {
 	}
 
 
+
+
+	private static float[] toArrayV3N3T2C3(Face face, int id, float[] lightAtVertices) {
+		float[] textCoord = MegaTexture.getInstance().getTexCoordinate(id,face.getNormal());
+
+		float txmin = textCoord[0];
+		float txmax = textCoord[1];
+		float tymin = textCoord[2];
+		float tymax = textCoord[3];
+		float ttj = (float) Math.pow(2, face.getJ());
+		float xmin = (float) (ttj*face.coord.x);
+		float ymin = (float) (ttj*face.coord.y);
+		float zmin = (float) (ttj*face.coord.z);
+		float l0 = lightAtVertices[0];
+		float l1 = lightAtVertices[1];
+		float l2 = lightAtVertices[2];
+		float l3 = lightAtVertices[3];
+
+		switch (face.getNormal()){
+		case 1 :{
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,     +1,      0,       0,     txmin,    tymin, l0, l0, l0,
+					xmin,        ymin+ttj,  zmin,     +1,      0,       0,     txmax,    tymin, l1, l1, l1,
+					xmin,        ymin+ttj,  zmin+ttj, +1,      0,       0,     txmax,    tymax, l2, l2, l2,
+					xmin,        ymin,      zmin+ttj, +1,      0,       0,     txmin,    tymax, l3, l3, l3,
+			};
+			return data;
+		}
+		case -1 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,     -1,      0,       0,     txmax,    tymin, l0, l0, l0,
+					xmin,        ymin,      zmin+ttj, -1,      0,       0,     txmax,    tymax, l1, l1, l1,
+					xmin,        ymin+ttj,  zmin+ttj, -1,      0,       0,     txmin,    tymax, l2, l2, l2,
+					xmin,        ymin+ttj,  zmin,     -1,      0,       0,     txmin,    tymin, l3, l3, l3,
+			};
+			return data;
+		}
+		case 2 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,     +1,       0,     txmax,    tymin, l0, l0, l0,
+					xmin,        ymin,      zmin+ttj,  0,     +1,       0,     txmax,    tymax, l1, l1, l1,
+					xmin+ttj,    ymin,  	zmin+ttj,  0,     +1,       0,     txmin,    tymax, l2, l2, l2,
+					xmin+ttj,    ymin,      zmin,      0,     +1,       0,     txmin,    tymin, l3, l3, l3,
+			};
+			return data;
+		}
+		case -2 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,     -1,       0,     txmin,    tymin, l0, l0, l0,
+					xmin+ttj,    ymin,      zmin,      0,     -1,       0,     txmax,    tymin, l1, l1, l1,
+					xmin+ttj,    ymin,  	zmin+ttj,  0,     -1,       0,     txmax,    tymax, l2, l2, l2,
+					xmin,        ymin,      zmin+ttj,  0,     -1,       0,     txmin,    tymax, l3, l3, l3,
+			};
+			return data;
+		}
+		case -3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,      0,      -1,     txmax,    tymin, l0, l0, l0,
+					xmin    ,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymin, l1, l1, l1,
+					xmin+ttj,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymax, l2, l2, l2,
+					xmin+ttj,    ymin,      zmin,      0,      0,      -1,     txmax,    tymax, l3, l3, l3,
+			};
+			return data;
+		}
+		case 3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,      0,      +1,     txmin,    tymin, l0, l0, l0,
+					xmin+ttj,    ymin,      zmin,      0,      0,      +1,     txmin,    tymax, l1, l1, l1,
+					xmin+ttj,    ymin+ttj,  zmin,      0,      0,      +1,     txmax,    tymax, l2, l2, l2,
+					xmin    ,    ymin+ttj,  zmin,      0,      0,      +1,     txmax,    tymin, l3, l3, l3
+			};
+			return data;
+		}
+		}
+		return null;
+	}
+
 	public static float[] toArrayV3N3T2(Face face, int id){
-		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
+		float[] textCoord = MegaTexture.getInstance().getTexCoordinate(id,face.getNormal());
 
 		float txmin = textCoord[0];
 		float txmax = textCoord[1];
@@ -127,7 +204,7 @@ public class FaceToArray {
 
 
 	public static float[] toArrayV3N3T2partlyFilledbis(Face face, int id,float w){
-		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
+		float[] textCoord = MegaTexture.getInstance().getTexCoordinate(id,face.getNormal());
 
 		float txmin = textCoord[0];
 		float txmax = textCoord[1];
@@ -197,7 +274,7 @@ public class FaceToArray {
 		return null;
 	}
 	public static float[] toArrayV3N3T2partlyFilled(Face face, int id,float heightOfFluid){
-		float[] textCoord = MegaTexture.getTexCoordinate(id,face.getNormal());
+		float[] textCoord = MegaTexture.getInstance().getTexCoordinate(id,face.getNormal());
 
 		float txmin = textCoord[0];
 		float txmax = textCoord[1];
@@ -287,6 +364,26 @@ public class FaceToArray {
 			}
 		}
 		return data;
+	}
 
+	public static float[] toArrayV3N3T2C3(List<LightFace> ligthFaces){
+		int dataSz = ( 3 + 3 + 2 + 3) * 4 * ligthFaces.size();
+		float[] data = new float[dataSz];
+
+		for (int i = 0; i < ligthFaces.size(); i++){
+			Face face = ligthFaces.get(i).getFace();
+
+			int offset = i*(3 + 3 + 2 + 3)*4;
+			DyadicBlock block = face.getFather();
+			int content = 0;
+			if (block instanceof Blocktree){
+				content = ((Blocktree) block).getContent();
+			}
+			float[] dataFace = toArrayV3N3T2C3(face, content, ligthFaces.get(i).getLigthAtVertice());
+			for (int k = 0; k < dataFace.length; k++){
+				data[offset + k] = dataFace[k]; 
+			}
+		}
+		return data;
 	}
 }

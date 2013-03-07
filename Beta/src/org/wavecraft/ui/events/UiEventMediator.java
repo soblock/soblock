@@ -25,7 +25,7 @@ public class UiEventMediator extends EventMediator<UiEvent, UiEventListener>{
 		uiEventMediator.add(listener);
 	}
 	
-	public static void addEvent(UiEvent event){
+	public  void addEvent(UiEvent event){
 		uiEventMediator.add(event);
 	}
 	

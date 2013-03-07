@@ -18,7 +18,8 @@ import org.wavecraft.graphics.texture.MegaTexture;
 public class VBOWrapper {
 	public enum VboMode{
 		V3N3C4, // 3 float for position, 3 for normal, 4 for color (rgba)
-		V3N3T2; // 3 float for position, 3 for normal, 2 for texture coordinate
+		V3N3T2, // 3 float for position, 3 for normal, 2 for texture coordinate
+		V3N3T2C3;
 	}
 	
 	private int vertex_buffer_id;
@@ -37,6 +38,9 @@ public class VBOWrapper {
 			break;
 		case V3N3T2:
 			stride = 8;
+			break;
+		case V3N3T2C3:
+			stride = 3 + 3 + 2 + 3;
 			break;
 		default:
 			break;
@@ -132,7 +136,32 @@ public class VBOWrapper {
 			GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
 			GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);	
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			break;
+		case V3N3T2C3 :
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL11.GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL11.GL_NEAREST);
+
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			MegaTexture.bind();
+			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+			GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+			GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertex_buffer_id);
+			GL11.glVertexPointer(3, GL11.GL_FLOAT, 4*stride, 0);
+			GL11.glNormalPointer(GL11.GL_FLOAT, 4*stride, 12);
+			GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 4*stride,24);
+			GL11.glColorPointer(3, GL11.GL_FLOAT, 4*stride, 4*(3+3+2));
+
+			GL11.glDrawArrays(GL11.GL_QUADS, 0, size/ stride);
+			GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+			GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+			GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);	
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			
+			break;
 		}
+		
 		
 	}
 

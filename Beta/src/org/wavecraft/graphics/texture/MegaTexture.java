@@ -126,7 +126,7 @@ public class MegaTexture {
 
 
 	//xmin xmax ymin ymax
-	public static  float[] getTexCoordinate(int id){
+	public  float[] getTexCoordinate(int id){
 		float epsilon = 1E-5f;
 		float[] texCoord=new float[4];
 		texCoord[0]= 0f;
@@ -136,7 +136,7 @@ public class MegaTexture {
 		return texCoord;
 	}
 
-	public static float[] getTexCoordinate(int id, int normal){
+	public float[] getTexCoordinate(int id, int normal){
 		float epsilon = 1E-5f;
 		float[] texCoord=new float[4];
 		int idn =0; // id of normal (between 0 and 5)

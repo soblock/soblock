@@ -42,6 +42,8 @@ public class VBOFace implements OctreeEventListener {
 		case V3N3T2 : 
 			stride = 8 * 4; // number of float per vertices * 4 bytes per float	
 			break;
+		default:
+			throw new IllegalArgumentException("not supported");
 		}
 
 		verticePerFace = 4 ; 
@@ -126,6 +128,9 @@ public class VBOFace implements OctreeEventListener {
 				content = ((Octree) b).getContent();
 			}
 			buff = FaceToArray.toArrayV3N3T2(face, content);
+			break;
+		default:
+			throw new IllegalArgumentException("not supported");
 		}
 		int j = position/size;
 		int i = position%size;
@@ -172,6 +177,9 @@ public class VBOFace implements OctreeEventListener {
 			break;
 		case V3N3T2 :
 			buff = FaceToArray.toArrayV3N3T2(facetmp, 0);
+			break;
+		case V3N3T2C3 : 
+			throw new IllegalArgumentException("not supported");
 		}
 		if (push){
 			vboArr[j].update(buff, verticePerFace*i);

@@ -85,7 +85,7 @@ public class KeyBoard {
 					if (this.bindingMap.containsKey(ikc)){
 						KeyboardBinding keyboardBinding= this.bindingMap.get(ikc);
 						UiEvent event = new UiEventKeyboardPressed(keyboardBinding);
-						UiEventMediator.addEvent(event);
+						UiEventMediator.getUiEventMediator().addEvent(event);
 				}
 			}
 		}				
@@ -96,7 +96,7 @@ public class KeyBoard {
 			if (Keyboard.isKeyDown(keyVal.getKey())){
 				KeyboardBinding keyboardBinding = keyVal.getValue();
 				UiEvent event = new UiEventKeyboardDown(keyboardBinding);
-				UiEventMediator.addEvent(event);
+				UiEventMediator.getUiEventMediator().addEvent(event);
 			}
 		}
 	}

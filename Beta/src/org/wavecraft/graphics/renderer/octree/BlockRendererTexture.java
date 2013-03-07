@@ -59,7 +59,7 @@ public class BlockRendererTexture {
 		if (block instanceof Octree){
 			id = ((Octree) block).getContent();
 		}
-		float[] texCoord = MegaTexture.getTexCoordinate(id);
+		float[] texCoord = MegaTexture.getInstance().getTexCoordinate(id);
 		GL11.glTexCoord2d(0, 0);
 		
 		float ttj  = (float) Math.pow(2, block.getJ());

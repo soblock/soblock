@@ -40,7 +40,7 @@ public class Mouse implements UiEventListener{
 		// move event
 		if (lastMove.x!= 0 && lastMove.y!=0){
 			UiEvent eventMoved = new UiEventMouseMoved(lastMove);
-			UiEventMediator.addEvent(eventMoved);
+			UiEventMediator.getUiEventMediator().addEvent(eventMoved);
 		}
 
 		// click events
@@ -52,7 +52,7 @@ public class Mouse implements UiEventListener{
 				int y = org.lwjgl.input.Mouse.getEventY();
 
 				UiEventMouseClicked eventClicked = new UiEventMouseClicked(new Coord2d(x, y), buttonId, buttonState);
-				UiEventMediator.addEvent(eventClicked);
+				UiEventMediator.getUiEventMediator().addEvent(eventClicked);
 			}
 		}
 

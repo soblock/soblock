@@ -39,7 +39,7 @@ public class WindowFrame implements UiEventListener {
 			public void componentResized(ComponentEvent e)
 			{
 				UiEvent event = new UiEventWindowResized(canvas.getWidth(),canvas.getHeight());
-				UiEventMediator.addEvent(event);
+				UiEventMediator.getUiEventMediator().addEvent(event);
 			}
 		});
 
