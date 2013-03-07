@@ -31,17 +31,19 @@ public class BlockTreeRefiner implements Runnable {
 	private VBOBlockTreeGrandFather vbo;
 	private List<VBOBlockTreeGrandFather> vboSons;
 	private List<Blocktree> sonsBefore;
+	private boolean active;
 	
 	public BlockTreeRefiner(){
 		state = State.NO_JOB;
 		nodeToRefine = null;
 		builder = null;
 		vboSons = new ArrayList<VBOBlockTreeGrandFather>();
+		setActive(true);
 	}
 	
 	@Override
 	public void run() {
-		while (true){
+		while (isActive()){
 			//System.out.println(getState());
 			if (getState() == State.READY_TO_PROCESS_JOB) {
 				double t1 = System.currentTimeMillis();
@@ -161,6 +163,14 @@ public class BlockTreeRefiner implements Runnable {
 			break;
 		}
 		vboState = StateVBO.DO_NOTHING;
+	}
+
+	public synchronized boolean isActive() {
+		return active;
+	}
+
+	public synchronized void setActive(boolean active) {
+		this.active = active;
 	}
 
 	

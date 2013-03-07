@@ -81,6 +81,7 @@ public class WaveCraftSP implements UiEventListener {
 	}
 
 	protected void close() {
+		GameEngine.getGameEngine().prepareForExit();
 		UserInterface.close();
 	}
 

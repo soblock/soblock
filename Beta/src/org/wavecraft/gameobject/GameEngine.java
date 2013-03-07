@@ -55,6 +55,7 @@ public class GameEngine {
 	private static BlockTreeUpdaterMaxPriority blockTreeUpdater;
 	private static BlocktreeUpdaterSimple blockTreeUpdaterSimple;
 	private static BlockTreeRefiner refiner;
+	private static Thread refinerThread; 
 	private static BlocktreeBuilder builder;
 
 	public static GameEngine getGameEngine(){
@@ -103,7 +104,6 @@ public class GameEngine {
 		modif.computeSumAncestors();
 
 
-		double z0=MathSoboutils.powerOf2[Octree.JMAX]/2;
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
@@ -142,7 +142,7 @@ public class GameEngine {
 		blockTreeUpdater = new BlockTreeUpdaterMaxPriority(builder);
 
 		refiner = new BlockTreeRefiner();
-		Thread refinerThread = new Thread(refiner);
+		refinerThread = new Thread(refiner);
 		refinerThread.start();
 
 		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
@@ -243,6 +243,11 @@ public class GameEngine {
 		return blocktree;
 	}
 
+	
+	public void prepareForExit(){
+		refiner.setActive(false);
+		
+	}
 
 
 
