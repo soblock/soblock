@@ -2,12 +2,15 @@ package org.wavecraft.graphics;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.Coord3i;
+import org.wavecraft.geometry.Face;
+import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.builder.OctreeBuilderWorldFuntionCullerModif;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
@@ -21,6 +24,7 @@ import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
 import org.wavecraft.graphics.renderer.octree.BlocktreRendererLines;
 import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
 import org.wavecraft.graphics.texture.MegaTexture;
+import org.wavecraft.graphics.vbo.LightFace;
 import org.wavecraft.graphics.vbo.VBOBlocktreePool;
 import org.wavecraft.graphics.vbo.VBOFace;
 import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
@@ -61,7 +65,7 @@ public class GraphicEngine {
 		// 64000 on macbook
 		// pro
 		OctreeEventMediator.addListener(vboFace);
-		MegaTexture.getInstance();
+		MegaTexture.getInstance().loadTexture();
 
 		WindowSize.getInstance();
 
@@ -130,10 +134,10 @@ public class GraphicEngine {
 
 	public static void innerRender() {
 		// GL11.glFlush();
-		//Grid.draw();
+		Grid.draw();
 		// GL11.glFlush();
 
-
+		
 		BlocktreRendererLines.render(GameEngine.getBlocktree());
 
 
@@ -158,8 +162,8 @@ public class GraphicEngine {
 			OctreeRendererLines.renderModif(modif);
 		}
 
-		light.initLight();
-
+		//light.initLight();
+		light.setSkyColor();
 		vboFace.draw();
 
 

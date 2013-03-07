@@ -65,7 +65,7 @@ public class Face {
 		return new Face(coord, J, -normal);
 	}
 
-	public Coord3d[] vertices(){
+	public Coord3d[] getVertices(){
 		double ttj= edgeLength();
 		Coord3d[] vertices=new Coord3d[4];
 		double x=ttj*coord.x;

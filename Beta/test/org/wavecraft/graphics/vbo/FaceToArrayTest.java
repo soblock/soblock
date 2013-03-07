@@ -7,13 +7,12 @@ import java.util.List;
 
 import org.junit.Test;
 import org.wavecraft.geometry.Face;
-import org.wavecraft.ui.WindowFrame;
 
 public class FaceToArrayTest {
 
 	@Test
 	public void test() {
-		new WindowFrame("test");
+		
 		Face face = new Face(1, 2, 3, 4, 1);
 		float[] lightAtVertice = new float[]{0, 0, 0.2f, 0.2f };
 		LightFace lightFace = new LightFace(face, lightAtVertice);

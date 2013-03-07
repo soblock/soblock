@@ -8,7 +8,7 @@ public class FaceRendererLines {
 
 	// extremely inefficient rendering. for debug purposes only
 	private static void afterGLrender(Face face){
-		Coord3d[] coords = face.vertices();
+		Coord3d[] coords = face.getVertices();
 		int[] indices = {0 , 1, 1 ,2, 2, 3, 3, 0};
 		for (int k = 0; k<indices.length; k++){
 			GL11.glVertex3d(coords[indices[k]].x, coords[indices[k]].y, coords[indices[k]].z);

@@ -16,19 +16,21 @@ public class MegaTexture {
 	private static MegaTexture instance = null;
 
 	private MegaTexture(){
-		String filename = "terrain4.png";
+		szAll = 256;
+		szOne = 16;
+	}
 
+	/**
+	 * do not load in the constructor to be able to run junit test without display
+	 */
+	public void loadTexture(){
+		String filename = "terrain4.png";
 		try {
 			texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream(filename));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		szAll = 256;
-		szOne = 16;
-
-
 	}
-
 
 	public static int[] getMetaTexCoord(int id,int normal){
 		int[] terrainCoord;

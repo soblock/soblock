@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.lwjgl.Sys;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
@@ -98,7 +97,7 @@ public class BlocktreeRasterizerTest {
 
 		
 		// compare run time
-		int nRun = 10000;
+		int nRun = 100;
 		double t1 = System.currentTimeMillis();
 		Set<Face> allFaces = null;
 		List<Face> allFaceCheckNeighbors = null;

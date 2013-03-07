@@ -13,8 +13,8 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
-import org.wavecraft.geometry.blocktree.BlockTreeRefiner;
-import org.wavecraft.geometry.blocktree.BlockTreeUpdaterMaxPriority;
+import org.wavecraft.geometry.blocktree.BlocktreeRefiner;
+import org.wavecraft.geometry.blocktree.BlocktreeUpdaterMaxPriority;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderAdapter;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdater;
@@ -52,9 +52,9 @@ public class GameEngine {
 	private static OctreeUpdater octreeUpdater;
 
 	private static Blocktree blocktree;
-	private static BlockTreeUpdaterMaxPriority blockTreeUpdater;
+	private static BlocktreeUpdaterMaxPriority blockTreeUpdater;
 	private static BlocktreeUpdaterSimple blockTreeUpdaterSimple;
-	private static BlockTreeRefiner refiner;
+	private static BlocktreeRefiner refiner;
 	private static Thread refinerThread; 
 	private static BlocktreeBuilder builder;
 
@@ -139,9 +139,9 @@ public class GameEngine {
 
 
 		//blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
-		blockTreeUpdater = new BlockTreeUpdaterMaxPriority(builder);
+		blockTreeUpdater = new BlocktreeUpdaterMaxPriority(builder);
 
-		refiner = new BlockTreeRefiner();
+		refiner = new BlocktreeRefiner();
 		refinerThread = new Thread(refiner);
 		refinerThread.start();
 
@@ -200,7 +200,7 @@ public class GameEngine {
 		if (true){
 
 			// the refiner has finished, copy the results in the current tree.
-			if (refiner.getState() == BlockTreeRefiner.State.FINISHED){
+			if (refiner.getState() == BlocktreeRefiner.State.FINISHED){
 				refiner.doInMainThreadWhenDone();
 				Blocktree nodeToCopy = refiner.getNodeToRefine();
 				if (nodeToCopy.getJ() == blocktree.getJ()){
@@ -208,12 +208,12 @@ public class GameEngine {
 				} else {
 					nodeToCopy.becomeSonOfMyFather();
 				}
-				refiner.setState(BlockTreeRefiner.State.NO_JOB);
+				refiner.setState(BlocktreeRefiner.State.NO_JOB);
 			}
 
 
 			// the refiner has nothing to do : give him a new job
-			if (refiner.getState() ==  BlockTreeRefiner.State.NO_JOB){
+			if (refiner.getState() ==  BlocktreeRefiner.State.NO_JOB){
 				Blocktree.State nextUpdateState;
 				if (Math.random()>0.5){
 					nextUpdateState = State.GRAND_FATHER;
@@ -226,7 +226,7 @@ public class GameEngine {
 				if (nodeToUpdate!=null){
 					refiner.setNodeToRefine(nodeToUpdate);
 					refiner.setBuilder(builder);
-					refiner.setState(BlockTreeRefiner.State.READY_TO_PROCESS_JOB);
+					refiner.setState(BlocktreeRefiner.State.READY_TO_PROCESS_JOB);
 				}
 			}
 		}

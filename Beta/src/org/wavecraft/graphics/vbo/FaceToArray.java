@@ -10,7 +10,7 @@ import org.wavecraft.graphics.texture.MegaTexture;
 
 public class FaceToArray {
 	public static float[] toArrayV3N3C4(Face face){
-		Coord3d[] vertices = face.vertices();
+		Coord3d[] vertices = face.getVertices();
 		float[] rgb = new float[3];
 		float colorCoefft = 1.0f - face.getJ()/10.0f; 
 		switch (face.getNormal()) {
@@ -366,12 +366,12 @@ public class FaceToArray {
 		return data;
 	}
 
-	public static float[] toArrayV3N3T2C3(List<LightFace> ligthFaces){
-		int dataSz = ( 3 + 3 + 2 + 3) * 4 * ligthFaces.size();
+	public static float[] toArrayV3N3T2C3(List<LightFace> lightFaces){
+		int dataSz = ( 3 + 3 + 2 + 3) * 4 * lightFaces.size();
 		float[] data = new float[dataSz];
 
-		for (int i = 0; i < ligthFaces.size(); i++){
-			Face face = ligthFaces.get(i).getFace();
+		for (int i = 0; i < lightFaces.size(); i++){
+			Face face = lightFaces.get(i).getFace();
 
 			int offset = i*(3 + 3 + 2 + 3)*4;
 			DyadicBlock block = face.getFather();
@@ -379,7 +379,7 @@ public class FaceToArray {
 			if (block instanceof Blocktree){
 				content = ((Blocktree) block).getContent();
 			}
-			float[] dataFace = toArrayV3N3T2C3(face, content, ligthFaces.get(i).getLigthAtVertice());
+			float[] dataFace = toArrayV3N3T2C3(face, content, lightFaces.get(i).getLigthAtVertice());
 			for (int k = 0; k < dataFace.length; k++){
 				data[offset + k] = dataFace[k]; 
 			}

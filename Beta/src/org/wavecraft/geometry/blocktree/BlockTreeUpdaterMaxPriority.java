@@ -4,9 +4,9 @@ package org.wavecraft.geometry.blocktree;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
 
-public class BlockTreeUpdaterMaxPriority extends BlocktreeUpdaterSimple {
+public class BlocktreeUpdaterMaxPriority extends BlocktreeUpdaterSimple {
 
-	public BlockTreeUpdaterMaxPriority(BlocktreeBuilder builder) {
+	public BlocktreeUpdaterMaxPriority(BlocktreeBuilder builder) {
 		super(builder);
 	}
 

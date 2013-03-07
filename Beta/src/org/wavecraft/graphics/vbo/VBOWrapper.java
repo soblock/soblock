@@ -145,18 +145,24 @@ public class VBOWrapper {
 			MegaTexture.bind();
 			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 			GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 			GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+			GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+			
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertex_buffer_id);
+			
 			GL11.glVertexPointer(3, GL11.GL_FLOAT, 4*stride, 0);
 			GL11.glNormalPointer(GL11.GL_FLOAT, 4*stride, 12);
-			GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 4*stride,24);
 			GL11.glColorPointer(3, GL11.GL_FLOAT, 4*stride, 4*(3+3+2));
+			GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 4*stride,24);
+			
+			
 
 			GL11.glDrawArrays(GL11.GL_QUADS, 0, size/ stride);
 			GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
 			GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+			GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
 			GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);	
+			
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			
 			break;
