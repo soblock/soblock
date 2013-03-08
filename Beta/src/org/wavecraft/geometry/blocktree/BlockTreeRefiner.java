@@ -32,7 +32,7 @@ public class BlocktreeRefiner implements Runnable {
 	private List<VBOBlockTreeGrandFather> vboSons;
 	private List<Blocktree> sonsBefore;
 	private boolean active;
-	private boolean verboseDebug = true;
+	private boolean verboseDebug = false;
 
 	public BlocktreeRefiner(){
 		state = State.NO_JOB;
