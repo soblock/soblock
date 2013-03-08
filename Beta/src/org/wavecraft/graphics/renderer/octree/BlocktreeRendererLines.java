@@ -12,23 +12,23 @@ import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
 
-public class BlocktreRendererLines implements UiEventListener {
-	private static BlocktreRendererLines instance;
+public class BlocktreeRendererLines implements UiEventListener {
+	private static BlocktreeRendererLines instance;
 	private static DrawMode drawMode;
 	private enum DrawMode{
 		DRAWALL,
 		DRAWLEAF,
 		DRAWNOTHING,
 	}
-	public static BlocktreRendererLines getInstance(){
+	public static BlocktreeRendererLines getInstance(){
 		if (instance == null){
-			instance = new BlocktreRendererLines();
+			instance = new BlocktreeRendererLines();
 		}
 		return instance;
 	}
 
-	private BlocktreRendererLines(){
-		drawMode = DrawMode.DRAWLEAF;
+	private BlocktreeRendererLines(){
+		drawMode = DrawMode.DRAWNOTHING;
 		UiEventMediator.addListener(this);
 	}
 

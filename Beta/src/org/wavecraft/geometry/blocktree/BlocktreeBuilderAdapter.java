@@ -44,7 +44,7 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 
 	@Override
 	public double priority(DyadicBlock block) {
-		if (block.getJ()<=BlocktreeUpdaterSimple.BLOCK_LOG_SIZE +1) {return 0;}
+		if (block.getJ()<=Blocktree.BLOCK_LOG_SIZE +1) {return 0;}
 		return builder.priority(block);
 	}
 	

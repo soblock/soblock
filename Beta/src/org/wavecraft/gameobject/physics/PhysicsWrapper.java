@@ -21,9 +21,9 @@ public class PhysicsWrapper extends Physics implements UiEventListener{
 	public void move(GameObjectMoving movingObject, double dt) {
 		physics.move(movingObject, dt);
 		
-		if (Timer.getNframe()==30){
-			physics = PhysicsWalkIntersect.getInstance();
-		}
+		//if (Timer.getNframe()==30){
+		//	physics = PhysicsWalkIntersect.getInstance();
+		//}
 			
 		//System.out.println(physics.getClass().toString());
 	}

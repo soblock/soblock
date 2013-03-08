@@ -31,7 +31,7 @@ public class VBOBlockTreeGrandFatherTest {
 		
 		
 		
-		VBOBlockTreeGrandFather vboBlocktree2 = new VBOBlockTreeGrandFather(blocktree, blocktree, builder);
+		VBOBlockTreeGrandFather vboBlocktree2 = new VBOBlockTreeGrandFather(blocktree, builder);
 		System.out.println(vboBlocktree2.getDataSize()); 
 		
 		assertTrue(vboBlocktree2.getDataSize()/(3+3+2+3) == vboBlocktree.getDataSize()/(3+3+2));

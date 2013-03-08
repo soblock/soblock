@@ -7,16 +7,8 @@ import org.wavecraft.geometry.DyadicBlock;
 
 @SuppressWarnings("serial")
 public class Blocktree extends DyadicBlock{
-//
-//	@Override
-//	public int hashCode() {
-//		return super.hashCode();
-//	}
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		return super.equals(obj);
-//	}
+
+	public static int BLOCK_LOG_SIZE = 4;
 
 	public enum State{
 		PATRIARCH,
@@ -190,7 +182,29 @@ public class Blocktree extends DyadicBlock{
 			}
 		}
 	}
+	
+	public List<Blocktree> listOfGreatChildren(){
+		List<Blocktree> list = new ArrayList<Blocktree>();
+		listOfGreatChildrenInner(list, this.getJ());
+		return list;
+	}
+	
+	private void listOfGreatChildrenInner(List<Blocktree> list, int J){
+		if (this.getJ() >= J - BLOCK_LOG_SIZE){
+			if (this.hasSons()){
+				for (Blocktree son : this.getSons()){
+					son.listOfGreatChildrenInner(list, J);
+				}
+			}
+		}
+		else {
+			if (this.getJ() == J - BLOCK_LOG_SIZE - 1){
+				list.add(this);
+			}
+		}
+	}
 
+	//private void listOfL
 
 	
 

@@ -93,7 +93,7 @@ public class VBOBlocktreePool implements UiEventListener{
 
 		case DRAW_SMALL:
 			for (Blocktree blocktree : uploaded.keySet()){
-				if (blocktree.getJ()<=4){
+				if (blocktree.getJ()<=Blocktree.BLOCK_LOG_SIZE+1){
 					VBOBlockTreeGrandFather vbo = uploaded.get(blocktree);
 					vbo.render();
 				}

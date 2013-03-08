@@ -2,6 +2,7 @@ package org.wavecraft.graphics.vbo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -28,61 +29,38 @@ public class LightFace {
 		this.ligthAtVertice = lightAtVertice;
 	}
 
-	public LightFace(Face face, Blocktree root, BlocktreeBuilder builder){
-//		switch (face.getNormal()) {
-//		case -1:
-//			ligthAtVertice = new float[]{0.6f, 0.6f, 0.6f, 0.6f};
-//			break;
-//		case 1:
-//			ligthAtVertice = new float[]{1, 1, 1, 1};
-//			break;
-//		case -2:
-//			ligthAtVertice = new float[]{0.6f, 0.6f, 0.6f, 0.6f};
-//			break;
-//		case 2:
-//			ligthAtVertice = new float[]{1, 1, 1, 1};
-//			break;
-//		case -3:
-//			ligthAtVertice = new float[]{0.6f, 0.6f, 0.6f, 0.6f};
-//			break;			
-//		case 3:
-//			ligthAtVertice = new float[]{1, 1, 1, 1};
-//			break;
-//
-//		default:
-//			ligthAtVertice = null;
-//			break;
-//		}
-		
-		//
-		ligthAtVertice = new float[4];
+	
+	public LightFace(Face face, HashMap<DyadicBlock, Float> cache, BlocktreeBuilder builder){
+		ligthAtVertice = new float[4];		
 		Coord3i[] vertices = face.getVerticesI();
+		float lightFace = getNormalLightForVertice(face)*getSizeFaceLight(face);
 		for (int i = 0; i<4 ; i ++){
-			float light = 1;
-			light *= getNormalLightForVertice(face);
-			light *= getOclusionLigthForVertice(face, vertices[i], root, builder);
-			 ligthAtVertice[i] = light;
+			float light = lightFace;
+			light *= getOclusionlightForVerticeCache(face, vertices[i], cache, builder);
+			ligthAtVertice[i] = light;
 		}
-		
-		//ligthAtVertice = new float[]{0, 0.25f, 0.5f, 0.75f};
 		this.face = face;
+		
 	}
 	
-	public static float getOclusionLigthForVertice(Face face, Coord3i vertice, Blocktree root, BlocktreeBuilder builder){
-		// look at the four block facing the vertice in direction of the normal
-		// and count how many are made of air.
-		DyadicBlock[] neighbors = face.inFrontOfVertice(vertice); 
+	
+	public static float getOclusionlightForVerticeCache(Face face, Coord3i vertice, HashMap<DyadicBlock, Float> cache, BlocktreeBuilder builder){
+		DyadicBlock[] neighbors = face.inFrontOfVertice(vertice);
 		int airNeighborCount = 0;
 		for (int i = 0; i<4; i++){
 			DyadicBlock neighbor = neighbors[i];
-			Blocktree find = root.smallestCellContaining(neighbor);
-			if ((find == null || (find.getJ()!=neighbor.getJ() && find.getState()!=State.DEAD_AIR))){
-				airNeighborCount = (builder.isIntersectingSurface(neighbor) || builder.isGround(neighbor)) ? airNeighborCount : airNeighborCount+1;
-			} else {
-				airNeighborCount = (find.getState()==State.DEAD_AIR) ? airNeighborCount+1 : airNeighborCount;
+			// check if in the cache
+			if (cache.containsKey(neighbor)){
+				Float value = cache.get(neighbor);
+				airNeighborCount += value;
+			}
+			else {
+				float value = (builder.isIntersectingSurface(neighbor) || builder.isGround(neighbor)) ? 0 : 1;
+				airNeighborCount += value;
+				cache.put(neighbor, new Float(value));
 			}
 		}
-		return airNeighborCount*1.0f/4;
+		return airNeighborCount*1.0f/8 + 1.0f/2;
 	}
 	
 	public static float getNormalLightForVertice(Face face){
@@ -92,6 +70,28 @@ public class LightFace {
 		else {
 			return 1.0f;
 		}
+	}
+	
+	public static float getSizeFaceLight(Face face){
+		return 1-face.getJ()*1.0f/5;
+	}
+	
+	public static HashMap<DyadicBlock , Float> initCacheFromBlocktree(List<Blocktree> blocktrees){
+		HashMap<DyadicBlock, Float> cache = new HashMap<DyadicBlock, Float>();
+		for (Blocktree blocktree : blocktrees){
+			switch (blocktree.getState()) {
+			case LEAF: case DEAD_GROUND: 
+				cache.put(blocktree, new Float(0));
+				break;
+
+			case DEAD_AIR :
+				cache.put(blocktree, new Float(1));
+				break;
+			default:
+				throw new IllegalArgumentException("init cache only from grand father");
+			}
+		}
+		return cache;
 	}
 	
 	/**
@@ -106,10 +106,10 @@ public class LightFace {
 		return face;
 	}
 	
-	public static List<LightFace> computeLight(List<Face> faces, Blocktree root, BlocktreeBuilder builder){
+	public static List<LightFace> computeLightCache(List<Face> faces, HashMap<DyadicBlock, Float> cache, BlocktreeBuilder builder){
 		List<LightFace> lightFaces = new ArrayList<LightFace>();
 		for (Face face : faces){
-			LightFace lightFace = new LightFace(face, root, builder);
+			LightFace lightFace = new LightFace(face, cache, builder);
 			lightFaces.add(lightFace);
 		}
 		return lightFaces;

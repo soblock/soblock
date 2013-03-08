@@ -76,16 +76,10 @@ public class GameEngine {
 	private GameEngine(){
 		player = new Player();
 
-		player.position.x=Math.pow(2,Octree.JMAX-1);//95;
-		player.position.y=Math.pow(2,Octree.JMAX-1);
-		player.position.z=Math.pow(2,Octree.JMAX);
 
-		if (Octree.JMAX == 10){
-			player.position.x = 450;
-			player.position.x = 380;
-			player.position.z = 816;
-		}
-
+		player.position.x = 512;
+		player.position.y = 512;
+		player.position.z = 640;
 		new MathSoboutils();
 
 		// register main player to UiEvents

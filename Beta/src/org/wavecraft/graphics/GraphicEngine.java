@@ -21,7 +21,7 @@ import org.wavecraft.graphics.renderer.DyadicBlockString;
 import org.wavecraft.graphics.renderer.GameObjectRenderer;
 import org.wavecraft.graphics.renderer.GameObjectRendererBuilder;
 import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
-import org.wavecraft.graphics.renderer.octree.BlocktreRendererLines;
+import org.wavecraft.graphics.renderer.octree.BlocktreeRendererLines;
 import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.graphics.vbo.LightFace;
@@ -138,7 +138,7 @@ public class GraphicEngine {
 		// GL11.glFlush();
 
 		
-		BlocktreRendererLines.render(GameEngine.getBlocktree());
+		BlocktreeRendererLines.render(GameEngine.getBlocktree());
 
 
 

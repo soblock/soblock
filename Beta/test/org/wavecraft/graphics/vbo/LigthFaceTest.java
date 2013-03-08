@@ -2,9 +2,11 @@ package org.wavecraft.graphics.vbo;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
+import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
@@ -31,9 +33,10 @@ public class LigthFaceTest {
 		VBOBlockTreeGrandFather vboBlocktree = new VBOBlockTreeGrandFather(blocktree);
 
 		List<Face> faces = BlocktreeRasterizer.allNonDoublonFaceFusionFast(blocktree);
-		List<LightFace> lightFaces = LightFace.computeLight(faces, blocktree, builder);
-		
-		System.out.println(lightFaces);
+		List<Blocktree> blocktrees = blocktree.listOfGreatChildren();
+		HashMap<DyadicBlock, Float> cache = LightFace.initCacheFromBlocktree(blocktrees);
+		List<LightFace> lightFaces = LightFace.computeLightCache(faces, cache, builder);
+		System.out.println(lightFaces.size());
 	}
 
 }

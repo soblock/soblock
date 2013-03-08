@@ -6,6 +6,8 @@ import static org.wavecraft.geometry.blocktree.Blocktree.State.FATHER;
 import static org.wavecraft.geometry.blocktree.Blocktree.State.GRAND_FATHER;
 import static org.wavecraft.geometry.blocktree.Blocktree.State.LEAF;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
@@ -56,6 +58,22 @@ public class BlocktreeTest {
 		assertTrue(blocktree.smallestCellContaining(block) != null);
 	}
 	
+	@Test
+	public void testListOfGreatChildren(){
+
+		Blocktree blocktree = new Blocktree(0, 0, 0, 5);
+		BlocktreeBuilder builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(16.5));
+		
+
+		blocktree.setState(State.GRAND_FATHER);
+		BlocktreeUpdaterSimple blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
+		blockTreeUpdaterSimple.init(blocktree);
+
+		
+		List<Blocktree> listOfGreatChildren = blocktree.listOfGreatChildren();
+		System.out.println(listOfGreatChildren);
+		assertTrue(blocktree.getState() == GRAND_FATHER);
+	}
 	
 
 }
