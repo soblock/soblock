@@ -95,6 +95,59 @@ public class Face {
 		return vertices;
 	}
 
+	/**
+	 * @return the list of the vertices in the face in
+	 * the same order as method from FaceToArray
+	 */
+	public Coord3i[] getVerticesI(){
+		int ttj= (int) edgeLength();
+		Coord3i[] vertices=new Coord3i[4];
+		int x=ttj*coord.x;
+		int y=ttj*coord.y;
+		int z=ttj*coord.z;
+		switch (normal){
+		case 1 : 
+			vertices[0]=new Coord3i(x, y, z);
+			vertices[1]=new Coord3i(x, y+ttj, z);
+			vertices[2]=new Coord3i(x, y+ttj, z+ttj);
+			vertices[3]=new Coord3i(x, y, z+ttj);
+			break;
+		case -1 :
+			vertices[0]=new Coord3i(x, y, z);
+			vertices[1]=new Coord3i(x, y, z+ttj);
+			vertices[2]=new Coord3i(x, y+ttj, z+ttj);
+			vertices[3]=new Coord3i(x, y+ttj, z);
+			break;
+		case 2 : 
+			vertices[0]=new Coord3i(x, y, z);
+			vertices[1]=new Coord3i(x, y, z+ttj);
+			vertices[2]=new Coord3i(x+ttj, y, z+ttj);
+			vertices[3]=new Coord3i(x+ttj, y, z);
+			break;
+		case -2 :
+			vertices[0]=new Coord3i(x, y, z);
+			vertices[1]=new Coord3i(x+ttj, y, z);
+			vertices[2]=new Coord3i(x+ttj, y, z+ttj);
+			vertices[3]=new Coord3i(x, y, z+ttj);
+			break;
+		case 3 : 
+			vertices[0]=new Coord3i(x, y, z);
+			vertices[1]=new Coord3i(x+ttj, y, z);
+			vertices[2]=new Coord3i(x+ttj, y+ttj, z);
+			vertices[3]=new Coord3i(x, y+ttj, z);
+			break;
+		case -3 :
+			vertices[0]=new Coord3i(x, y, z);
+			vertices[1]=new Coord3i(x, y+ttj, z);
+			vertices[2]=new Coord3i(x+ttj, y+ttj, z);
+			vertices[3]=new Coord3i(x+ttj, y, z);
+			break;
+		}
+
+		return vertices;
+	}
+
+
 	public DyadicBlock getFather(){
 		return this.father;
 	}
@@ -192,6 +245,59 @@ public class Face {
 		}
 		return block;
 	}
-	
-	
+
+	/**
+	 * @param vertice
+	 * @return the four blocks adjacent to the vertice in the direction of the normal of the face
+	 */
+	public DyadicBlock[] inFrontOfVertice(Coord3i vertice){
+
+		DyadicBlock[] blocks = new DyadicBlock[4];
+		int ttj = (int) Math.pow(2, J);
+		if (ttj==0){
+			System.out.println("bug");
+		}
+		int xb = vertice.x/ttj;
+		int yb = vertice.y/ttj;
+		int zb = vertice.z/ttj;
+
+		int id1 = 0, id2 = 0; // the identifiers of the moving variable
+		switch (normal) {
+		case 1: case -1:
+			xb = (normal>0) ? xb : xb-1;
+			id1 = 2;
+			id2 = 3;
+			break;
+		case 2: case -2:
+			yb = (normal>0) ? yb : yb-1;
+			id1 = 1;
+			id2 = 3;
+			break;
+		case 3: case -3:
+			zb = (normal>0) ? zb : zb-1;
+			id1 = 1;
+			id2 = 2;
+			break;
+
+		default:
+			throw new IllegalArgumentException("wrong normal");
+		}
+
+		blocks[0] = new DyadicBlock(xb, yb, zb, J);
+		blocks[1] = new DyadicBlock(xb+((id1==1)?-1:0), 
+				yb+((id1==2)?-1:0), 
+				zb+((id1==3)?-1:0),
+				J);
+		blocks[2] = new DyadicBlock(xb+((id1==1||id2==1)?-1:0), 
+				yb+((id1==2||id2==2)?-1:0), 
+				zb+((id1==3||id2==3)?-1:0),
+				J);
+		blocks[3] = new DyadicBlock(xb+((id2==1)?-1:0), 
+				yb+((id2==2)?-1:0), 
+				zb+((id2==3)?-1:0),
+				J);
+		return blocks;
+	}
+
+
 }

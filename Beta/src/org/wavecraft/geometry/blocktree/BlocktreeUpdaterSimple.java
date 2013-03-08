@@ -5,7 +5,7 @@ import static org.wavecraft.geometry.blocktree.Blocktree.State.*;
 public class BlocktreeUpdaterSimple implements BlocktreeUpdater {
 
 	protected BlocktreeBuilder builder;
-	public static int BLOCK_LOG_SIZE = 4;
+	public static int BLOCK_LOG_SIZE = 3;
 
 	public BlocktreeUpdaterSimple(BlocktreeBuilder builder){
 		this.builder = builder;

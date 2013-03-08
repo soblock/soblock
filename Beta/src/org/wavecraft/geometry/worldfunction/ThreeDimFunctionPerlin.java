@@ -57,6 +57,9 @@ public class ThreeDimFunctionPerlin implements ThreeDimFunction {
 	}
 
 	private double pseudoRandomInt(int i,int j,int k){
+		i = (i<0)? i+N:i;
+		j = (j<0)? j+N:j;
+		k = (k<0)? k+N:k;
 		int ind=perm[(i+perm[(j+perm[k % N]) % N]) % N];
 		return noise[ind];
 	}

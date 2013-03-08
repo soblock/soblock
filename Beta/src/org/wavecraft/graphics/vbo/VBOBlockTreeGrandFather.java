@@ -32,10 +32,17 @@ public class VBOBlockTreeGrandFather {
 	 */
 	public VBOBlockTreeGrandFather(Blocktree blocktree, Blocktree root, BlocktreeBuilder builder){
 		// put all face in hashset
+		//System.out.println(blocktree);
+		long t1 = System.currentTimeMillis();
 		List<Face> allFacesFusionFast = BlocktreeRasterizer.allNonDoublonFaceFusionFast(blocktree);
+		long t2 = System.currentTimeMillis();
 		List<LightFace> lightFaces = LightFace.computeLight(allFacesFusionFast, root, builder);
+		long t3 = System.currentTimeMillis();
+		//System.out.println("face "+(t2-t1)+" light "+(t3-t2));
 		data = FaceToArray.toArrayV3N3T2C3(lightFaces);
-		vboWrapper = new VBOWrapper(VboMode.V3N3T2C3); 
+		vboWrapper = new VBOWrapper(VboMode.V3N3T2C3);
+		//data = FaceToArray.toArrayV3N3T2(allFacesFusionFast);
+		//vboWrapper = new VBOWrapper(VboMode.V3N3T2);
 	}
 
 	public void uploadToGrahpicCard(){

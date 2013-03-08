@@ -109,21 +109,21 @@ public class FaceToArray {
 			};
 			return data;
 		}
-		case -3 :{ 
-			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
-					xmin,        ymin,      zmin,      0,      0,      -1,     txmax,    tymin, l0, l0, l0,
-					xmin    ,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymin, l1, l1, l1,
-					xmin+ttj,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymax, l2, l2, l2,
-					xmin+ttj,    ymin,      zmin,      0,      0,      -1,     txmax,    tymax, l3, l3, l3,
-			};
-			return data;
-		}
 		case 3 :{ 
 			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
 					xmin,        ymin,      zmin,      0,      0,      +1,     txmin,    tymin, l0, l0, l0,
 					xmin+ttj,    ymin,      zmin,      0,      0,      +1,     txmin,    tymax, l1, l1, l1,
 					xmin+ttj,    ymin+ttj,  zmin,      0,      0,      +1,     txmax,    tymax, l2, l2, l2,
 					xmin    ,    ymin+ttj,  zmin,      0,      0,      +1,     txmax,    tymin, l3, l3, l3
+			};
+			return data;
+		}
+		case -3 :{ 
+			float[] data = {//x, y          z        nx       ny       nz       tx        ty 
+					xmin,        ymin,      zmin,      0,      0,      -1,     txmax,    tymin, l0, l0, l0,
+					xmin    ,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymin, l1, l1, l1,
+					xmin+ttj,    ymin+ttj,  zmin,      0,      0,      -1,     txmin,    tymax, l2, l2, l2,
+					xmin+ttj,    ymin,      zmin,      0,      0,      -1,     txmax,    tymax, l3, l3, l3,
 			};
 			return data;
 		}
