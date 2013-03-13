@@ -8,7 +8,7 @@ import org.wavecraft.geometry.DyadicBlock;
 @SuppressWarnings("serial")
 public class Blocktree extends DyadicBlock{
 
-	public static int BLOCK_LOG_SIZE = 4;
+	public static int BLOCK_LOG_SIZE = 3;
 
 	public enum State{
 		PATRIARCH,

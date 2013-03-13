@@ -2,13 +2,13 @@ package org.wavecraft.geometry.blocktree;
 
 import org.wavecraft.geometry.DyadicBlock;
 
-public interface BlocktreeBuilder {
+public interface BlocktreeBuilder extends BlocktreePriority{
 
 	public boolean isGround(DyadicBlock block);
 	public boolean isIntersectingSurface(DyadicBlock block);
-	public boolean shouldSplitGreatFatherToPatriarch(DyadicBlock block);
-	public boolean shouldMergePatriarchIntoGreatFather(DyadicBlock block);
+	public boolean shouldSplitGreatFatherToPatriarch(Blocktree block);
+	public boolean shouldMergePatriarchIntoGreatFather(Blocktree block);
 	public int contentAt(DyadicBlock block);
-	public abstract double priority(DyadicBlock block);
+
 
 }

@@ -60,7 +60,7 @@ public class LightFace {
 				cache.put(neighbor, new Float(value));
 			}
 		}
-		return airNeighborCount*1.0f/8 + 1.0f/2;
+		return airNeighborCount*1.0f/5 + 1.0f/5;
 	}
 	
 	public static float getNormalLightForVertice(Face face){

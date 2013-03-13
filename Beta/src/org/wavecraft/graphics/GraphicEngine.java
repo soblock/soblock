@@ -4,6 +4,7 @@ package org.wavecraft.graphics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.client.Timer;
@@ -71,7 +72,7 @@ public class GraphicEngine {
 
 		Coord3i ci = new Coord3i(300, 150, 250);
 
-
+		
 
 		octreeArrMsg = DyadicBlockString.stringToOctreeArr("welcome in beautiful wavecraft",2,ci);
 
@@ -98,12 +99,12 @@ public class GraphicEngine {
 		viewMain.initRendering();
 
 
-
-		//GL11.glEnable(GL11.GL_FOG);
-		//GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
-		//GL11.glFogf(GL11.GL_FOG_START, 48.f);
-		//GL11.glFogf(GL11.GL_FOG_END, 256.f);
-
+//
+//		GL11.glEnable(GL11.GL_FOG);
+//		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR); 
+//		GL11.glFogf(GL11.GL_FOG_START, 256.f);
+//		GL11.glFogf(GL11.GL_FOG_END, 512.f);
+//
 
 		innerRender();
 
@@ -125,6 +126,7 @@ public class GraphicEngine {
 		Profiler.getInstance().display();
 		// GL11.glFlush();
 		Display.update();
+		Display.setVSyncEnabled(false);
 
 
 		double t2 = System.currentTimeMillis()-t1;

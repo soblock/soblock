@@ -20,5 +20,7 @@ public class ThreeDimFunctionFlat implements ThreeDimFunction{
 		//return block.edgeLentgh();
 		return 0;
 	}
+	
+
 
 }

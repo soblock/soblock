@@ -139,7 +139,7 @@ public class VBOWrapper {
 			break;
 		case V3N3T2C3 :
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL11.GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL11.GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL11.GL_LINEAR);
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			MegaTexture.bind();

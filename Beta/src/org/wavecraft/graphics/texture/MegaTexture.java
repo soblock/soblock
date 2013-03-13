@@ -139,7 +139,8 @@ public class MegaTexture {
 	}
 
 	public float[] getTexCoordinate(int id, int normal){
-		float epsilon = 1E-5f;
+		//float epsilon = 1E-5f;
+		float epsilon = 1.01f;
 		float[] texCoord=new float[4];
 		int idn =0; // id of normal (between 0 and 5)
 		if (id == 8){
@@ -153,10 +154,15 @@ public class MegaTexture {
 		id = metaTex[1];
 		//System.out.println(idn);
 		//System.out.println(id);
-		texCoord[0]= idn*(szOne-epsilon)/(1.0f*szAll);
-		texCoord[1]= (idn+1)*(szOne-epsilon)/(1.0f*szAll);
-		texCoord[3]= (id*szOne)/(1.0f*szAll);
+//		texCoord[0]= idn*(szOne-epsilon)/(1.0f*szAll);
+//		texCoord[1]= (idn+1)*(szOne-epsilon)/(1.0f*szAll);
+//		texCoord[3]= (id*szOne)/(1.0f*szAll);
+//		texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
+		texCoord[0]= (idn*szOne+epsilon)/(1.0f*szAll);
+		texCoord[1]= ((idn+1)*szOne-epsilon)/(1.0f*szAll);
+		texCoord[3]= (id*szOne+epsilon)/(1.0f*szAll);
 		texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
+		
 		return texCoord;
 	}
 }

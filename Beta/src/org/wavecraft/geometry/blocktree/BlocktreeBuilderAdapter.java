@@ -25,15 +25,12 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 	}
 
 	@Override
-	public boolean shouldSplitGreatFatherToPatriarch(DyadicBlock block) {
-		//return !builder.cull(new Octree(block, null));
-		return (priority(block)>1);
-		
+	public boolean shouldSplitGreatFatherToPatriarch(Blocktree block) {
+		return (priority(block)>1);	
 	}
 
 	@Override
-	public boolean shouldMergePatriarchIntoGreatFather(DyadicBlock block) {
-		//return builder.cull(new Octree(block, null));
+	public boolean shouldMergePatriarchIntoGreatFather(Blocktree block) {
 		return priority(block)>1;
 	}
 
@@ -43,7 +40,7 @@ public class BlocktreeBuilderAdapter implements BlocktreeBuilder {
 	}
 
 	@Override
-	public double priority(DyadicBlock block) {
+	public double priority(Blocktree block) {
 		if (block.getJ()<=Blocktree.BLOCK_LOG_SIZE +1) {return 0;}
 		return builder.priority(block);
 	}

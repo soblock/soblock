@@ -13,6 +13,9 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
+import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunCenter;
+import org.wavecraft.geometry.blocktree.BlocktreePriority;
+import org.wavecraft.geometry.blocktree.BlocktreePriorityPosition;
 import org.wavecraft.geometry.blocktree.BlocktreeRefiner;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdaterMaxPriority;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
@@ -27,8 +30,18 @@ import org.wavecraft.geometry.octree.builder.OctreeUpdaterPriority;
 import org.wavecraft.geometry.octree.events.OctreeEventListenerBasic;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.geometry.octree.fluid.FluidTree;
+import org.wavecraft.geometry.worldfunction.ThreeDimContent;
+import org.wavecraft.geometry.worldfunction.ThreeDimContentBiome;
+import org.wavecraft.geometry.worldfunction.ThreeDimContentConstant;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunction;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionPerlin;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionPerlinMS;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSphere;
+import org.wavecraft.geometry.worldfunction.ThreeDimFunctionSum;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
+import org.wavecraft.geometry.worldfunction.WorldFunctionWrapper;
 import org.wavecraft.graphics.vbo.VBOBlocktreePool;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.events.UiEventMediator;
@@ -100,6 +113,11 @@ public class GameEngine {
 
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
+		ThreeDimFunction fun1 = new ThreeDimFunctionSphere(new Coord3d(1024, 1024, 1024), 1024);
+		ThreeDimFunction fun2 = new ThreeDimFunctionPerlinMS();
+		ThreeDimFunction fun = new ThreeDimFunctionSum(fun1, fun2);
+		ThreeDimContent content = new ThreeDimContentBiome(-100, 2048, fun, 10);
+		//wf = new WorldFunctionWrapper(content, fun);
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 
 		OctreeEventMediator.getInstance();
@@ -119,11 +137,22 @@ public class GameEngine {
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
 		//WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
 		//BlocktreeBuilderAdapter blockTreeBuilder
-		builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 10));
+		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 100));
+		 //wf = new WorldFunctionWrapper(new ThreeDimContentConstant(), new ThreeDimFunctionFlat(1));
+		//wf = new WorldFunctionWrapper(new ThreeDimContentConstant(), new ThreeDimFunctionPerlin());
 		OctreeBuilder ob2 = OctreeBuilderBuilder.getBuilder(wf);
 		builder = new BlocktreeBuilderAdapter(ob2);
+		//
+		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
+		priority.setPosition(player.position);
+		builder = new BlocktreeBuilderThreeDimFunCenter(wf, priority);
+		
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
-		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(0, 0, 0), 512));
+		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(512, 512, 512), 500));
+		
+		
+		
+//	builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getPerlinMSGeoCulling());
 
 		blocktree = new Blocktree(0,0,0,10);
 

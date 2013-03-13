@@ -90,20 +90,22 @@ public class ThreeDimFunctionPerlin implements ThreeDimFunction {
 	
 	@Override
 	public double valueAt(Coord3d coord) {
-		// TODO Auto-generated method stub
 		double val = minVal + (maxVal - minVal) * pseudoRandomDouble(coord.x,coord.y,coord.z,Math.pow(2, j));
 		return val;
 	}
 
 	@Override
 	public double uncertaintyBound(DyadicBlock block) {
-		// TODO Auto-generated method stub
+		
 		if (j<block.getJ()){
 			return maxVal - minVal;
 		}
 		else {
 			return 0;
 		}
+		
+		//return block.edgeLentgh()*(maxVal-minVal)/Math.pow(2, j);
+		
 	}
 	
 
