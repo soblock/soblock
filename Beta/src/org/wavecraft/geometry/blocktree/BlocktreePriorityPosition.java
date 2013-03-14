@@ -42,10 +42,12 @@ public class BlocktreePriorityPosition implements BlocktreePriority, UiEventList
 			UiEventKeyboardPressed ekp = (UiEventKeyboardPressed) e;
 			switch (ekp.key) {
 			case KEYBOARD_CULLING_INCREASE:
+				System.out.println("Blocktree cull"+radius);
 				radius++;
 				break;
 
 			case KEYBOARD_CULLING_DECREASE:
+				System.out.println("Blocktree cull"+radius);
 				radius--;
 				break;
 				

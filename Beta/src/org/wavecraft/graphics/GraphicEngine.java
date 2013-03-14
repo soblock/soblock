@@ -32,7 +32,9 @@ import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
 import org.wavecraft.graphics.view.WindowSize;
+import org.wavecraft.modif.BlocktreeGrabber;
 import org.wavecraft.modif.ModifAdder;
+import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.menu.MenuSelectBlock;
@@ -155,6 +157,13 @@ public class GraphicEngine {
 		BlockRendererLines.getInstance().renderEmphasize(ModifAdder.getNodeToRemove(), 0);
 		BlockRendererLines.getInstance().renderEmphasize(ModifAdder.getNodeToAdd(), 1);
 
+
+		Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(GameEngine.getBlocktree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		//BlockRendererLines.getInstance().renderEmphasize(nearest, 0);
+		
+		
+		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToRemove(), 0);
+		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToAdd(), 1);
 
 
 

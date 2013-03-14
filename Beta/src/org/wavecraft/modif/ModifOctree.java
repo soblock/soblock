@@ -100,7 +100,7 @@ public class ModifOctree extends DyadicBlock {
 		}
 	}
 
-	public double minValueAtFrRoot(Octree block) {
+	public double minValueAtFrRoot(DyadicBlock block) {
 		ModifOctree cell = smallestCellContainingBlock(block);
 		if (cell.sons == null)
 			return cell.sumAncestors + cell.value;
@@ -112,7 +112,7 @@ public class ModifOctree extends DyadicBlock {
 		}
 	}
 
-	public ModifOctree smallestCellContainingBlock(Octree block) {
+	public ModifOctree smallestCellContainingBlock(DyadicBlock block) {
 		if (this.getJ() == block.getJ() || sons == null)
 			return this;
 		else {
@@ -143,8 +143,8 @@ public class ModifOctree extends DyadicBlock {
 		return smallestNegativeCellContainingBlockRec(block,null);
 	}
 
-	public double jumpMax(Octree b) {
-		int size_max = MathSoboutils.powerOf2[Octree.JMAX - b.getJ()];
+	public double jumpMax(DyadicBlock b) {
+		int size_max = (int) Math.pow(2,Octree.JMAX - b.getJ());
 		double jumpMax = 0;
 
 		double vMin = minValueAtFrRoot(b);

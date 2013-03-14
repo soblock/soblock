@@ -18,7 +18,7 @@ public class Blocktree extends DyadicBlock{
 		DEAD_AIR,
 		LEAF;
 	}
-
+	
 	private State state;
 	private Blocktree[] sons;
 	private Blocktree father;
@@ -133,6 +133,23 @@ public class Blocktree extends DyadicBlock{
 				if (hasSons()){
 					int offset = this.findSonContaining(block);
 					return sons[offset].smallestCellContaining(block);
+				}
+				else {
+					return this;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Blocktree smallestPatriarchOrGrandFatherContaining(DyadicBlock block){
+		if (this.equals(block))
+			return this;
+		else {
+			if (this.contains(block)){
+				if (this.getState()==State.PATRIARCH){
+					int offset = this.findSonContaining(block);
+					return sons[offset].smallestPatriarchOrGrandFatherContaining(block);
 				}
 				else {
 					return this;

@@ -163,7 +163,6 @@ public class OctreeBuilderWorldFuntionCullerModif implements OctreeBuilder{
 		double[] minmax =  ThreeDimFunctionUtils.minMaxValuesAtVertices(worldFunction, octree);
 		double vMax=minmax[1]+S+v+bmax;
 		return (vMax<0);
-	
 	}
 	
 	@Override

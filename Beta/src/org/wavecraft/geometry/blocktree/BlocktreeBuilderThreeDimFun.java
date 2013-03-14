@@ -5,17 +5,12 @@ import org.wavecraft.geometry.worldfunction.ThreeDimFunctionUtils;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 
 
-/**
- * thise class uses only the value at the center instead of the value at each vertex
- * to determine if the block is ground or surface or air
- * @author laurentsifre
- */
-public class BlocktreeBuilderThreeDimFunCenter implements BlocktreeBuilder{
+public class BlocktreeBuilderThreeDimFun implements BlocktreeBuilder{
 
 	private WorldFunction wf;
 	private BlocktreePriority priority;
 	
-	public BlocktreeBuilderThreeDimFunCenter(WorldFunction wf, BlocktreePriority priority){
+	public BlocktreeBuilderThreeDimFun(WorldFunction wf, BlocktreePriority priority){
 		this.wf = wf;
 		this.priority = priority;
 	}

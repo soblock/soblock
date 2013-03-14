@@ -13,7 +13,8 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
-import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunCenter;
+import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFun;
+import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunModif;
 import org.wavecraft.geometry.blocktree.BlocktreePriority;
 import org.wavecraft.geometry.blocktree.BlocktreePriorityPosition;
 import org.wavecraft.geometry.blocktree.BlocktreeRefiner;
@@ -45,6 +46,9 @@ import org.wavecraft.geometry.worldfunction.WorldFunctionWrapper;
 import org.wavecraft.graphics.vbo.VBOBlocktreePool;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.events.UiEventMediator;
+import org.wavecraft.modif.BlocktreeGrabber;
+import org.wavecraft.modif.ModifAdder;
+import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.Soboutils.MathSoboutils;
 
@@ -145,7 +149,14 @@ public class GameEngine {
 		//
 		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
 		priority.setPosition(player.position);
-		builder = new BlocktreeBuilderThreeDimFunCenter(wf, priority);
+		builder = new BlocktreeBuilderThreeDimFun(wf, priority);
+		//ModifOctree modif = new ModifOctree(0, 0, 0, 10, 0, 0);
+		modif =new ModifOctree(0,0,0,10,5,0.);
+		modif.computeBounds();
+		modif.sumAncestors = 0;
+		modif.computeSumAncestors();
+
+		builder = new BlocktreeBuilderThreeDimFunModif(wf, priority, modif);
 		
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(512, 512, 512), 500));
@@ -156,6 +167,8 @@ public class GameEngine {
 
 		blocktree = new Blocktree(0,0,0,10);
 
+		
+		
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
 		blockTreeUpdaterSimple.init(blocktree);
@@ -185,6 +198,8 @@ public class GameEngine {
 
 
 		//updateThread.start();
+		
+		
 	}
 
 	public static void update(){
@@ -211,6 +226,7 @@ public class GameEngine {
 		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
 
 		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(blocktree, player.position, player.getVectorOfSight());
 		Octree obstacle=new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		obstacle.initSon(2);
 		Octree son1= (obstacle.getSons())[2];
@@ -218,7 +234,12 @@ public class GameEngine {
 
 		//water.moveFluid(octree,player.position,octreeBuilder);
 
+		
 
+		ModifAdderBlocktree.setModif(modif);
+		ModifAdderBlocktree.setOctree(blocktree);
+
+		
 
 		if (true){
 
@@ -245,6 +266,11 @@ public class GameEngine {
 					nextUpdateState = State.PATRIARCH;
 				}
 				Blocktree nodeToUpdate = blockTreeUpdater.getArgMaxPriorityPerState(blocktree, nextUpdateState);
+				Blocktree nodeToRecompute = ModifAdderBlocktree.pushRecompute();
+				if (nodeToRecompute!=null){
+					nodeToUpdate = nodeToRecompute;
+					//nodeToUpdate.setState(State.PATRIARCH);
+				}
 				//System.out.println("next state tu update " + nextUpdateState +"node to update " + nodeToUpdate);
 				if (nodeToUpdate!=null){
 					refiner.setNodeToRefine(nodeToUpdate);
