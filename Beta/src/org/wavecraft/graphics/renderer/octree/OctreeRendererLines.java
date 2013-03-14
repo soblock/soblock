@@ -35,8 +35,8 @@ public class OctreeRendererLines implements UiEventListener {
 	}
 
 	private OctreeRendererLines(){
-		drawMode = DrawMode.DRAWNOTHING;
-		UiEventMediator.addListener(this);
+		drawMode = DrawMode.MODIF;
+		//UiEventMediator.addListener(this);
 	}
 
 	public static OctreeRendererLines getInstance(){
@@ -66,14 +66,14 @@ public class OctreeRendererLines implements UiEventListener {
 	}
 
 	public static void renderModif(ModifOctree modifOctree){
-		for (int J=0; J <=  Octree.JMAX; J++){
+		for (int J=0; J <=  ModifOctree.JMAX; J++){
 			setLineWidth(J);
-		GL11.glBegin(GL11.GL_LINES);
-		inner(modifOctree, J);
-		GL11.glEnd();
+			GL11.glBegin(GL11.GL_LINES);
+			inner(modifOctree, J);
+			GL11.glEnd();
 		}
 	}
-	
+
 	private static void setLineWidth(int J){
 		GL11.glLineWidth((float) (3*(J-1)+1) );
 	}

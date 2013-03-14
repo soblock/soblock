@@ -21,11 +21,12 @@ public class BlocktreeRefiner implements Runnable {
 	public enum StateVBO{
 		UPLOAD_ME_UNLOAD_SONS,
 		UNLOAD_ME_UPLOAD_SONS,
+		REUPLOAD_ME,
 		DO_NOTHING
 	}
 
 	private boolean regenate;
-	
+
 
 	private StateVBO vboState;
 	private Blocktree nodeToRefine;
@@ -44,114 +45,128 @@ public class BlocktreeRefiner implements Runnable {
 		vboSons = new ArrayList<VBOBlockTreeGrandFather>();
 		setActive(true);
 	}
-	
+
 	@Override
 	public void run(){
 		while (isActive()){
 			if (getState() == State.READY_TO_PROCESS_JOB) {
 				Blocktree.State initialStateOfNode = getNodeToRefine().getState();
-				switch (initialStateOfNode) {
-				case GRAND_FATHER:
-					runGrandFather();
-					break;
+				if (isRegenate()){
+					switch (initialStateOfNode) {
+					case GRAND_FATHER:
+						runRegenerateGrandFather();
+						break;
 
-				case PATRIARCH:
-					runPatiarch();
-					break;
-					
-				default:
-					break;
+						
+					case PATRIARCH:
+						runRegeneratePatriarch();
+						break;
+					default:
+							throw new IllegalArgumentException("can regenerate only grand father");
+					}
+
+				} else {
+					switch (initialStateOfNode) {
+					case GRAND_FATHER:
+						runGrandFather();
+						break;
+
+					case PATRIARCH:
+						runPatiarch();
+						break;
+
+					default:
+						break;
+					}
 				}
 			}
 		}
 	}
-	
-	
-//
-//	@Override
-//	public void run() {
-//		while (isActive()){
-//			//System.out.println(getState());
-//			if (getState() == State.READY_TO_PROCESS_JOB) {
-//				double t1 = System.currentTimeMillis();
-//				setState(State.PROCESSING_JOB);
-//				BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
-//				Blocktree.State initialStateOfNode = getNodeToRefine().getState();
-//				//updater.updateInner(getNodeToRefine());
-//				switch (initialStateOfNode) {
-//				case GRAND_FATHER:
-//					updater.splitAllLeaf(getNodeToRefine());
-//					break;
-//
-//				case PATRIARCH:
-//					sonsBefore = getNodeToRefine().listOfSonsOfStateGrandFather();
-//					updater.mergeAllLeaf(getNodeToRefine());
-//				default:
-//					break;
-//				}
-//				double t2 = System.currentTimeMillis();
-//				switch (initialStateOfNode) {
-//				case GRAND_FATHER:
-//					if (getNodeToRefine().getState() == Blocktree.State.PATRIARCH){ // the node has been split : prepare to unload it
-//						// and add its sons
-//
-//						vboSons.clear();
-//						for (int i=0; i<8; i++){
-//							Blocktree son = nodeToRefine.getSons()[i];
-//							if (son.getState()==Blocktree.State.GRAND_FATHER){
-//								//VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(son);
-//								VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(son, builder);
-//								vboSons.add(nextVbo);
-//							} else {
-//								vboSons.add(null);
-//							}
-//						}
-//						vboState = StateVBO.UNLOAD_ME_UPLOAD_SONS;
-//					}
-//					break;
-//
-//				case PATRIARCH:
-//					if (getNodeToRefine().getState() == Blocktree.State.GRAND_FATHER){ // the node has been merged : upload it
-//						//VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine);
-//						VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine, builder);
-//						vbo = nextVbo;
-//						vboState = StateVBO.UPLOAD_ME_UNLOAD_SONS;
-//					}
-//					break;
-//				default:
-//					break;
-//				}
-//				double t3 = System.currentTimeMillis();
-//				if (verboseDebug){
-//					System.out.println("BlocktreeRefiner : refine "+ (t2-t1)+ " faces "+(t3-t2));
-//				}
-//				setState(State.FINISHED);
-//			}
-//			else {
-//				try {
-//					Thread.sleep(100);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//
-//	}
-	
+
+
+	//
+	//	@Override
+	//	public void run() {
+	//		while (isActive()){
+	//			//System.out.println(getState());
+	//			if (getState() == State.READY_TO_PROCESS_JOB) {
+	//				double t1 = System.currentTimeMillis();
+	//				setState(State.PROCESSING_JOB);
+	//				BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
+	//				Blocktree.State initialStateOfNode = getNodeToRefine().getState();
+	//				//updater.updateInner(getNodeToRefine());
+	//				switch (initialStateOfNode) {
+	//				case GRAND_FATHER:
+	//					updater.splitAllLeaf(getNodeToRefine());
+	//					break;
+	//
+	//				case PATRIARCH:
+	//					sonsBefore = getNodeToRefine().listOfSonsOfStateGrandFather();
+	//					updater.mergeAllLeaf(getNodeToRefine());
+	//				default:
+	//					break;
+	//				}
+	//				double t2 = System.currentTimeMillis();
+	//				switch (initialStateOfNode) {
+	//				case GRAND_FATHER:
+	//					if (getNodeToRefine().getState() == Blocktree.State.PATRIARCH){ // the node has been split : prepare to unload it
+	//						// and add its sons
+	//
+	//						vboSons.clear();
+	//						for (int i=0; i<8; i++){
+	//							Blocktree son = nodeToRefine.getSons()[i];
+	//							if (son.getState()==Blocktree.State.GRAND_FATHER){
+	//								//VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(son);
+	//								VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(son, builder);
+	//								vboSons.add(nextVbo);
+	//							} else {
+	//								vboSons.add(null);
+	//							}
+	//						}
+	//						vboState = StateVBO.UNLOAD_ME_UPLOAD_SONS;
+	//					}
+	//					break;
+	//
+	//				case PATRIARCH:
+	//					if (getNodeToRefine().getState() == Blocktree.State.GRAND_FATHER){ // the node has been merged : upload it
+	//						//VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine);
+	//						VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine, builder);
+	//						vbo = nextVbo;
+	//						vboState = StateVBO.UPLOAD_ME_UNLOAD_SONS;
+	//					}
+	//					break;
+	//				default:
+	//					break;
+	//				}
+	//				double t3 = System.currentTimeMillis();
+	//				if (verboseDebug){
+	//					System.out.println("BlocktreeRefiner : refine "+ (t2-t1)+ " faces "+(t3-t2));
+	//				}
+	//				setState(State.FINISHED);
+	//			}
+	//			else {
+	//				try {
+	//					Thread.sleep(100);
+	//				} catch (InterruptedException e) {
+	//					e.printStackTrace();
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+
 	public void runGrandFather(){
 		double t1 = System.currentTimeMillis();
 		setState(State.PROCESSING_JOB);
 		BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
-		//Blocktree.State initialStateOfNode = getNodeToRefine().getState();
 		updater.splitAllLeaf(getNodeToRefine());
 		double t2 = System.currentTimeMillis();
-		if (getNodeToRefine().getState() == Blocktree.State.PATRIARCH){ // the node has been split : prepare to unload it
+		if (nodeToRefine.getState() == Blocktree.State.PATRIARCH){ // the node has been split : prepare to unload it
 			// and add its sons
 			vboSons.clear();
 			for (int i=0; i<8; i++){
 				Blocktree son = nodeToRefine.getSons()[i];
 				if (son.getState()==Blocktree.State.GRAND_FATHER){
-					//VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(son);
 					VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(son, builder);
 					vboSons.add(nextVbo);
 				} else {
@@ -166,17 +181,15 @@ public class BlocktreeRefiner implements Runnable {
 		}
 		setState(State.FINISHED);
 	}
-	
+
 	public void runPatiarch(){
 		double t1 = System.currentTimeMillis();
 		setState(State.PROCESSING_JOB);
 		BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
-		//Blocktree.State initialStateOfNode = getNodeToRefine().getState();
 		sonsBefore = getNodeToRefine().listOfSonsOfStateGrandFather();
 		updater.mergeAllLeaf(getNodeToRefine());
 		double t2 = System.currentTimeMillis();
-		if (getNodeToRefine().getState() == Blocktree.State.GRAND_FATHER){ // the node has been merged : upload it
-			//VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine);
+		if (nodeToRefine.getState() == Blocktree.State.GRAND_FATHER){ // the node has been merged : upload it
 			VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(nodeToRefine, builder);
 			vbo = nextVbo;
 			vboState = StateVBO.UPLOAD_ME_UNLOAD_SONS;
@@ -186,6 +199,38 @@ public class BlocktreeRefiner implements Runnable {
 			System.out.println("BlocktreeRefiner : refine "+ (t2-t1)+ " faces "+(t3-t2));
 		}
 		setState(State.FINISHED);
+	}
+
+	public void runRegenerateGrandFather(){
+		double t1 = System.currentTimeMillis();
+		BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
+		updater.init(getNodeToRefine());
+		double t2 = System.currentTimeMillis();
+		VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(getNodeToRefine(), builder);
+		vbo = nextVbo;
+		vboState = StateVBO.REUPLOAD_ME;
+		double t3 = System.currentTimeMillis();
+		if (verboseDebug){
+			System.out.println("BlocktreeRefiner : refine "+ (t2-t1)+ " faces "+(t3-t2));
+		}
+		setState(State.FINISHED);
+	}
+	
+	public void runRegeneratePatriarch(){
+		double t1 = System.currentTimeMillis();
+		sonsBefore = getNodeToRefine().listOfSonsOfStateGrandFather();
+		BlocktreeUpdaterSimple updater = new BlocktreeUpdaterSimple(getBuilder());
+		updater.init(getNodeToRefine());
+		double t2 = System.currentTimeMillis();
+		VBOBlockTreeGrandFather nextVbo = new VBOBlockTreeGrandFather(getNodeToRefine(), builder);
+		vbo = nextVbo;
+		double t3 = System.currentTimeMillis();
+		if (verboseDebug){
+			System.out.println("BlocktreeRefiner : refine "+ (t2-t1)+ " faces "+(t3-t2));
+		}
+		vboState = StateVBO.UPLOAD_ME_UNLOAD_SONS;
+		setState(State.FINISHED);
+		
 	}
 
 	public synchronized void  setVbo(VBOBlockTreeGrandFather vbo) {
@@ -222,11 +267,11 @@ public class BlocktreeRefiner implements Runnable {
 
 	public void doInMainThreadWhenDone(){
 		switch (vboState) {
-		case UPLOAD_ME_UNLOAD_SONS:
-			VBOBlocktreePool.getInstance().put(getNodeToRefine(), getVbo());
+		case UPLOAD_ME_UNLOAD_SONS: // in this order !
 			for (Blocktree grandsons : sonsBefore){
 				VBOBlocktreePool.getInstance().prepareToUnload(grandsons);
 			}
+			VBOBlocktreePool.getInstance().put(getNodeToRefine(), getVbo());
 			break;
 
 		case UNLOAD_ME_UPLOAD_SONS:
@@ -238,6 +283,11 @@ public class BlocktreeRefiner implements Runnable {
 					VBOBlocktreePool.getInstance().put(son, vbo);
 				}
 			}
+			break;
+
+		case REUPLOAD_ME:
+			VBOBlocktreePool.getInstance().prepareToUnload(getNodeToRefine());
+			VBOBlocktreePool.getInstance().put(getNodeToRefine(), vbo);
 			break;
 
 		default:

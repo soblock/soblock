@@ -9,6 +9,7 @@ import org.wavecraft.geometry.DyadicBlock;
 public class Blocktree extends DyadicBlock{
 
 	public static int BLOCK_LOG_SIZE = 3;
+	public static int JMAX = 11;
 
 	public enum State{
 		PATRIARCH,
@@ -147,9 +148,18 @@ public class Blocktree extends DyadicBlock{
 			return this;
 		else {
 			if (this.contains(block)){
+				if (this.getJ() == block.getJ()){
+					return this;
+				}
 				if (this.getState()==State.PATRIARCH){
 					int offset = this.findSonContaining(block);
-					return sons[offset].smallestPatriarchOrGrandFatherContaining(block);
+					Blocktree son = sons[offset];
+					if (son.getState() == State.PATRIARCH || son.getState() == State.GRAND_FATHER){
+						return son.smallestPatriarchOrGrandFatherContaining(block);
+					}
+					else {
+						return this;
+					}
 				}
 				else {
 					return this;

@@ -13,6 +13,12 @@ public class BlocktreeBuilderThreeDimFunModif implements BlocktreeBuilder{
 	private BlocktreePriority priority;
 	private ModifOctree modif;
 	
+	public ModifOctree getModif() {
+		return modif;
+	}
+
+
+
 	public BlocktreeBuilderThreeDimFunModif(WorldFunction wf, BlocktreePriority priority, ModifOctree modif){
 		this.wf = wf;
 		this.priority = priority;
@@ -73,7 +79,17 @@ public class BlocktreeBuilderThreeDimFunModif implements BlocktreeBuilder{
 
 	@Override
 	public int contentAt(DyadicBlock block) {
-		return wf.contentAt(block);
+		
+		
+		ModifOctree smallestMod = modif.smallestNegativeCellContainingBlock(block);
+		if (smallestMod != null && smallestMod.value<0){
+			return smallestMod.content;
+			//System.out.println(smallestMod.toString());
+		}
+		else {
+			return wf.contentAt(block);
+		}
+		
 	}
 
 	@Override

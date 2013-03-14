@@ -5,6 +5,7 @@ package org.wavecraft.modif;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Coord3i;
 import org.wavecraft.Soboutils.MathSoboutils;
+import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.octree.Octree;
 
 
@@ -13,6 +14,7 @@ import org.wavecraft.geometry.octree.Octree;
 public class ModifOctree extends DyadicBlock {
 	public ModifOctree[] sons = null;
 	public ModifOctree father = null;
+	public static int JMAX = Blocktree.JMAX;
 	public double value;
 	public double sumAncestors;
 	public double boundMin;
@@ -87,7 +89,7 @@ public class ModifOctree extends DyadicBlock {
 
 	}
 
-	public double maxValueAtFrRoot(Octree block) {
+	public double maxValueAtFrRoot(DyadicBlock block) {
 		ModifOctree cell = smallestCellContainingBlock(block);
 		if (cell.sons == null) {
 			return cell.sumAncestors + cell.value;
@@ -124,7 +126,7 @@ public class ModifOctree extends DyadicBlock {
 		}
 	}
 	
-	private ModifOctree smallestNegativeCellContainingBlockRec(Octree block,ModifOctree save) {
+	private ModifOctree smallestNegativeCellContainingBlockRec(DyadicBlock block,ModifOctree save) {
 		if (this.value<0){
 			save = this;
 		}
@@ -139,16 +141,16 @@ public class ModifOctree extends DyadicBlock {
 		}
 	}
 	
-	public ModifOctree smallestNegativeCellContainingBlock(Octree block) {
+	public ModifOctree smallestNegativeCellContainingBlock(DyadicBlock block) {
 		return smallestNegativeCellContainingBlockRec(block,null);
 	}
 
 	public double jumpMax(DyadicBlock b) {
-		int size_max = (int) Math.pow(2,Octree.JMAX - b.getJ());
+		int size_max = (int) Math.pow(2,JMAX - b.getJ());
 		double jumpMax = 0;
 
 		double vMin = minValueAtFrRoot(b);
-		Octree neigh = new Octree(b.x, b.y, b.z, b.getJ());
+		DyadicBlock neigh = new Octree(b.x, b.y, b.z, b.getJ());
 
 		neigh.x += 1;
 		if (neigh.x < size_max)

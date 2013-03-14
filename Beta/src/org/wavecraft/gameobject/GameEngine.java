@@ -85,6 +85,10 @@ public class GameEngine {
 	public static OctreeBuilder getOctreeBuilder(){
 		return octreeBuilder;
 	}
+	
+	public static BlocktreeBuilder getBlocktreeBuilder(){
+		return builder;
+	}
 
 	public static Player getPlayer(){
 		return player;
@@ -117,6 +121,10 @@ public class GameEngine {
 
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
+		
+		//wf = WorldFunctionBuilder.getWorldFunctionFlatUniform(0);
+		
+		
 		ThreeDimFunction fun1 = new ThreeDimFunctionSphere(new Coord3d(1024, 1024, 1024), 1024);
 		ThreeDimFunction fun2 = new ThreeDimFunctionPerlinMS();
 		ThreeDimFunction fun = new ThreeDimFunctionSum(fun1, fun2);
@@ -239,7 +247,7 @@ public class GameEngine {
 		ModifAdderBlocktree.setModif(modif);
 		ModifAdderBlocktree.setOctree(blocktree);
 
-		
+		refiner.setBuilder(builder);
 
 		if (true){
 
@@ -269,10 +277,14 @@ public class GameEngine {
 				Blocktree nodeToRecompute = ModifAdderBlocktree.pushRecompute();
 				if (nodeToRecompute!=null){
 					nodeToUpdate = nodeToRecompute;
+					refiner.setRegenate(true);
 					//nodeToUpdate.setState(State.PATRIARCH);
+				} else {
+					refiner.setRegenate(false);
 				}
 				//System.out.println("next state tu update " + nextUpdateState +"node to update " + nodeToUpdate);
 				if (nodeToUpdate!=null){
+					
 					refiner.setNodeToRefine(nodeToUpdate);
 					refiner.setBuilder(builder);
 					refiner.setState(BlocktreeRefiner.State.READY_TO_PROCESS_JOB);

@@ -12,6 +12,7 @@ import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.Coord3i;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunModif;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.octree.builder.OctreeBuilderWorldFuntionCullerModif;
 import org.wavecraft.geometry.octree.events.OctreeEventMediator;
@@ -171,6 +172,11 @@ public class GraphicEngine {
 		if (GameEngine.getOctreeBuilder() instanceof OctreeBuilderWorldFuntionCullerModif){
 			ModifOctree modif = ((OctreeBuilderWorldFuntionCullerModif) GameEngine.getOctreeBuilder()).getModifOctree();
 			OctreeRendererLines.renderModif(modif);
+		}
+		
+		if (GameEngine.getBlocktreeBuilder() instanceof BlocktreeBuilderThreeDimFunModif){
+			ModifOctree modif = ((BlocktreeBuilderThreeDimFunModif) GameEngine.getBlocktreeBuilder()).getModif();
+		//	OctreeRendererLines.renderModif(modif);
 		}
 
 		//light.initLight();

@@ -1,6 +1,7 @@
 package org.wavecraft.geometry;
 
 import org.wavecraft.Soboutils.MathSoboutils;
+import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.octree.Octree;
 
 
@@ -178,7 +179,7 @@ public class DyadicBlock extends Coord3i {
 	}
 
 	public DyadicBlock neighbor(int dx,int dy,int dz){
-		int maxn = (int)(Math.pow(2, Octree.JMAX - J ));
+		int maxn = (int)(Math.pow(2, Blocktree.JMAX - J ));
 		int xn = x + dx;
 		int yn = y + dy;
 		int zn = z + dz;
@@ -201,6 +202,34 @@ public class DyadicBlock extends Coord3i {
 		neighbors[4] = neighbor(0, 0, 1);
 		neighbors[5] = neighbor(0, 0, -1);
 		return neighbors;
+	}
+	
+	public DyadicBlock[] eighteenNeighbors(){
+		// TODO
+		DyadicBlock[] neighbors = new DyadicBlock[18];
+		neighbors[0] = neighbor(-1, 0, 0);
+		neighbors[1] = neighbor(1, 0, 0);
+		neighbors[2] = neighbor(0, 1, 0);
+		neighbors[3] = neighbor(0, -1, 0);
+		neighbors[4] = neighbor(0, 0, 1);
+		neighbors[5] = neighbor(0, 0, -1);
+		
+		neighbors[6] = neighbor(0, -1, -1);
+		neighbors[7] = neighbor(0, 1, -1);
+		neighbors[8] = neighbor(-1, 0, -1);
+		neighbors[9] = neighbor(1, 0, -1);
+		
+		neighbors[10] = neighbor(0, -1, 1);
+		neighbors[11] = neighbor(0, 1, 1);
+		neighbors[12] = neighbor(-1, 0, 1);
+		neighbors[13] = neighbor(1, 0, 1);
+		
+		neighbors[14] = neighbor(-1, -1, 0);
+		neighbors[15] = neighbor(1, 1, 0);
+		neighbors[16] = neighbor(-1, 1, 0);
+		neighbors[17] = neighbor(1, -1, 0);
+		return neighbors;
+		
 	}
 
 	public DyadicBlock ancestor(int J){
