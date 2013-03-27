@@ -163,8 +163,8 @@ public class GraphicEngine {
 		//BlockRendererLines.getInstance().renderEmphasize(nearest, 0);
 		
 		
-		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToRemove(), 0);
-		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToAdd(), 1);
+		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToRemove(GameEngine.getPlayer()), 0);
+		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToAdd(GameEngine.getPlayer()), 1);
 
 
 

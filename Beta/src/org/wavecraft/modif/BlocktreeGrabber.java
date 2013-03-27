@@ -1,5 +1,6 @@
 package org.wavecraft.modif;
 
+import org.wavecraft.geometry.BoundingBox;
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
@@ -15,6 +16,7 @@ public class BlocktreeGrabber {
 	
 	public static Blocktree nearestIntersectedLeaf(Blocktree root, Coord3d origin, Coord3d vector){
 		MinAndArgmin best = nearestIntersectedLeafInner(root, origin, vector);
+		
 		return best.octree;
 	}
 	

@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import org.wavecraft.gameobject.GameEngine;
+import org.wavecraft.gameobject.Player;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
@@ -71,25 +72,30 @@ public class ModifAdderBlocktree implements UiEventListener {
 	}
 
 
-	public static DyadicBlock getNodeToRemove(){
+	public static DyadicBlock getNodeToRemove(Player player){
 		// find nearest neighbor 
-		Blocktree best = BlocktreeGrabber.nearestIntersectedLeaf(root, GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		Blocktree best = BlocktreeGrabber.nearestIntersectedLeaf(root, player.getPosition(), player.getVectorOfSight());
 		if (best == null){return null;}
 		// find best face
-		Face face = best.nearestIntersectedFace(GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		Face face = best.nearestIntersectedFace(player.getPosition(), player.getVectorOfSight());
 		DyadicBlock nodeToRemove = face.getFather();
 		nodeToRemove = nodeToRemove.ancestor(targetJ);
 		return nodeToRemove;
 	}
 
-	public static DyadicBlock getNodeToAdd(){
+	public static DyadicBlock getNodeToAdd(Player player){
 		// find nearest neighbor 
-		Blocktree best = BlocktreeGrabber.nearestIntersectedLeaf(root, GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		Blocktree best = BlocktreeGrabber.nearestIntersectedLeaf(root, player.getPosition(), player.getVectorOfSight());
 		if (best == null){return null;}
 		// find best face
-		Face face = best.nearestIntersectedFace(GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		Face face = best.nearestIntersectedFace(player.getPosition(), player.getVectorOfSight());
 		DyadicBlock nodeToAdd = face.getBlockInFrontOf();
+		// check the the block does not intersect player's bounding box :
+
 		nodeToAdd = nodeToAdd.ancestor(targetJ);
+		if (nodeToAdd!=null){
+			if (player.getTranslatedBoundingBox().intersects(nodeToAdd)){return null;}
+		}
 		return nodeToAdd;
 	}
 
@@ -254,13 +260,13 @@ public class ModifAdderBlocktree implements UiEventListener {
 			UiEventMouseClicked emc = (UiEventMouseClicked) (e);
 			if (emc.isButtonPressed){
 				if (emc.buttonId == 0 ){
-					DyadicBlock nodeToAdd = getNodeToAdd();
+					DyadicBlock nodeToAdd = getNodeToAdd(GameEngine.getPlayer());
 					if (nodeToAdd !=null){
 						addBlock(nodeToAdd, targetContent);
 					}
 				}
 				if (emc.buttonId == 1 ){
-					DyadicBlock nodeToRemove = getNodeToRemove();
+					DyadicBlock nodeToRemove = getNodeToRemove(GameEngine.getPlayer());
 					if (nodeToRemove != null){	
 						removeBlock(nodeToRemove);
 						//removeBlockAdjacentCell(nodeToRemove);
@@ -270,13 +276,13 @@ public class ModifAdderBlocktree implements UiEventListener {
 		}
 		if (e instanceof UiEventKeyboardPressed){
 			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_GAME_ADDBLOCK){
-				DyadicBlock nodeToAdd = getNodeToAdd();
+				DyadicBlock nodeToAdd = getNodeToAdd(GameEngine.getPlayer());
 				if (nodeToAdd !=null){
 					addBlock(nodeToAdd, targetContent);
 				}
 			}
 			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_GAME_KILLBLOCK){
-				DyadicBlock nodeToRemove = getNodeToRemove();
+				DyadicBlock nodeToRemove = getNodeToRemove(GameEngine.getPlayer());
 				if (nodeToRemove != null){
 					System.out.println("node to remove : " + nodeToRemove.toString());
 					removeBlock(nodeToRemove);

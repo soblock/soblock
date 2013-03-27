@@ -234,7 +234,7 @@ public class GameEngine {
 		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
 
 		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
-		Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(blocktree, player.position, player.getVectorOfSight());
+		//Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(blocktree,player.position, player.getVectorOfSight());
 		Octree obstacle=new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
 		obstacle.initSon(2);
 		Octree son1= (obstacle.getSons())[2];

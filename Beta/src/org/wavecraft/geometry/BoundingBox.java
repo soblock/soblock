@@ -5,7 +5,7 @@ public class BoundingBox {
 	private Coord3d minCoords;
 	private Coord3d maxCoords;
 
-	
+
 
 	public BoundingBox(Coord3d minCoords, Coord3d maxCoords){
 		this.minCoords = minCoords;
@@ -18,7 +18,7 @@ public class BoundingBox {
 		this.maxCoords = new Coord3d(block.x*ttj+ttj, block.y*ttj+ttj, block.z*ttj+ttj);
 	}
 
-	
+
 	public BoundingBox extrude(Coord3d vector){
 		double xmin,ymin,zmin,xmax,ymax,zmax;
 		xmin = Math.min(minCoords.x + vector.x,minCoords.x);
@@ -30,7 +30,7 @@ public class BoundingBox {
 		Coord3d minCoords2 = new Coord3d(xmin,ymin,zmin);
 		Coord3d maxCoords2 = new Coord3d(xmax,ymax,zmax);
 		return new BoundingBox(minCoords2,maxCoords2);
-		
+
 	}
 	public Coord3d getMinCoord3d(){
 		return this.minCoords;
@@ -61,10 +61,15 @@ public class BoundingBox {
 	public boolean intersects(BoundingBox box){
 		// two bounding box does not intersect if at least one of 0x,0y,0z direction
 		// separates them
-		return   !(maxCoords.x < box.minCoords.x || box.maxCoords.x < minCoords.x
+		// or : one can be contained in the other
+		return   !(maxCoords.x < box.minCoords.x || box.maxCoords.x < minCoords.x 
 				|| maxCoords.y < box.minCoords.y || box.maxCoords.y < minCoords.y
-				|| maxCoords.z < box.minCoords.z || box.maxCoords.z < minCoords.z);
+				|| maxCoords.z < box.minCoords.z || box.maxCoords.z < minCoords.z) || 
+				(minCoords.x < box.minCoords.x && maxCoords.x > box.maxCoords.x 
+				&& minCoords.y < box.minCoords.y && maxCoords.y > box.maxCoords.y
+				&& minCoords.z < box.minCoords.z && maxCoords.z > box.maxCoords.z);
 	}
+
 
 	public boolean intersects(DyadicBlock block){
 		BoundingBox box = new BoundingBox(block);
