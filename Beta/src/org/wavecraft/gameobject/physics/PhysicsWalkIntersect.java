@@ -7,12 +7,15 @@ import org.wavecraft.Soboutils.MathSoboutils;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.gameobject.GameObjectMoving;
 import org.wavecraft.gameobject.GameObjectMovingOriented;
 import org.wavecraft.geometry.BoundingBox;
 import org.wavecraft.geometry.Coord3d;
+import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardDown;
@@ -121,10 +124,11 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			velocity.add(gravity().scalarMult(dt));
 			velocity.add(nonLinearFriction().scalarMult(dt));
 			movingObject.setSpeed(velocity);
-			Octree root = GameEngine.getOctree();
+			//Octree root = GameEngine.getOctree();
+			Blocktree root = GameEngine.getBlocktree();
 			BoundingBox box = movingObject.getTranslatedBoundingBox();
 			box= box.extrude(velocity.scalarMult(dt));
-			ArrayList<Octree> listOfIntersectedLeaf = CollisionDetectionOctree.intersectedLeaf(root, box);
+			List<Blocktree> listOfIntersectedLeaf = CollisionDetectionBlocktree.intersectedLeaf(root, box);
 			avoid_blocks(listOfIntersectedLeaf, movingObject, dt);
 			direction.clear();
 			scalarSpeedMult = 1;
@@ -170,7 +174,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 	}
 
-	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt){
+	public void avoid_blocks(List<? extends DyadicBlock> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt){
 		boolean shock_zp=false;
 		boolean shock_zm=false;
 		velocitynm1= new Coord3d(velocity);
@@ -178,7 +182,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 	}
 
-	public void avoid_blocks(ArrayList<Octree> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
+	public void avoid_blocks(List<? extends DyadicBlock> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
 		// / the player is a considered a sphere of radius size_player
 		double playerWidth = 0.15; 
 		double playerHeightDown = 1.5; // under-the-eye player size
@@ -216,7 +220,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 
 
 		for (int i = 0; i < listOfIntersectedLeaf.size(); i++) {
-			Octree leaf = listOfIntersectedLeaf.get(i);
+			DyadicBlock leaf = listOfIntersectedLeaf.get(i);
 			size_cell = MathSoboutils.dpowerOf2[leaf.getJ()];
 
 			// bb of current cell

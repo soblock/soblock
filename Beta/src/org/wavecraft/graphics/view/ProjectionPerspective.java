@@ -10,8 +10,8 @@ import org.wavecraft.ui.events.UiEventWindowResized;
 public class ProjectionPerspective implements Projection,UiEventListener{
 
 	private float fovy=70;
-	private float zNear=0.1f;
-	private float zFar=1E15f;
+	private float zNear=0.01f;
+	private float zFar=1E13f;
 	private int xm = 0;
 	private int xM = 200;
 	private int ym = 0;
