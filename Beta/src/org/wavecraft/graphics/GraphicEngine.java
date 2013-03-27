@@ -39,6 +39,7 @@ import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.menu.MenuSelectBlock;
+import org.wavecraft.ui.menu.twl.MenuController;
 
 // this class is the graphic engine
 // singleton
@@ -48,6 +49,7 @@ public class GraphicEngine {
 	private static GameObjectRenderer gameObjectRenderer;
 	private static HUD hud;
 	private static Light light;
+	private static MenuController menuController;
 
 
 
@@ -82,6 +84,8 @@ public class GraphicEngine {
 		for (int i = 0 ;i<octreeArrMsg.size();i++){
 			vboFace.pushNode(octreeArrMsg.get(i));
 		}
+		
+		menuController = new MenuController();
 
 
 	}
@@ -128,6 +132,8 @@ public class GraphicEngine {
 
 		Profiler.getInstance().display();
 		// GL11.glFlush();
+		menuController.display();
+		
 		Display.update();
 		Display.setVSyncEnabled(false);
 
@@ -135,6 +141,7 @@ public class GraphicEngine {
 		double t2 = System.currentTimeMillis()-t1;
 		Profiler.getInstance().push("render", t2,Timer.getCurrT());
 
+		
 	}
 
 	public static void innerRender() {
