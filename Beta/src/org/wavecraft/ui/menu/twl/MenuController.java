@@ -5,6 +5,7 @@ package org.wavecraft.ui.menu.twl;
 import java.io.IOException;
 
 import org.lwjgl.LWJGLException;
+import org.wavecraft.graphics.view.WindowSize;
 
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
@@ -45,7 +46,7 @@ public class MenuController {
 
 	public void refreshDimension(){
 		renderer.syncViewportSize();
-		widget.resize();
+		widget.resize(WindowSize.getInstance().getW(), WindowSize.getInstance().getH());
 	}
 	
 	public void display(){

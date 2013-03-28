@@ -19,7 +19,6 @@ public class MainMenu extends Widget implements ResizableWidget{
 	
 	public MainMenu(){
 		createButton();
-		resize();
 	}
 
 
@@ -47,11 +46,11 @@ public class MainMenu extends Widget implements ResizableWidget{
 		add(buttonQuit);
 	}
 
-	public void resize(){
+	public void resize(int w, int h){
 		int buttonW = 150;
 		int buttonH= 33;
-		int left = WindowSize.getInstance().getW()/2 - buttonW/2;
-		int top = Math.max(40, WindowSize.getInstance().getH()/2 - 5 * buttonH);
+		int left = w/2 - buttonW/2;
+		int top = Math.max(40, h/2 - 5 * buttonH);
 		int dy = 50;
 		
 		
