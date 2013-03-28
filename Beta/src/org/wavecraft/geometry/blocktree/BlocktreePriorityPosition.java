@@ -10,7 +10,7 @@ import org.wavecraft.ui.events.UiEventMediator;
 public class BlocktreePriorityPosition implements BlocktreePriority, UiEventListener {
 
 	private Coord3d position;
-	private double radius=10;
+	private double radius=6;
 	private static final double RADIUS_MIN = 1;
 	private static final double RADIUS_MAX = 512;
 

@@ -1,7 +1,12 @@
 package org.wavecraft.ui.menu.twl;
 
 
+import org.wavecraft.gameobject.GameEngine;
+import org.wavecraft.gameobject.physics.PhysicsWrapper;
 import org.wavecraft.graphics.view.WindowSize;
+import org.wavecraft.ui.Mouse;
+import org.wavecraft.ui.Mouse.State;
+import org.wavecraft.ui.menu.twl.MenuController.Menu;
 
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.Widget;
@@ -13,11 +18,21 @@ public class MainMenu extends Widget implements ResizableWidget{
 	private Button buttonOptions;
 	private Button buttonQuit;
 	
+	private MenuController menuController;
+	
 	private String pathToTheme = "mainmenu.xml";
 	
+	private static MainMenu instance;
 	
+	public static MainMenu getInstance(MenuController menuController){
+		if (instance == null){
+			instance = new MainMenu(menuController);
+		}
+		return instance;
+	}
 	
-	public MainMenu(){
+	private MainMenu(MenuController menuController){
+		this.menuController = menuController;
 		createButton();
 	}
 
@@ -30,7 +45,6 @@ public class MainMenu extends Widget implements ResizableWidget{
 
 	private void createButton() {
 		buttonNewGame = new Button("New Game");
-		
 		buttonLoadGame = new Button("Load Game");
 		buttonOptions = new Button("Options");
 		buttonQuit =  new Button("Quit");
@@ -39,6 +53,17 @@ public class MainMenu extends Widget implements ResizableWidget{
 		buttonLoadGame.setTheme("button");
 		buttonOptions.setTheme("button");
 		buttonQuit.setTheme("button");
+		
+		buttonNewGame.addCallback(new Runnable() {
+			
+			@Override
+			public void run() {
+				Mouse.getInstance().setState(State.ACTIVE);
+				menuController.setMenu(Menu.DISABLE);
+				GameEngine.startNewGame();
+				org.lwjgl.input.Mouse.setGrabbed(true);
+			}
+		});
 		
 		add(buttonNewGame);
 		add(buttonLoadGame);
@@ -75,6 +100,7 @@ public class MainMenu extends Widget implements ResizableWidget{
 	}
 
 
+	
 
 	
 

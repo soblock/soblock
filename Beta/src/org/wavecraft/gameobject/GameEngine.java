@@ -85,7 +85,7 @@ public class GameEngine {
 	public static OctreeBuilder getOctreeBuilder(){
 		return octreeBuilder;
 	}
-	
+
 	public static BlocktreeBuilder getBlocktreeBuilder(){
 		return builder;
 	}
@@ -93,6 +93,8 @@ public class GameEngine {
 	public static Player getPlayer(){
 		return player;
 	}
+
+
 
 	private GameEngine(){
 		player = new Player();
@@ -121,40 +123,23 @@ public class GameEngine {
 
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
-		
-		//wf = WorldFunctionBuilder.getWorldFunctionFlatUniform(0);
-		
-		
+
+
 		ThreeDimFunction fun1 = new ThreeDimFunctionSphere(new Coord3d(1024, 1024, 1024), 1024);
 		ThreeDimFunction fun2 = new ThreeDimFunctionPerlinMS();
 		ThreeDimFunction fun = new ThreeDimFunctionSum(fun1, fun2);
 		ThreeDimContent content = new ThreeDimContentBiome(-100, 2048, fun, 10);
-		//wf = new WorldFunctionWrapper(content, fun);
+		//
 		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
 
 		OctreeEventMediator.getInstance();
 		OctreeEventListenerBasic oelb = new OctreeEventListenerBasic();
 		OctreeEventMediator.addListener(oelb);
-		//octreeUpdater = new OctreeUpdaterPartial(octree,octreeBuilder);
 		octreeUpdater = new OctreeUpdaterPriority(octree, octreeBuilder);
 
-		//water = new FluidTree(0,0,0,Octree.JMAX,4);
-		//water.initSon(6);
-		//water.initializeVolumes();
-
-
-		//blockTreeUpdater = new BOctreeBuilderBuilder.getFlatlandGeoCulling(z0);
-		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(0.1));
-		//BlocktreeBuilderAdapter blockTreeBuilder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
-		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(4.1));
-		//WorldFunction wf2 = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(128,128);
-		//BlocktreeBuilderAdapter blockTreeBuilder
-		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSincGeoCulling(new Coord3d(0, 0, 0), 100, 100, 100));
-		 //wf = new WorldFunctionWrapper(new ThreeDimContentConstant(), new ThreeDimFunctionFlat(1));
-		//wf = new WorldFunctionWrapper(new ThreeDimContentConstant(), new ThreeDimFunctionPerlin());
 		OctreeBuilder ob2 = OctreeBuilderBuilder.getBuilder(wf);
 		builder = new BlocktreeBuilderAdapter(ob2);
-		//
+
 		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
 		priority.setPosition(player.position);
 		builder = new BlocktreeBuilderThreeDimFun(wf, priority);
@@ -165,18 +150,18 @@ public class GameEngine {
 		modif.computeSumAncestors();
 
 		builder = new BlocktreeBuilderThreeDimFunModif(wf, priority, modif);
-		
+
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(512, 512, 512), 500));
-		
-		
-		
-//	builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getPerlinMSGeoCulling());
+
+
+
+		//	builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getPerlinMSGeoCulling());
 
 		blocktree = new Blocktree(0,0,0,10);
 
-		
-		
+
+
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
 		blockTreeUpdaterSimple.init(blocktree);
@@ -206,8 +191,13 @@ public class GameEngine {
 
 
 		//updateThread.start();
-		
-		
+
+
+	}
+
+	public static void startNewGame(){
+		physicsPlayer = new PhysicsWrapper();
+		((PhysicsWrapper) physicsPlayer).switchPhys();
 	}
 
 	public static void update(){
@@ -242,7 +232,7 @@ public class GameEngine {
 
 		//water.moveFluid(octree,player.position,octreeBuilder);
 
-		
+
 
 		ModifAdderBlocktree.setModif(modif);
 		ModifAdderBlocktree.setOctree(blocktree);
@@ -284,7 +274,7 @@ public class GameEngine {
 				}
 				//System.out.println("next state tu update " + nextUpdateState +"node to update " + nodeToUpdate);
 				if (nodeToUpdate!=null){
-					
+
 					refiner.setNodeToRefine(nodeToUpdate);
 					refiner.setBuilder(builder);
 					refiner.setState(BlocktreeRefiner.State.READY_TO_PROCESS_JOB);
@@ -304,10 +294,10 @@ public class GameEngine {
 		return blocktree;
 	}
 
-	
+
 	public void prepareForExit(){
 		refiner.setActive(false);
-		
+
 	}
 
 

@@ -69,7 +69,7 @@ public class KeyBoard {
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_7),KeyboardBinding.KEYBOARD_CONTENT_7);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_8),KeyboardBinding.KEYBOARD_CONTENT_8);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_9),KeyboardBinding.KEYBOARD_CONTENT_9);
-		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_ESCAPE),KeyboardBinding.KEYBOARD_GRAB_MOUSE);
+		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_ESCAPE),KeyboardBinding.KEYBOARD_MENU);
 	}
 
 	public void getKeyboardEvents(){

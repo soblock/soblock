@@ -31,19 +31,23 @@ public class PhysicsWrapper extends Physics implements UiEventListener{
 	public void handle(UiEvent e) {
 		if (e instanceof UiEventKeyboardPressed){
 			if (((UiEventKeyboardPressed) e).key == KeyboardBinding.KEYBOARD_SWITCH_PHYSICS){
-				if (physics instanceof PhysicsFreeFlight){
-					physics = PhysicsWalkIntersect.getInstance();
-					System.out.println("WALK INTERSECT");
-				}
-				else{
-					if (physics instanceof PhysicsWalkIntersect){
-						physics = PhysicsFreeFlightIntersect.getInstance();
-						System.out.println("FREE FLIGHT MODE");
-					}
-				}
+				switchPhys();
 			}
 
 		}
+	}
+	
+	public void switchPhys(){
+	if (physics instanceof PhysicsFreeFlight){
+		physics = PhysicsWalkIntersect.getInstance();
+		System.out.println("WALK INTERSECT");
+	}
+	else{
+		if (physics instanceof PhysicsWalkIntersect){
+			physics = PhysicsFreeFlightIntersect.getInstance();
+			System.out.println("FREE FLIGHT MODE");
+		}
+	}
 	}
 
 }
