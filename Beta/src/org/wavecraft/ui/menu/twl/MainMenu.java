@@ -1,12 +1,12 @@
 package org.wavecraft.ui.menu.twl;
 
-import de.matthiasmann.twl.Button;
-import de.matthiasmann.twl.GUI;
-import de.matthiasmann.twl.Widget;
-import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
-import de.matthiasmann.twl.theme.ThemeManager;
 
-public class MainMenu extends Widget{
+import org.wavecraft.graphics.view.WindowSize;
+
+import de.matthiasmann.twl.Button;
+import de.matthiasmann.twl.Widget;
+
+public class MainMenu extends Widget implements ResizableWidget{
 	
 	private Button buttonNewGame;
 	private Button buttonLoadGame;
@@ -19,7 +19,7 @@ public class MainMenu extends Widget{
 	
 	public MainMenu(){
 		createButton();
-		layout();
+		resize();
 	}
 
 
@@ -47,24 +47,36 @@ public class MainMenu extends Widget{
 		add(buttonQuit);
 	}
 
-	protected void layout(){
-		int left = 350;
-		int top = 100;
+	public void resize(){
+		int buttonW = 150;
+		int buttonH= 33;
+		int left = WindowSize.getInstance().getW()/2 - buttonW/2;
+		int top = Math.max(40, WindowSize.getInstance().getH()/2 - 5 * buttonH);
 		int dy = 50;
 		
+		
 		buttonNewGame.setPosition(left, top);
-		buttonNewGame.setSize(150, 33);
+		buttonNewGame.setSize(buttonW, buttonH);
 		
 		buttonLoadGame.setPosition(left, top + dy);
-		buttonLoadGame.setSize(150, 33);
+		buttonLoadGame.setSize(buttonW, buttonH);
 
 		buttonOptions.setPosition(left, top + 2*dy);
-		buttonOptions.setSize(150, 33);
+		buttonOptions.setSize(buttonW, buttonH);
 		
 		buttonQuit.setPosition(left, top + 3*dy);
-		buttonQuit.setSize(150, 33);
+		buttonQuit.setSize(buttonW, buttonH);
 		
 		//button.adjustSize(); //Calculate optimal size instead of manually setting it
 	}
+
+	@Override
+	public Widget asWidget() {
+		return this;
+	}
+
+
+
+	
 
 }

@@ -211,6 +211,8 @@ public class GraphicEngine {
 		VBOBlocktreePool.getInstance().unloadAll();
 		VBOBlocktreePool.getInstance().uploadAll();
 		double t2 = System.currentTimeMillis();
+		menuController.refreshDimension();
+		
 		Profiler.getInstance().push("updateVBO", t2-t1, Timer.getCurrT());
 	}
 
