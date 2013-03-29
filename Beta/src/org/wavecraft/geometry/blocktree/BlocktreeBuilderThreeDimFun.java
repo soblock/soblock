@@ -41,7 +41,7 @@ public class BlocktreeBuilderThreeDimFun implements BlocktreeBuilder{
 	}
 
 	@Override
-	public int contentAt(DyadicBlock block) {
+	public Terran contentAt(DyadicBlock block) {
 		return wf.contentAt(block);
 	}
 

@@ -2,7 +2,7 @@ package org.wavecraft.geometry;
 
 import org.wavecraft.Soboutils.MathSoboutils;
 import org.wavecraft.geometry.blocktree.Blocktree;
-import org.wavecraft.geometry.octree.Octree;
+
 
 
 

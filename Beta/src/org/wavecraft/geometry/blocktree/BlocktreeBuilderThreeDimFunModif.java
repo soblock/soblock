@@ -73,7 +73,7 @@ public class BlocktreeBuilderThreeDimFunModif implements BlocktreeBuilder{
 	}
 
 	@Override
-	public int contentAt(DyadicBlock block) {
+	public Terran contentAt(DyadicBlock block) {
 		ModifOctree smallestMod = modif.smallestNegativeCellContainingBlock(block);
 		if (smallestMod != null && smallestMod.value<0){
 			return smallestMod.content;

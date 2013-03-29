@@ -1,4 +1,4 @@
-	package org.wavecraft.graphics.texture;
+package org.wavecraft.graphics.texture;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
+import org.wavecraft.geometry.blocktree.Terran;
 
 // singleton
 public class MegaTexture {
@@ -48,10 +49,10 @@ public class MegaTexture {
 					terrainCoord =new int[]{2,0};
 				}
 				else
-				terrainCoord =new int[]{3,0};
+					terrainCoord =new int[]{3,0};
 			}
 			break;
-			
+
 		case 1 :
 			terrainCoord =new int[]{0,13};
 			break;
@@ -67,14 +68,14 @@ public class MegaTexture {
 					terrainCoord =new int[]{2,0};
 				}
 				else
-				terrainCoord =new int[]{4,4};
+					terrainCoord =new int[]{4,4};
 			}
-			
+
 			break;
 		case 5 :
 			terrainCoord =new int[]{6,0};
 			break;
-			
+
 		case 6:
 			terrainCoord =new int[]{2,0};
 			break;
@@ -87,11 +88,11 @@ public class MegaTexture {
 		case 9:
 			terrainCoord =new int[]{8,0};
 			break;
-				
+
 		case 10:
 			terrainCoord =new int[]{3,4};
 			break;
-			
+
 		case 11:
 			if (normal==3){
 				terrainCoord =new int[]{3,4};
@@ -101,14 +102,77 @@ public class MegaTexture {
 					terrainCoord =new int[]{2,0};
 				}
 				else
-				terrainCoord =new int[]{4,4};
+					terrainCoord =new int[]{4,4};
 			}
 			break;
-			
-			
+
+
 		default:
 			terrainCoord =new int[]{1,1};
 			break;
+		}
+		return terrainCoord;
+	}
+
+	public static int[] getMetaTexCoord(Terran terran,int normal){
+		int[] terrainCoord = new int[]{0,0};
+		switch (terran) {
+		case NAT_DIRT:
+			terrainCoord =new int[]{2,0};
+			break;
+
+		case NAT_GRASS:
+			if (normal==3){
+				terrainCoord =new int[]{5,8};
+			}
+			else{
+				if (normal==-3){
+					terrainCoord =new int[]{2,0};
+				}
+				else
+					terrainCoord =new int[]{3,0};
+			}
+			break;
+
+		case NAT_ICE:
+
+			if (normal==3){
+				terrainCoord =new int[]{2,4};
+			}
+			else{
+				if (normal==-3){
+					terrainCoord =new int[]{2,0};
+				}
+				else
+					terrainCoord =new int[]{4,4};
+			}
+			break;
+
+		case NAT_SNOW:
+			if (normal==3){
+				terrainCoord =new int[]{3,4};
+			}
+			else{
+				if (normal==-3){
+					terrainCoord =new int[]{2,0};
+				}
+				else
+					terrainCoord =new int[]{4,4};
+			}
+			break;
+
+		case NAT_SAND:
+			terrainCoord =new int[]{2,1};
+			break;
+
+		case NAT_STONE:
+			terrainCoord =new int[]{7,0};
+			break;
+		case MAN_BRICK:
+			break;
+		default:
+			break;
+
 		}
 		return terrainCoord;
 	}
@@ -154,15 +218,40 @@ public class MegaTexture {
 		id = metaTex[1];
 		//System.out.println(idn);
 		//System.out.println(id);
-//		texCoord[0]= idn*(szOne-epsilon)/(1.0f*szAll);
-//		texCoord[1]= (idn+1)*(szOne-epsilon)/(1.0f*szAll);
-//		texCoord[3]= (id*szOne)/(1.0f*szAll);
-//		texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
+		//		texCoord[0]= idn*(szOne-epsilon)/(1.0f*szAll);
+		//		texCoord[1]= (idn+1)*(szOne-epsilon)/(1.0f*szAll);
+		//		texCoord[3]= (id*szOne)/(1.0f*szAll);
+		//		texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
 		texCoord[0]= (idn*szOne+epsilon)/(1.0f*szAll);
 		texCoord[1]= ((idn+1)*szOne-epsilon)/(1.0f*szAll);
 		texCoord[3]= (id*szOne+epsilon)/(1.0f*szAll);
 		texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
-		
+
 		return texCoord;
 	}
+
+	public float[] getTexCoordinate(Terran terran, int normal){
+		//float epsilon = 1E-5f;
+		float epsilon = 1.01f;
+		float[] texCoord=new float[4];
+		
+
+		int[] metaTex = getMetaTexCoord(terran, normal);
+
+		int idn = metaTex[0];
+		int id = metaTex[1];
+		//System.out.println(idn);
+		//System.out.println(id);
+		//				texCoord[0]= idn*(szOne-epsilon)/(1.0f*szAll);
+		//				texCoord[1]= (idn+1)*(szOne-epsilon)/(1.0f*szAll);
+		//				texCoord[3]= (id*szOne)/(1.0f*szAll);
+		//				texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
+		texCoord[0]= (idn*szOne+epsilon)/(1.0f*szAll);
+		texCoord[1]= ((idn+1)*szOne-epsilon)/(1.0f*szAll);
+		texCoord[3]= (id*szOne+epsilon)/(1.0f*szAll);
+		texCoord[2]= ((id+1)*szOne-epsilon)/(1.0f*szAll);
+
+		return texCoord;
+	}
+
 }

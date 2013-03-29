@@ -9,9 +9,11 @@ import static org.wavecraft.geometry.blocktree.Blocktree.State.LEAF;
 import java.util.List;
 
 import org.junit.Test;
+import org.wavecraft.gameobject.Player;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
-import org.wavecraft.geometry.octree.builder.OctreeBuilderBuilder;
+import org.wavecraft.geometry.worldfunction.WorldFunction;
+import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
 
 public class BlocktreeTest {
 
@@ -46,9 +48,18 @@ public class BlocktreeTest {
 		assertFalse(big.contains(small));
 		
 		Blocktree blocktree = new Blocktree(0, 0, 0, 5);
-		BlocktreeBuilder builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(16.5));
+		//BlocktreeBuilder builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(16.5));
 		
 
+
+
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
+
+		Player player = new Player();
+		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
+		priority.setPosition(player.getPosition());
+		BlocktreeBuilder	builder = new BlocktreeBuilderThreeDimFun(wf, priority);
+		
 		blocktree.setState(State.GRAND_FATHER);
 		BlocktreeUpdaterSimple blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
 		blockTreeUpdaterSimple.init(blocktree);
@@ -62,7 +73,14 @@ public class BlocktreeTest {
 	public void testListOfGreatChildren(){
 
 		Blocktree blocktree = new Blocktree(0, 0, 0, 5);
-		BlocktreeBuilder builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(16.5));
+		//BlocktreeBuilder builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandNoculling(16.5));
+
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
+
+		Player player = new Player();
+		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
+		priority.setPosition(player.getPosition());
+		BlocktreeBuilder	builder = new BlocktreeBuilderThreeDimFun(wf, priority);
 		
 
 		blocktree.setState(State.GRAND_FATHER);

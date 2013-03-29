@@ -6,6 +6,7 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.Terran;
 import org.wavecraft.graphics.texture.MegaTexture;
 
 public class FaceToArray {
@@ -56,7 +57,7 @@ public class FaceToArray {
 
 
 
-	private static float[] toArrayV3N3T2C3(Face face, int id, float[] lightAtVertices) {
+	private static float[] toArrayV3N3T2C3(Face face, Terran id, float[] lightAtVertices) {
 		float[] textCoord = MegaTexture.getInstance().getTexCoordinate(id,face.getNormal());
 
 		float txmin = textCoord[0];
@@ -131,7 +132,7 @@ public class FaceToArray {
 		return null;
 	}
 
-	public static float[] toArrayV3N3T2(Face face, int id){
+	public static float[] toArrayV3N3T2(Face face, Terran id){
 		float[] textCoord = MegaTexture.getInstance().getTexCoordinate(id,face.getNormal());
 
 		float txmin = textCoord[0];
@@ -354,7 +355,7 @@ public class FaceToArray {
 
 			int offset = i*(3 + 3 + 2)*4;
 			DyadicBlock block = face.getFather();
-			int content = 0;
+			Terran content =  Terran.NAT_SAND;
 			if (block instanceof Blocktree){
 				content = ((Blocktree) block).getContent();
 			}
@@ -375,7 +376,7 @@ public class FaceToArray {
 
 			int offset = i*(3 + 3 + 2 + 3)*4;
 			DyadicBlock block = face.getFather();
-			int content = 0;
+			Terran content = Terran.NAT_SAND;
 			if (block instanceof Blocktree){
 				content = ((Blocktree) block).getContent();
 			}

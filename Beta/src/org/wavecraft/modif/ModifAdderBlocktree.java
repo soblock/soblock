@@ -9,15 +9,8 @@ import org.wavecraft.gameobject.Player;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.Terran;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.OctreeStateFatherCool;
-import org.wavecraft.geometry.octree.OctreeStateGround;
-import org.wavecraft.geometry.octree.OctreeStateLeaf;
-import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
-import org.wavecraft.geometry.octree.events.OctreeEvent;
-import org.wavecraft.geometry.octree.events.OctreeEventKindof;
-import org.wavecraft.geometry.octree.events.OctreeEventMediator;
 import org.wavecraft.ui.KeyboardBinding;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
@@ -32,7 +25,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 
 	private static ModifOctree modif ;
 	private static Blocktree root;
-	private static int targetContent = 1;
+	private static Terran targetContent = Terran.MAN_BRICK;
 	private static int targetJ = 1; // the size of the modif
 	private static final int MAX_TARGET_J = 10;
 	private static ModifAdderBlocktree instance;
@@ -40,7 +33,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 
 	private static List<Blocktree> toRecomputeVBO = null; 
 
-	public static void setTargetContent(int content){
+	public static void setTargetContent(Terran content){
 		targetContent = content;
 	}
 
@@ -110,7 +103,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 		ModifAdderBlocktree.modif = modif;
 	}
 
-	private void addBlock(DyadicBlock nodeToAdd, int content){
+	private void addBlock(DyadicBlock nodeToAdd, Terran content){
 		// modify the modif tree properly
 		double value = -1E16*(1 + Blocktree.JMAX - nodeToAdd.getJ());
 		// it is crucial to make the value vary with J so that recursive 
@@ -161,7 +154,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 		double value =  1E16*(1 + ModifOctree.JMAX - nodeToRemove.getJ())	;
 		// it is crucial to make the value vary with J so that recursive 
 		// modif handle the content properly
-		modif.addModif(nodeToRemove, value, 0);
+		modif.addModif(nodeToRemove, value, null);
 		modif.computeBounds();
 		Blocktree nodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(nodeToRemove);
 		toRecomputeVBO.add(nodeToRecomputeVBO);

@@ -14,8 +14,8 @@ import org.lwjgl.opengl.GL11;
 import org.wavecraft.client.Timer;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.fluid.FluidTree;
+import org.wavecraft.geometry.blocktree.Terran;
+
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.graphics.vbo.FaceToArray;
 
@@ -24,25 +24,15 @@ public class BlockRendererTexture {
 	
 	public static void afterGLQuads2(DyadicBlock block){
 		int id = 0;
-		if (block instanceof Octree){
-			id = ((Octree) block).getContent();
-		}
-		if (block instanceof FluidTree){
-			id = 10;
-		}
+		
 		//id = 9;
 		// get all faces
 		Face[] faces = block.getFaces();
 		
 		for (int i = 0 ; i<6 ; i ++){
 			float[] faceData;
-			if (block instanceof FluidTree){
-				float value = (float) (((FluidTree)block).value/Math.pow(2, 2*block.getJ()));
-				faceData = FaceToArray.toArrayV3N3T2partlyFilled(faces[i], id, value);
-			}
-			else {
-				faceData = FaceToArray.toArrayV3N3T2(faces[i], id);
-			}
+				faceData = FaceToArray.toArrayV3N3T2(faces[i], Terran.MAN_BRICK);
+		
 			for (int vertexid = 0 ; vertexid<4;vertexid++){
 				
 				GL11.glTexCoord2d(faceData[8*vertexid + 6],faceData[8*vertexid + 7]);
@@ -56,9 +46,7 @@ public class BlockRendererTexture {
 	// extremely inefficent, for debug only
 	public static void afterGLQuads(DyadicBlock block){
 		int id = (Timer.getNframe()/20)%7;
-		if (block instanceof Octree){
-			id = ((Octree) block).getContent();
-		}
+		
 		float[] texCoord = MegaTexture.getInstance().getTexCoordinate(id);
 		GL11.glTexCoord2d(0, 0);
 		

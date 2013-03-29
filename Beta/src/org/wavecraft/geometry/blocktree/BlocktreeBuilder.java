@@ -8,7 +8,7 @@ public interface BlocktreeBuilder extends BlocktreePriority{
 	public boolean isIntersectingSurface(DyadicBlock block);
 	public boolean shouldSplitGreatFatherToPatriarch(Blocktree block);
 	public boolean shouldMergePatriarchIntoGreatFather(Blocktree block);
-	public int contentAt(DyadicBlock block);
+	public Terran contentAt(DyadicBlock block);
 
 
 }

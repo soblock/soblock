@@ -13,9 +13,7 @@ import org.wavecraft.geometry.Coord3i;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunModif;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.builder.OctreeBuilderWorldFuntionCullerModif;
-import org.wavecraft.geometry.octree.events.OctreeEventMediator;
+
 import org.wavecraft.graphics.hud.HUD;
 import org.wavecraft.graphics.hud.HUDBuilder;
 import org.wavecraft.graphics.light.Light;
@@ -24,11 +22,11 @@ import org.wavecraft.graphics.renderer.GameObjectRenderer;
 import org.wavecraft.graphics.renderer.GameObjectRendererBuilder;
 import org.wavecraft.graphics.renderer.octree.BlockRendererLines;
 import org.wavecraft.graphics.renderer.octree.BlocktreeRendererLines;
-import org.wavecraft.graphics.renderer.octree.OctreeRendererLines;
+
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.graphics.vbo.LightFace;
 import org.wavecraft.graphics.vbo.VBOBlocktreePool;
-import org.wavecraft.graphics.vbo.VBOFace;
+
 import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
@@ -53,9 +51,7 @@ public class GraphicEngine {
 
 
 
-	static ArrayList<Octree> octreeArrMsg ;
 
-	private static VBOFace vboFace = null;
 
 	private GraphicEngine() {
 		viewMain = ViewBuilder.viewFullFrameFPS();
@@ -64,13 +60,7 @@ public class GraphicEngine {
 		gameObjectRenderer = GameObjectRendererBuilder.defaultGameObjectRenderer();
 		hud = HUDBuilder.defaultHUD();
 		light = new Light();
-		// vboFace = new VBOFace(3*64000); // can go up to 6 * 64000 on macbook
-		// pro
-		vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
-		//vboFace = new VBOFace(8096, 1, VboMode.V3N3T2); // can go up to 6 *
-		// 64000 on macbook
-		// pro
-		OctreeEventMediator.addListener(vboFace);
+		
 		MegaTexture.getInstance().loadTexture();
 
 		WindowSize.getInstance();
@@ -79,11 +69,9 @@ public class GraphicEngine {
 
 		
 
-		octreeArrMsg = DyadicBlockString.stringToOctreeArr("welcome in beautiful wavecraft",2,ci);
 
-		for (int i = 0 ;i<octreeArrMsg.size();i++){
-			vboFace.pushNode(octreeArrMsg.get(i));
-		}
+
+		
 		
 		menuController = new MenuController();
 
@@ -154,9 +142,8 @@ public class GraphicEngine {
 
 
 
-		Octree octree = new Octree(0, 0, 0, 0);
-		octree.setContent(8);
-		OctreeRendererLines.render(octree);
+		
+		
 
 		gameObjectRenderer.render(GameEngine.getPlayer());
 
@@ -174,7 +161,6 @@ public class GraphicEngine {
 
 		//light.initLight();
 		light.setSkyColor();
-		vboFace.draw();
 
 
 
@@ -193,7 +179,6 @@ public class GraphicEngine {
 
 	public static void update() {
 		double t1 = System.currentTimeMillis();
-		vboFace.update();
 		VBOBlocktreePool.getInstance().unloadAll();
 		VBOBlocktreePool.getInstance().uploadAll();
 		double t2 = System.currentTimeMillis();

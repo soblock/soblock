@@ -1,9 +1,12 @@
 package org.wavecraft.ui.menu;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.wavecraft.geometry.Coord2d;
+import org.wavecraft.geometry.blocktree.Terran;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
 
@@ -12,6 +15,11 @@ public class MenuSelectBlock {
 	
 	private static MenuSelectBlock instance = null;
 	
+	private List<Terran> selectableTerran = Arrays.asList(new Terran[]{Terran.MAN_BRICK,
+			Terran.NAT_DIRT,
+			Terran.NAT_GRASS,
+			Terran.NAT_STONE
+	});
 	
 	Set<WCButton> buttons ;
 	View view;
@@ -25,7 +33,7 @@ public class MenuSelectBlock {
 	
 	private MenuSelectBlock(){
 		buttons = new HashSet<WCButton>();
-		int nButtons = 11;
+		int nButtons = selectableTerran.size();
 		double xmr = -0.5;
 		double xMr = 0.5;
 		
@@ -34,12 +42,12 @@ public class MenuSelectBlock {
 		double buttonAspect = 3/4.0f;
 		double buttonSizey = buttonSizex*buttonAspect;
 		
-		for (int i = 1;i<nButtons;i++){
+		for (int i = 0;i<selectableTerran.size();i++){
 			
 			Coord2d positionRelative = new Coord2d(xmr+ (i-1)*deltax, -0.9);
 			Coord2d sizeRelative = new Coord2d(buttonSizex, buttonSizey);
-			int buttonLabel = (i<10)?i:0;
-			WCButtonSelectBlock button = new WCButtonSelectBlock(buttonLabel, positionRelative, sizeRelative);
+			
+			WCButtonSelectBlock button = new WCButtonSelectBlock(selectableTerran.get(i),i+1, positionRelative, sizeRelative);
 			buttons.add(button);
 			
 		}

@@ -5,6 +5,7 @@ package org.wavecraft.ui.menu;
 import org.wavecraft.graphics.hud.TextRenderer;
 import org.wavecraft.graphics.view.WindowSize;
 
+
 // use this class for display information on the screen 
 public class Console {
 

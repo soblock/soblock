@@ -4,14 +4,6 @@ import static org.lwjgl.opengl.GL11.*;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.OctreeState;
-import org.wavecraft.geometry.octree.OctreeStateDead;
-import org.wavecraft.geometry.octree.OctreeStateFatherCool;
-import org.wavecraft.geometry.octree.OctreeStateFatherWorried;
-import org.wavecraft.geometry.octree.OctreeStateGround;
-import org.wavecraft.geometry.octree.OctreeStateLeaf;
-import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
 
 import org.wavecraft.geometry.worldfunction.ThreeDimFunction;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
@@ -45,7 +37,7 @@ public class BlockColorerLines implements UiEventListener{
 		colorMode = ColorMode.COLORSTATE;
 		functionForColormap = new ThreeDimFunctionFlat(0);
 		vminForColormap = 0;
-		vminForColormap = Math.pow(2, Octree.JMAX);
+		
 		
 		UiEventMediator.getUiEventMediator().addListener(this);
 	}
@@ -71,47 +63,7 @@ public class BlockColorerLines implements UiEventListener{
 			}
 
 		}
-		if (block instanceof org.wavecraft.geometry.octree.Octree){
-			OctreeState state = ((org.wavecraft.geometry.octree.Octree) block).getState();
-			switch (colorMode) {
-			case COLORSTATE:
-				if (state instanceof OctreeStateNotYetVisited){
-					glColor3d(0.5,0.5,0.5);
-				}
-				if (state instanceof OctreeStateLeaf){
-					glColor3d(1,1,1);
-				}
-				if (state instanceof OctreeStateDead){
-					glColor3d(1,0,0);
-				}
-				if (state instanceof OctreeStateGround){
-					glColor3d(1,1,0);
-				}
-				if (state instanceof OctreeStateFatherWorried){
-					glColor3d(1,0.5,0.5);
-				}
-				if (state instanceof OctreeStateFatherCool){
-					glColor3d(0,1,0);
-				}
-				break;
-
-			case COLORINTERSECTPLAYERBB :
-				if (GameEngine.getPlayer().getTranslatedBoundingBox().intersects(block)){
-					glColor3d(1, 0, 0);
-				}
-				else{
-					glColor3d(0.3, 0.3, 0.3);
-				}
-				break;
-
-			case COLORCOLORMAP :
-				double v = functionForColormap.valueAt(block.center());
-				ColorMap.getInstance().setColor(v, vminForColormap, vmaxForColormap);
-				break;
-			default:
-				break;
-			}
-		}
+		
 		if (block instanceof Blocktree){
 			switch (colorMode) {
 			case COLORSTATE:

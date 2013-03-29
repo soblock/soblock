@@ -2,7 +2,8 @@ package org.wavecraft.geometry.worldfunction;
 
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
-import org.wavecraft.geometry.octree.Octree;
+import org.wavecraft.geometry.blocktree.Terran;
+
 
 public class ThreeDimContentBiome implements ThreeDimContent{
 
@@ -11,9 +12,10 @@ public class ThreeDimContentBiome implements ThreeDimContent{
 	// rescale humidity and temperature
 	private ThreeDimFunction function;
 	@Override
-	public int contentAt(DyadicBlock block) {
+	public Terran contentAt(DyadicBlock block) {
 		// TODO Auto-generated method stub
-		return content(block.center(), function);
+		//return content(block.center(), function);
+		return Terran.NAT_SAND;
 	}
 
 

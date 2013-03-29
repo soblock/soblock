@@ -1,7 +1,9 @@
 package org.wavecraft.ui.menu;
 
+
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.geometry.Coord2d;
+import org.wavecraft.geometry.blocktree.Terran;
 import org.wavecraft.graphics.texture.MegaTexture;
 import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.ui.events.UiEvent;
@@ -9,12 +11,16 @@ import org.wavecraft.ui.events.UiEventKeyboardPressed;
 
 public class WCButtonSelectBlock extends WCButton{
 
-	private int contentId;
+	private int buttonNumber;
+	private Terran contentId;
+	
+
 	class PressedButtonAction implements WCAction{
-		int contentId = 0;
-		public PressedButtonAction(int content){
-			this.contentId = content; 
-		}
+		//Terran contentId = contentId;
+		//public PressedButtonAction(Terran content){
+		//	this.contentId = content; 
+		//}
+
 		@Override
 		public void process() {
 			//ModifAdder.setTargetContent(contentId);
@@ -22,11 +28,11 @@ public class WCButtonSelectBlock extends WCButton{
 		}
 	}
 
-	public WCButtonSelectBlock(int contentId, Coord2d positionRelative,
+	public WCButtonSelectBlock(Terran contentId,int buttonNumber,Coord2d positionRelative,
 			Coord2d sizeRelative ) {
-		super(String.format("%d",contentId), positionRelative, sizeRelative, null);
-
-		this.setWCAction(new PressedButtonAction(contentId));
+		super(String.format("%d",buttonNumber), positionRelative, sizeRelative, null);
+		this.buttonNumber = buttonNumber;
+		this.setWCAction(new PressedButtonAction());
 		this.contentId = contentId;
 	}
 
@@ -39,6 +45,7 @@ public class WCButtonSelectBlock extends WCButton{
 		double xMax = positionRelative.x+sizeRelative.x;
 		double yMin = positionRelative.y;
 		double yMax = positionRelative.y+sizeRelative.y;
+		
 		float[] texCoord = MegaTexture.getInstance().getTexCoordinate(contentId,0);
 		//texCoord for xmin xmax ymin ymax
 		GL11.glTexCoord2f(texCoord[0], texCoord[2]);
@@ -62,6 +69,8 @@ public class WCButtonSelectBlock extends WCButton{
 		drawRectangle();
 		drawText();
 	}
+
+
 
 
 	@Override 
@@ -105,9 +114,12 @@ public class WCButtonSelectBlock extends WCButton{
 			default:
 				break;
 			}
-			if (idPressed == contentId){
+
+			if (buttonNumber== idPressed){
 				this.onClick();
 			}
+
+
 		}
 
 	}

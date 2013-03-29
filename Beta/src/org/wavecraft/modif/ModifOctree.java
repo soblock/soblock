@@ -6,7 +6,8 @@ import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Coord3i;
 import org.wavecraft.Soboutils.MathSoboutils;
 import org.wavecraft.geometry.blocktree.Blocktree;
-import org.wavecraft.geometry.octree.Octree;
+import org.wavecraft.geometry.blocktree.Terran;
+
 
 
 
@@ -19,16 +20,16 @@ public class ModifOctree extends DyadicBlock {
 	public double sumAncestors;
 	public double boundMin;
 	public double boundMax;
-	public int content;
+	public Terran content;
 
-	public ModifOctree(int i, int j, int k, int J, int cont, double val) {
+	public ModifOctree(int i, int j, int k, int J, Terran cont, double val) {
 		super(i, j, k, J);
 		value = val;
 		content = cont;
 		boundMin = boundMax = 0;
 		init();
 	}
-	public ModifOctree(int i, int j, int k, int J, int cont, double val,double sum) {
+	public ModifOctree(int i, int j, int k, int J, Terran cont, double val,double sum) {
 		super(i, j, k, J);
 		value = val;
 		content = cont;
@@ -37,7 +38,7 @@ public class ModifOctree extends DyadicBlock {
 		init();
 	}
 
-	public ModifOctree(Coord3i coords, int J, int cont, double val) {
+	public ModifOctree(Coord3i coords, int J, Terran cont, double val) {
 		super(coords.x, coords.y, coords.z, J);
 		content = cont;
 		value = val;
@@ -159,7 +160,7 @@ public class ModifOctree extends DyadicBlock {
 		double jumpMax = 0;
 
 		double vMin = minValueAtFrRoot(b);
-		DyadicBlock neigh = new Octree(b.x, b.y, b.z, b.getJ());
+		DyadicBlock neigh = new DyadicBlock(b.x, b.y, b.z, b.getJ());
 
 		neigh.x += 1;
 		if (neigh.x < size_max)
@@ -190,7 +191,7 @@ public class ModifOctree extends DyadicBlock {
 	}
 
 
-	public void addModif(DyadicBlock block,double val,int content){
+	public void addModif(DyadicBlock block,double val,Terran content){
 		if (this.getJ()>block.getJ()){
 			int ind = findSonContainingBlock(block);
 			if (this.sons == null){
@@ -210,7 +211,7 @@ public class ModifOctree extends DyadicBlock {
 					sons[ind]= new ModifOctree(
 							this.subBlock(ind).x, 
 							this.subBlock(ind).y, 
-							this.subBlock(ind).z,this.getJ()-1,0,0, sumAncestorOfMySons);
+							this.subBlock(ind).z,this.getJ()-1,null,0, sumAncestorOfMySons);
 					sons[ind].father = this;
 				}
 			

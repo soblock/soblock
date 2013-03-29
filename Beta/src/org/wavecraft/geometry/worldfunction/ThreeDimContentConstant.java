@@ -1,12 +1,13 @@
 package org.wavecraft.geometry.worldfunction;
 
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Terran;
 
 public class ThreeDimContentConstant implements ThreeDimContent {
 
 	@Override
-	public int contentAt(DyadicBlock block) {
-		return (int) ((block.x*block.edgeLentgh()/128)%7);
+	public Terran contentAt(DyadicBlock block) {
+		return Terran.NAT_SAND;
 	}
 	
 }

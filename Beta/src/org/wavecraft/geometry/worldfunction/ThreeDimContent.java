@@ -1,7 +1,8 @@
 package org.wavecraft.geometry.worldfunction;
 
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Terran;
 
 public interface ThreeDimContent{
-	public int contentAt(DyadicBlock block);
+	public Terran contentAt(DyadicBlock block);
 }

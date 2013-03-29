@@ -2,6 +2,7 @@ package org.wavecraft.geometry.worldfunction;
 
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.Terran;
 
 public class WorldFunctionWrapper implements WorldFunction {
 
@@ -22,7 +23,7 @@ public class WorldFunctionWrapper implements WorldFunction {
 	}
 	
 	@Override
-	public int contentAt(DyadicBlock block) {
+	public Terran contentAt(DyadicBlock block) {
 		return content.contentAt(block);
 	}
 

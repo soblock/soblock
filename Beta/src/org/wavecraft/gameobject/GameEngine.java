@@ -20,17 +20,11 @@ import org.wavecraft.geometry.blocktree.BlocktreePriorityPosition;
 import org.wavecraft.geometry.blocktree.BlocktreeRefiner;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdaterMaxPriority;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilder;
-import org.wavecraft.geometry.blocktree.BlocktreeBuilderAdapter;
+
 import org.wavecraft.geometry.blocktree.BlocktreeUpdater;
 import org.wavecraft.geometry.blocktree.BlocktreeUpdaterSimple;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.builder.OctreeBuilder;
-import org.wavecraft.geometry.octree.builder.OctreeBuilderBuilder;
-import org.wavecraft.geometry.octree.builder.OctreeUpdater;
-import org.wavecraft.geometry.octree.builder.OctreeUpdaterPriority;
-import org.wavecraft.geometry.octree.events.OctreeEventListenerBasic;
-import org.wavecraft.geometry.octree.events.OctreeEventMediator;
-import org.wavecraft.geometry.octree.fluid.FluidTree;
+import org.wavecraft.geometry.blocktree.Terran;
+
 import org.wavecraft.geometry.worldfunction.ThreeDimContent;
 import org.wavecraft.geometry.worldfunction.ThreeDimContentBiome;
 import org.wavecraft.geometry.worldfunction.ThreeDimContentConstant;
@@ -74,6 +68,8 @@ public class GameEngine implements UiEventListener{
 	private static BlocktreeRefiner refiner;
 	private static Thread refinerThread; 
 	private static BlocktreeBuilder builder;
+	
+	public static int JMAX = 10;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){
@@ -98,7 +94,7 @@ public class GameEngine implements UiEventListener{
 		
 		new MathSoboutils();
 		
-		modif =new ModifOctree(0,0,0,Octree.JMAX,5,0.);
+		modif =new ModifOctree(0,0,0,JMAX,null,0.);
 
 
 
@@ -108,19 +104,14 @@ public class GameEngine implements UiEventListener{
 		
 		
 
-		OctreeEventMediator.getInstance();
-		OctreeEventListenerBasic oelb = new OctreeEventListenerBasic();
-		OctreeEventMediator.addListener(oelb);
 		
 
-		OctreeBuilder ob2 = OctreeBuilderBuilder.getBuilder(wf);
-		builder = new BlocktreeBuilderAdapter(ob2);
-
+		
 		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
 		priority.setPosition(player.position);
 		builder = new BlocktreeBuilderThreeDimFun(wf, priority);
 		//ModifOctree modif = new ModifOctree(0, 0, 0, 10, 0, 0);
-		modif =new ModifOctree(0,0,0,10,5,0.);
+		modif =new ModifOctree(0,0,0,10,null,0.);
 		
 		builder = new BlocktreeBuilderThreeDimFunModif(wf, priority, modif);
 

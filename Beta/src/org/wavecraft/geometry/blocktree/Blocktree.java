@@ -23,12 +23,12 @@ public class Blocktree extends DyadicBlock{
 	private State state;
 	private Blocktree[] sons;
 	private Blocktree father;
-	private int content;
+	private Terran content;
 
 
 
 
-	public int getContent() {
+	public Terran getContent() {
 		return content;
 	}
 
@@ -102,7 +102,7 @@ public class Blocktree extends DyadicBlock{
 		return sons;
 	}
 
-	public void setContent(int content){
+	public void setContent(Terran content){
 		this.content = content;
 	}
 

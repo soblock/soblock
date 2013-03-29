@@ -4,9 +4,6 @@ import org.wavecraft.geometry.BoundingBox;
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.OctreeStateLeaf;
-import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
 
 
 
