@@ -30,7 +30,7 @@ public class PhysicsFreeFlight extends Physics implements UiEventListener{
 
 	protected PhysicsFreeFlight(){
 		direction = EnumSet.noneOf(Direction.class);
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 	
 	@Override

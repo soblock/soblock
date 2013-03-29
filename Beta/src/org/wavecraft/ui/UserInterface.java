@@ -4,7 +4,7 @@ package org.wavecraft.ui;
 import org.wavecraft.graphics.renderer.octree.ColorMap;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
-import org.wavecraft.ui.menu.MenuSelectColorMap;
+
 import org.wavecraft.ui.menu.MenuSelectBlock;
 
 
@@ -31,16 +31,16 @@ public class UserInterface {
 		keyboard=new KeyBoard();
 		mouse = Mouse.getInstance();
 		MenuSelectBlock.getInstance();
-		MenuSelectColorMap.getInstance();
+		
 		ColorMap.getInstance();
 		// register listener to mediator
-		UiEventMediator.addListener(window);
+		UiEventMediator.getUiEventMediator().addListener(window);
 	}
 	
 	public static void getEventAndSendNotification(){
 		keyboard.getKeyboardEvents();
 		mouse.getMouseEvent();
-		UiEventMediator.notifyAllListeners();
+		UiEventMediator.getUiEventMediator().notifyAllListeners();
 	}
 	
 	
@@ -50,6 +50,6 @@ public class UserInterface {
 	}
 	
 	public static void addUiEventListener(UiEventListener listener){
-		UiEventMediator.addListener(listener);
+		UiEventMediator.getUiEventMediator().addListener(listener);
 	}
 }

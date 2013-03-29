@@ -31,10 +31,4 @@ public class OctreeEventMediator extends EventMediator<OctreeEvent, OctreeEventL
 		return octreeEventMediator.events.size() + octreeEventMediator.nextEvents.size();
 	}
 	
-	public static boolean remainingEventInCurrentBuffer(){
-		return octreeEventMediator.remainingEventsInCurrentBuffer();
-	}
-	public static void notifyAllListenerForOneEvent(){
-		octreeEventMediator.notifyMyListenersForOneEvent();
-	}
 }

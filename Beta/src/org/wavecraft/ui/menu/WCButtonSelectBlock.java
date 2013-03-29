@@ -3,7 +3,7 @@ package org.wavecraft.ui.menu;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.graphics.texture.MegaTexture;
-import org.wavecraft.modif.ModifAdder;
+import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 
@@ -17,14 +17,15 @@ public class WCButtonSelectBlock extends WCButton{
 		}
 		@Override
 		public void process() {
-			ModifAdder.setTargetContent(contentId);
+			//ModifAdder.setTargetContent(contentId);
+			ModifAdderBlocktree.setTargetContent(contentId);
 		}
 	}
 
 	public WCButtonSelectBlock(int contentId, Coord2d positionRelative,
 			Coord2d sizeRelative ) {
 		super(String.format("%d",contentId), positionRelative, sizeRelative, null);
-		// TODO Auto-generated constructor stub
+
 		this.setWCAction(new PressedButtonAction(contentId));
 		this.contentId = contentId;
 	}

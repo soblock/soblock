@@ -17,11 +17,11 @@ public class UiEventMediator extends EventMediator<UiEvent, UiEventListener>{
 		return uiEventMediator;
 	}
 	
-	public static void removeListener(UiEventListener listener){
+	public void removeListener(UiEventListener listener){
 		uiEventMediator.remove(listener);
 	}
 	
-	public static void addListener(UiEventListener listener){
+	public void addListener(UiEventListener listener){
 		uiEventMediator.add(listener);
 	}
 	
@@ -29,7 +29,7 @@ public class UiEventMediator extends EventMediator<UiEvent, UiEventListener>{
 		uiEventMediator.add(event);
 	}
 	
-	public static void notifyAllListeners(){
+	public  void notifyAllListeners(){
 		uiEventMediator.notifyMyListeners();
 	}
 	

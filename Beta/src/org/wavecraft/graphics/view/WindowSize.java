@@ -21,7 +21,7 @@ public class WindowSize implements UiEventListener{
 	private WindowSize(){
 		w = 0;
 		h = 0;
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 
 	@Override

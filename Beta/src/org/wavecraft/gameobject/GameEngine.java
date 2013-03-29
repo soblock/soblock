@@ -45,9 +45,12 @@ import org.wavecraft.geometry.worldfunction.WorldFunctionBuilder;
 import org.wavecraft.geometry.worldfunction.WorldFunctionWrapper;
 import org.wavecraft.graphics.vbo.VBOBlocktreePool;
 import org.wavecraft.stats.Profiler;
+import org.wavecraft.ui.events.UiEvent;
+import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
+import org.wavecraft.ui.events.UiEventMenu;
 import org.wavecraft.modif.BlocktreeGrabber;
-import org.wavecraft.modif.ModifAdder;
+
 import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.Soboutils.MathSoboutils;
@@ -58,16 +61,15 @@ import org.wavecraft.Soboutils.MathSoboutils;
 // not call any class or any method of these packages
 // the only way to interact with the game engine is through events
 // singleton
-public class GameEngine {
+public class GameEngine implements UiEventListener{
 	private static GameEngine gameEngine = null;
 	private static Player player;
 	private static Physics physicsPlayer;
-	private static Octree octree;
-	private static FluidTree water;
+	
+	
+	
 	private static ModifOctree modif;
-	private static OctreeBuilder octreeBuilder;
-	private static OctreeUpdater octreeUpdater;
-
+	
 	private static Blocktree blocktree;
 	private static BlocktreeUpdaterMaxPriority blockTreeUpdater;
 	private static BlocktreeUpdaterSimple blockTreeUpdaterSimple;
@@ -82,9 +84,7 @@ public class GameEngine {
 		return gameEngine;
 	}
 
-	public static OctreeBuilder getOctreeBuilder(){
-		return octreeBuilder;
-	}
+	
 
 	public static BlocktreeBuilder getBlocktreeBuilder(){
 		return builder;
@@ -97,21 +97,11 @@ public class GameEngine {
 
 
 	private GameEngine(){
-		player = new Player();
-
-
-		player.position.x = 512;
-		player.position.y = 512;
-		player.position.z = 640;
+		UiEventMediator.getUiEventMediator().addListener(this);
+		initPlayer();
+		
 		new MathSoboutils();
-
-		// register main player to UiEvents
-		// other player should NOT listen to UiEvents
-		UiEventMediator.addListener(player);
-		//physicsPlayer = new PhysicsFreeFlight();
-		physicsPlayer = new PhysicsWrapper();
-
-		octree = new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
+		
 		modif =new ModifOctree(0,0,0,Octree.JMAX,5,0.);
 
 
@@ -125,17 +115,13 @@ public class GameEngine {
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
 
 
-		ThreeDimFunction fun1 = new ThreeDimFunctionSphere(new Coord3d(1024, 1024, 1024), 1024);
-		ThreeDimFunction fun2 = new ThreeDimFunctionPerlinMS();
-		ThreeDimFunction fun = new ThreeDimFunctionSum(fun1, fun2);
-		ThreeDimContent content = new ThreeDimContentBiome(-100, 2048, fun, 10);
 		//
-		octreeBuilder = OctreeBuilderBuilder.getBuilderModif(wf, modif);
+		
 
 		OctreeEventMediator.getInstance();
 		OctreeEventListenerBasic oelb = new OctreeEventListenerBasic();
 		OctreeEventMediator.addListener(oelb);
-		octreeUpdater = new OctreeUpdaterPriority(octree, octreeBuilder);
+		
 
 		OctreeBuilder ob2 = OctreeBuilderBuilder.getBuilder(wf);
 		builder = new BlocktreeBuilderAdapter(ob2);
@@ -145,10 +131,7 @@ public class GameEngine {
 		builder = new BlocktreeBuilderThreeDimFun(wf, priority);
 		//ModifOctree modif = new ModifOctree(0, 0, 0, 10, 0, 0);
 		modif =new ModifOctree(0,0,0,10,5,0.);
-		modif.computeBounds();
-		modif.sumAncestors = 0;
-		modif.computeSumAncestors();
-
+		
 		builder = new BlocktreeBuilderThreeDimFunModif(wf, priority, modif);
 
 		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
@@ -165,38 +148,34 @@ public class GameEngine {
 		blocktree.setState(State.GRAND_FATHER);
 		blockTreeUpdaterSimple = new BlocktreeUpdaterSimple(builder);
 		blockTreeUpdaterSimple.init(blocktree);
-
-
-		//blockTreeUpdater = new BlocktreeUpdaterSimple(blocktree, blockTreeBuilder); 
+ 
 		blockTreeUpdater = new BlocktreeUpdaterMaxPriority(builder);
 
 		refiner = new BlocktreeRefiner();
 		refinerThread = new Thread(refiner);
 		refinerThread.start();
 
-		//((BlocktreeUpdaterSimple) blockTreeUpdater).init(blocktree);
-		//((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
-		//blockTreeUpdater.update(blocktree);
-
-
-		//		Thread updateThread = new Thread(new Runnable() {
-		//			@Override
-		//			public void run() {
-		//				while (true){
-		//					((BlockTreeUpdaterMaxPriority) blockTreeUpdater).updateANode(blocktree);
-		//				}
-		//			}
-		//		});
-
-
-
-		//updateThread.start();
-
+		
 
 	}
-
-	public static void startNewGame(){
+	
+	private void initPlayer(){
+		player = new Player();
+		player.position.x = 512;
+		player.position.y = 512;
+		player.position.z = 640;
+		// register main player to UiEvents
+		// other player should NOT listen to UiEvents
+		UiEventMediator.getUiEventMediator().addListener(player);
 		physicsPlayer = new PhysicsWrapper();
+	}
+	
+	private void initBlocktree(){
+		
+	}
+
+	private static void startNewGame(){
+		//physicsPlayer = new PhysicsWrapper();
 		((PhysicsWrapper) physicsPlayer).switchPhys();
 	}
 
@@ -215,23 +194,8 @@ public class GameEngine {
 
 
 
-		double t2 = System.currentTimeMillis();
-		if (Timer.getNframe()%1 == 0){
-			octreeUpdater.updateOctree();
-		}
+		
 		// this function is being profiled in more detail
-		double dt_octreeUpdater = System.currentTimeMillis()-t2;
-		//Profiler.getInstance().push("updateOctree", dt_octreeUpdater,Timer.getCurrT());
-
-		//Octree nearest = BlockGrabber.nearestIntersectedLeaf(GameEngine.getOctree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
-		//Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(blocktree,player.position, player.getVectorOfSight());
-		Octree obstacle=new Octree(new DyadicBlock(0, 0, 0, Octree.JMAX), null);
-		obstacle.initSon(2);
-		Octree son1= (obstacle.getSons())[2];
-		son1.initSon(1);
-
-		//water.moveFluid(octree,player.position,octreeBuilder);
-
 
 
 		ModifAdderBlocktree.setModif(modif);
@@ -283,12 +247,6 @@ public class GameEngine {
 		}
 	}
 
-	public static Octree getOctree(){
-		return octree;
-	}
-	public static FluidTree getWater(){
-		return water;
-	}
 
 	public static Blocktree getBlocktree() {
 		return blocktree;
@@ -298,6 +256,21 @@ public class GameEngine {
 	public void prepareForExit(){
 		refiner.setActive(false);
 
+	}
+
+	@Override
+	public void handle(UiEvent e) {
+		if (e instanceof UiEventMenu){
+			switch ((UiEventMenu ) e) {
+			case START_NEW_GAME:
+				startNewGame();
+				break;
+
+			default:
+				break;
+			}
+		}
+		
 	}
 
 

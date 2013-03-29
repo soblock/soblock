@@ -18,7 +18,7 @@ public class ProjectionPerspective implements Projection,UiEventListener{
 	private int yM = 200;
 	
 	public ProjectionPerspective(){
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 	
 	@Override

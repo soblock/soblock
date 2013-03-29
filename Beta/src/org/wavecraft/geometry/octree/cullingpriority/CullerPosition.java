@@ -22,12 +22,12 @@ public class CullerPosition implements Culler, OctreePriorityFunction, UiEventLi
 	private final static double maxCullingCoefficient = 512;
 	public CullerPosition(){
 		position = new Coord3d(0, 0, 0);
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 
 	public CullerPosition(Coord3d position){
 		this.position = position;
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 
 	@Override

@@ -67,7 +67,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 	}
 
 	private ModifAdderBlocktree(){
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 		toRecomputeVBO = new ArrayList<Blocktree>();
 	}
 

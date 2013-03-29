@@ -1,7 +1,6 @@
 package org.wavecraft.geometry.blocktree;
 
 import org.wavecraft.geometry.DyadicBlock;
-import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionUtils;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
 import org.wavecraft.modif.ModifOctree;
@@ -17,16 +16,12 @@ public class BlocktreeBuilderThreeDimFunModif implements BlocktreeBuilder{
 		return modif;
 	}
 
-
-
 	public BlocktreeBuilderThreeDimFunModif(WorldFunction wf, BlocktreePriority priority, ModifOctree modif){
 		this.wf = wf;
 		this.priority = priority;
 		this.modif = modif;
 	}
 	
-	
-
 	@Override
 	public boolean isGround(DyadicBlock block) {
 		ModifOctree cell=modif.smallestCellContainingBlock(block);
@@ -79,17 +74,13 @@ public class BlocktreeBuilderThreeDimFunModif implements BlocktreeBuilder{
 
 	@Override
 	public int contentAt(DyadicBlock block) {
-		
-		
 		ModifOctree smallestMod = modif.smallestNegativeCellContainingBlock(block);
 		if (smallestMod != null && smallestMod.value<0){
 			return smallestMod.content;
-			//System.out.println(smallestMod.toString());
 		}
 		else {
 			return wf.contentAt(block);
 		}
-		
 	}
 
 	@Override

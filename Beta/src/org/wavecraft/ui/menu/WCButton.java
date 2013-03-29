@@ -46,7 +46,7 @@ public class WCButton implements UiEventListener{
 		this.action = action;
 		textRenderer = new TextRenderer();
 		textRenderer.setFontSize(16);
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 
 	public void onClick() {
@@ -63,7 +63,7 @@ public class WCButton implements UiEventListener{
 	}
 
 	public void deleteSafely(){
-		UiEventMediator.removeListener(this);
+		UiEventMediator.getUiEventMediator().removeListener(this);
 	}
 
 	protected void drawFilledRectangle(){

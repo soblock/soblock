@@ -1,12 +1,14 @@
 package org.wavecraft.gameobject.physics;
 
-import java.util.ArrayList;
+
+import java.util.List;
 
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.gameobject.GameObjectMoving;
 import org.wavecraft.geometry.BoundingBox;
 import org.wavecraft.geometry.Coord3d;
-import org.wavecraft.geometry.octree.Octree;
+import org.wavecraft.geometry.blocktree.Blocktree;
+
 
 public class PhysicsFreeFlightIntersect extends PhysicsFreeFlight{
 
@@ -18,10 +20,10 @@ public class PhysicsFreeFlightIntersect extends PhysicsFreeFlight{
 	public void move(GameObjectMoving movingObject, double dt) {
 		super.move(movingObject, dt);
 		// check for collision
-		Octree root = GameEngine.getOctree();
+		Blocktree root = GameEngine.getBlocktree();
 		BoundingBox box = movingObject.getTranslatedBoundingBox();
 
-		ArrayList<Octree> listOfIntersectedLeaf = CollisionDetectionOctree.intersectedLeaf(root, box);
+		List<Blocktree> listOfIntersectedLeaf = CollisionDetectionBlocktree.intersectedLeaf(root, box);
 		boolean case1happened = false;
 		boolean case2happened = false;
 		boolean case3happened = false;
@@ -29,7 +31,7 @@ public class PhysicsFreeFlightIntersect extends PhysicsFreeFlight{
 		boolean case5happened = false;
 		boolean case6happened = false;
 		for (int i=0; i<listOfIntersectedLeaf.size(); i++){
-			Octree leaf = listOfIntersectedLeaf.get(i);
+			Blocktree leaf = listOfIntersectedLeaf.get(i);
 			BoundingBox box2 = new BoundingBox(leaf);
 			// 6 case to check :
 			

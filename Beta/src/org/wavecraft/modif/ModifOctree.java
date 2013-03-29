@@ -26,6 +26,7 @@ public class ModifOctree extends DyadicBlock {
 		value = val;
 		content = cont;
 		boundMin = boundMax = 0;
+		init();
 	}
 	public ModifOctree(int i, int j, int k, int J, int cont, double val,double sum) {
 		super(i, j, k, J);
@@ -33,6 +34,7 @@ public class ModifOctree extends DyadicBlock {
 		content = cont;
 		sumAncestors=sum;
 		boundMin = boundMax = 0;
+		init();
 	}
 
 	public ModifOctree(Coord3i coords, int J, int cont, double val) {
@@ -41,8 +43,15 @@ public class ModifOctree extends DyadicBlock {
 		value = val;
 		sumAncestors = 0;
 		boundMin = boundMax = 0;
+		init();
 	}
 
+	private void init(){
+		this.computeBounds();
+		this.sumAncestors = 0;
+		this.computeSumAncestors();
+	}
+	
 	public void computeBounds() {
 		boundMin = 0.0;
 		boundMax = 0.0;

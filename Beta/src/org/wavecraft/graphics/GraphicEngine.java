@@ -34,7 +34,7 @@ import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
 import org.wavecraft.graphics.view.WindowSize;
 import org.wavecraft.modif.BlocktreeGrabber;
-import org.wavecraft.modif.ModifAdder;
+
 import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.stats.Profiler;
@@ -162,11 +162,9 @@ public class GraphicEngine {
 		// light.setPositionSunLight();
 
 
-		BlockRendererLines.getInstance().renderEmphasize(ModifAdder.getNodeToRemove(), 0);
-		BlockRendererLines.getInstance().renderEmphasize(ModifAdder.getNodeToAdd(), 1);
 
 
-		Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(GameEngine.getBlocktree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
+		//Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(GameEngine.getBlocktree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
 		//BlockRendererLines.getInstance().renderEmphasize(nearest, 0);
 		
 		
@@ -175,15 +173,10 @@ public class GraphicEngine {
 
 
 
-		OctreeRendererLines.render(GameEngine.getOctree());
-		if (GameEngine.getOctreeBuilder() instanceof OctreeBuilderWorldFuntionCullerModif){
-			ModifOctree modif = ((OctreeBuilderWorldFuntionCullerModif) GameEngine.getOctreeBuilder()).getModifOctree();
-			OctreeRendererLines.renderModif(modif);
-		}
+		
 		
 		if (GameEngine.getBlocktreeBuilder() instanceof BlocktreeBuilderThreeDimFunModif){
-			ModifOctree modif = ((BlocktreeBuilderThreeDimFunModif) GameEngine.getBlocktreeBuilder()).getModif();
-		//	OctreeRendererLines.renderModif(modif);
+			 ((BlocktreeBuilderThreeDimFunModif) GameEngine.getBlocktreeBuilder()).getModif();
 		}
 
 		//light.initLight();

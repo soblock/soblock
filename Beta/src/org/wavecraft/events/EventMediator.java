@@ -4,28 +4,29 @@ import java.util.ArrayList;
 
 
 
-import org.wavecraft.geometry.octree.events.OctreeEvent;
-import org.wavecraft.ui.events.UiEventWindowResized;
 
 // templated class for event handling
 public class EventMediator<Event,EventListenerSub extends EventListener<Event>> {
 
 	// the listeners is a set so that we can remove an element
 	protected  ArrayList<EventListenerSub> listeners;
+	// double buffer listeners
+	protected ArrayList<EventListenerSub> nextListeners;
 	// double buffer events to prevent concurrent access
 	protected ArrayList<Event> nextEvents;
 	protected ArrayList<Event> events;
-	protected int position;
+
 
 	protected EventMediator(){
 		this.listeners = new ArrayList<EventListenerSub>();
 		this.events = new ArrayList<Event>();
 		this.nextEvents = new ArrayList<Event>();
-		this.position = 0;
+		this.nextListeners = new ArrayList<EventListenerSub>();
+
 	}
 
 	public void add(EventListenerSub listener){
-		listeners.add(listener);
+		nextListeners.add(listener);
 	}
 	
 	public void remove(EventListenerSub listener){
@@ -36,47 +37,18 @@ public class EventMediator<Event,EventListenerSub extends EventListener<Event>> 
 		nextEvents.add(event);
 	}
 
-	public void notifyMyListenersForOneEvent(){
-		swap();
-		if (events.size()>0) {
-			if (events.get(position) instanceof OctreeEvent){
-				//System.out.println(events.get(position).toString());
-
-			}
-			for (EventListenerSub listener : listeners){
-				listener.handle(events.get(position));
-			}
-			position++;
-		}
-	}
-
-	public boolean remainingEventsInCurrentBuffer(){
-		return (position < events.size());
-	}
-
-	public void swap(){
-		if (!remainingEventsInCurrentBuffer()){
-			position =0;
-			events = nextEvents;
-			nextEvents = new ArrayList<Event>();
-		}
-	}
-
-	public  void notifyMyListeners(){
+	public void notifyMyListeners(){
 		events = nextEvents;
 		nextEvents = new ArrayList<Event>();
+		listeners.addAll(nextListeners);
+		nextListeners.clear();
 		for (Event event : events){
-			if (events.get(position) instanceof OctreeEvent){
-				//System.out.println(events.get(position).toString());
-			}
-			if (events.get(position) instanceof UiEventWindowResized){
-				//System.out.println(events.get(position).toString());
-			}
 			for (EventListenerSub listener : listeners){
 				listener.handle(event);
 			}
 		}
 		events.clear();
+		
 	}
 
 	public void printAllListenersType(){

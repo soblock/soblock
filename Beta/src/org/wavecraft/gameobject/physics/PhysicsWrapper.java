@@ -1,6 +1,5 @@
 package org.wavecraft.gameobject.physics;
 
-import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.GameObjectMoving;
 import org.wavecraft.ui.KeyboardBinding;
 import org.wavecraft.ui.events.UiEvent;
@@ -13,20 +12,16 @@ public class PhysicsWrapper extends Physics implements UiEventListener{
 	private Physics physics = PhysicsFreeFlightIntersect.getInstance();
 
 	public PhysicsWrapper(){
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 		PhysicsFreeFlight.getInstance();
 		PhysicsWalkIntersect.getInstance();
 	}
+	
 	@Override
 	public void move(GameObjectMoving movingObject, double dt) {
 		physics.move(movingObject, dt);
-		
-		//if (Timer.getNframe()==30){
-		//	physics = PhysicsWalkIntersect.getInstance();
-		//}
-			
-		//System.out.println(physics.getClass().toString());
 	}
+	
 	@Override
 	public void handle(UiEvent e) {
 		if (e instanceof UiEventKeyboardPressed){

@@ -4,8 +4,6 @@ import javax.vecmath.Point2d;
 
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.ui.events.UiEvent;
-import org.wavecraft.ui.events.UiEventKeyboardPressed;
-import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.ui.events.UiEventMouseClicked;
 import org.wavecraft.ui.events.UiEventMouseMoved;
@@ -18,8 +16,8 @@ public class Mouse {
 	private Point2d lastMove;
 
 	public enum State{
-		ACTIVE,
-		UNACTIVE
+		IN_GAME, // means active in game : click will result in block addition etc...
+		NAV_MENU // means unactive in game : pointers appear to navigate in menu
 	}
 	private State state;
 
@@ -37,7 +35,7 @@ public class Mouse {
 		org.lwjgl.input.Mouse.setGrabbed(false);
 	}
 	private void getUpdate(){
-		if (state == State.ACTIVE){
+		if (state == State.IN_GAME){
 			lastMove.x = sensitivity*org.lwjgl.input.Mouse.getDX() ; 
 			lastMove.y = sensitivity*org.lwjgl.input.Mouse.getDY();
 		}
@@ -45,7 +43,7 @@ public class Mouse {
 
 	public void getMouseEvent(){
 
-		if (state == State.ACTIVE){
+		if (state == State.IN_GAME){
 			getUpdate();
 			// move event
 			if (lastMove.x!= 0 && lastMove.y!=0){
@@ -71,6 +69,17 @@ public class Mouse {
 
 	public void setState(State state) {
 		this.state = state;
+		switch (state) {
+		case IN_GAME:
+			org.lwjgl.input.Mouse.setGrabbed(true);
+			break;
+
+		case NAV_MENU:
+			org.lwjgl.input.Mouse.setGrabbed(false);
+			
+		default:
+			break;
+		}
 	}
 
 }

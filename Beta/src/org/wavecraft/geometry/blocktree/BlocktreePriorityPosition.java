@@ -15,7 +15,7 @@ public class BlocktreePriorityPosition implements BlocktreePriority, UiEventList
 	private static final double RADIUS_MAX = 512;
 
 	public BlocktreePriorityPosition(){
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 	
 	@Override

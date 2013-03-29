@@ -2,15 +2,12 @@ package org.wavecraft.client;
 
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.gameobject.Player;
-import org.wavecraft.geometry.octree.Octree;
-import org.wavecraft.geometry.octree.builder.OctreeBuilder;
-import org.wavecraft.geometry.octree.builder.OctreeBuilderWorldFuntionCullerModif;
 import org.wavecraft.graphics.GraphicEngine;
 import org.wavecraft.graphics.hud.HUD;
 import org.wavecraft.graphics.hud.HUDBuilder;
 import org.wavecraft.graphics.view.ViewBuilder;
-import org.wavecraft.modif.ModifAdder;
-import org.wavecraft.modif.ModifOctree;
+
+
 
 
 // this class is the Client Controller
@@ -45,15 +42,10 @@ public class ClientControllerSP {
 	}
 	
 	private static void bindModifAdder(){
-		Octree octree = GameEngine.getOctree();
-		ModifAdder.setOctree(octree);
+		
 		// check if OctreeBuilder contains a modif
 		// if so, init the Modif adder with the modif field.
-		OctreeBuilder builder = GameEngine.getOctreeBuilder();
-		if (builder instanceof OctreeBuilderWorldFuntionCullerModif){
-			ModifOctree modif = ((OctreeBuilderWorldFuntionCullerModif) builder).getModifOctree();
-			ModifAdder.setModif(modif);
-		}
+		
 		
 	}
 	

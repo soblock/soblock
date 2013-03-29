@@ -29,7 +29,7 @@ public class BlocktreeRendererLines implements UiEventListener {
 
 	private BlocktreeRendererLines(){
 		drawMode = DrawMode.DRAWNOTHING;
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 
 

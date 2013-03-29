@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.text.JTextComponent.KeyBinding;
-
 import org.lwjgl.LWJGLException;
 import org.wavecraft.graphics.view.WindowSize;
 import org.wavecraft.ui.KeyboardBinding;
@@ -17,6 +15,7 @@ import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
+import org.wavecraft.ui.events.UiEventMenu;
 
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
@@ -28,12 +27,11 @@ public class MenuController implements UiEventListener{
 	private ResizableWidget widget;
 	public enum Menu {
 		MAIN_MENU,
-		DISABLE
+		IN_GAME_CLEAN,
+		IN_GAME_DEBUG
 	}
 
 	private Map<ResizableWidget, GUI> allMenus = new HashMap<ResizableWidget, GUI>();
-
-	private Menu menu;
 
 
 	private ThemeManager themeManager;
@@ -41,16 +39,16 @@ public class MenuController implements UiEventListener{
 
 	public MenuController(){
 
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 		
 		try {
 			renderer =  new LWJGLRenderer();
-			this.widget = MainMenu.getInstance(this);
+			this.widget = MainMenu.getInstance();
 			initGuiWithWidget();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
-		Mouse.getInstance().setState(State.UNACTIVE);
+		Mouse.getInstance().setState(State.NAV_MENU);
 
 	}
 
@@ -62,7 +60,7 @@ public class MenuController implements UiEventListener{
 		} // if not instantiate it
 		else {
 			try {
-				String path = ((MainMenu) widget).getPathToTheme();
+				String path = widget.getPathToThemeFile();
 				themeManager = ThemeManager.createThemeManager(widget.getClass().getResource(path), renderer);
 			}
 			catch (IOException e){
@@ -92,27 +90,40 @@ public class MenuController implements UiEventListener{
 	}
 
 	public void setMenu(Menu menu) {
-		this.menu = menu;
 		switch (menu) {
-		case DISABLE:
+		case IN_GAME_CLEAN:
 			gui = null;
+			Mouse.getInstance().setState(State.IN_GAME);
 			break;
 
+		case MAIN_MENU:
+			widget = MainMenu.getInstance();
+			initGuiWithWidget();
+			Mouse.getInstance().setState(State.NAV_MENU);
+			
 		default:
 			break;
 		}
 	}
-
 
 	@Override
 	public void handle(UiEvent e) {
 		if (e instanceof UiEventKeyboardPressed){
 			UiEventKeyboardPressed ePressed = (UiEventKeyboardPressed) e;
 			if (ePressed.key == KeyboardBinding.KEYBOARD_MENU){
-				widget = MainMenu.getInstance(this);
-				initGuiWithWidget();
-				Mouse.getInstance().setState(State.UNACTIVE);
-				org.lwjgl.input.Mouse.setGrabbed(false);
+				setMenu(Menu.MAIN_MENU);
+			}
+		}
+		
+		if (e instanceof UiEventMenu){
+			UiEventMenu eMenu = (UiEventMenu) e;
+			switch (eMenu) {
+			case START_NEW_GAME:
+				setMenu(Menu.IN_GAME_CLEAN);
+				break;
+
+			default:
+				break;
 			}
 		}
 	}

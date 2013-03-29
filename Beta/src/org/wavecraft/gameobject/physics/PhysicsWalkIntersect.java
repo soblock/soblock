@@ -5,7 +5,7 @@ package org.wavecraft.gameobject.physics;
 
 import org.wavecraft.Soboutils.MathSoboutils;
 
-import java.util.ArrayList;
+
 import java.util.EnumSet;
 import java.util.List;
 
@@ -16,7 +16,6 @@ import org.wavecraft.geometry.BoundingBox;
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
-import org.wavecraft.geometry.octree.Octree;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardDown;
 import org.wavecraft.ui.events.UiEventListener;
@@ -52,7 +51,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 	protected PhysicsWalkIntersect(){
 		scalarSpeedMult = 1;
 		direction = EnumSet.noneOf(Direction.class);
-		UiEventMediator.addListener(this);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 
 

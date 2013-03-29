@@ -36,7 +36,6 @@ public class KeyBoard {
 	
 	public void setDefaultBindingMap(){
 		this.bindingMap = new HashMap<Integer, KeyboardBinding>();
-		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_Q),KeyboardBinding.KEYBOARD_APP_CLOSE);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_EQUALS),KeyboardBinding.KEYBOARD_WINDOW_ENLARGE);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_MINUS),KeyboardBinding.KEYBOARD_WINDOW_REDUCE);
 		this.bindingMap.put(Integer.valueOf(Keyboard.KEY_W),KeyboardBinding.KEYBOARD_MOVE_FORWARD);

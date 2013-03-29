@@ -1,7 +1,6 @@
 package org.wavecraft.ui;
 
 public enum KeyboardBinding {
-	KEYBOARD_APP_CLOSE,
 	KEYBOARD_WINDOW_ENLARGE,
 	KEYBOARD_WINDOW_REDUCE,
 	KEYBOARD_MOVE_FORWARD,

@@ -1,12 +1,8 @@
 package org.wavecraft.ui.menu.twl;
 
+import org.wavecraft.ui.events.UiEventMediator;
+import org.wavecraft.ui.events.UiEventMenu;
 
-import org.wavecraft.gameobject.GameEngine;
-import org.wavecraft.gameobject.physics.PhysicsWrapper;
-import org.wavecraft.graphics.view.WindowSize;
-import org.wavecraft.ui.Mouse;
-import org.wavecraft.ui.Mouse.State;
-import org.wavecraft.ui.menu.twl.MenuController.Menu;
 
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.Widget;
@@ -18,30 +14,24 @@ public class MainMenu extends Widget implements ResizableWidget{
 	private Button buttonOptions;
 	private Button buttonQuit;
 	
-	private MenuController menuController;
-	
-	private String pathToTheme = "mainmenu.xml";
+	private final String pathToTheme = "mainmenu.xml";
 	
 	private static MainMenu instance;
 	
-	public static MainMenu getInstance(MenuController menuController){
+	public static MainMenu getInstance(){
 		if (instance == null){
-			instance = new MainMenu(menuController);
+			instance = new MainMenu();
 		}
 		return instance;
 	}
 	
-	private MainMenu(MenuController menuController){
-		this.menuController = menuController;
+	private MainMenu(){
 		createButton();
 	}
 
-
-
 	public String getPathToTheme() {
 		return pathToTheme;
-	}
-	
+	}	
 
 	private void createButton() {
 		buttonNewGame = new Button("New Game");
@@ -55,13 +45,16 @@ public class MainMenu extends Widget implements ResizableWidget{
 		buttonQuit.setTheme("button");
 		
 		buttonNewGame.addCallback(new Runnable() {
-			
 			@Override
 			public void run() {
-				Mouse.getInstance().setState(State.ACTIVE);
-				menuController.setMenu(Menu.DISABLE);
-				GameEngine.startNewGame();
-				org.lwjgl.input.Mouse.setGrabbed(true);
+				UiEventMediator.getUiEventMediator().add(UiEventMenu.START_NEW_GAME);
+			}
+		});
+		
+		buttonQuit.addCallback(new Runnable() {
+			@Override
+			public void run() {
+				UiEventMediator.getUiEventMediator().add(UiEventMenu.QUIT);
 			}
 		});
 		
@@ -78,7 +71,6 @@ public class MainMenu extends Widget implements ResizableWidget{
 		int top = Math.max(40, h/2 - 5 * buttonH);
 		int dy = 50;
 		
-		
 		buttonNewGame.setPosition(left, top);
 		buttonNewGame.setSize(buttonW, buttonH);
 		
@@ -90,8 +82,6 @@ public class MainMenu extends Widget implements ResizableWidget{
 		
 		buttonQuit.setPosition(left, top + 3*dy);
 		buttonQuit.setSize(buttonW, buttonH);
-		
-		//button.adjustSize(); //Calculate optimal size instead of manually setting it
 	}
 
 	@Override
@@ -99,9 +89,9 @@ public class MainMenu extends Widget implements ResizableWidget{
 		return this;
 	}
 
-
-	
-
-	
+	@Override
+	public String getPathToThemeFile() {
+		return pathToTheme;
+	}
 
 }

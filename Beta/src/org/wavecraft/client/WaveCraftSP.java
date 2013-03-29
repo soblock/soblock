@@ -1,18 +1,16 @@
 package org.wavecraft.client;
 
-import java.text.DateFormat;
-import java.util.Date;
 
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.graphics.GraphicEngine;
-import org.wavecraft.modif.ModifAdder;
 
-import org.wavecraft.stats.Profiler;
+
+
 import org.wavecraft.stats.StatisticsClient;
 import org.wavecraft.ui.UserInterface;
 import org.wavecraft.ui.events.UiEvent;
-import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;
+import org.wavecraft.ui.events.UiEventMenu;
 
 /**
  * Client for wavecraft single player mode
@@ -58,7 +56,7 @@ public class WaveCraftSP implements UiEventListener {
 		// add listeners
 		UserInterface.addUiEventListener(this);
 		
-		UserInterface.addUiEventListener(ModifAdder.getInstance());
+		
 	}
 
 	protected void logic(){
@@ -67,17 +65,10 @@ public class WaveCraftSP implements UiEventListener {
 		StatisticsClient.update();
 		GameEngine.update();
 		GraphicEngine.update();
-		
-			
 	}
 
 	protected void render() {	
-
 		GraphicEngine.render();
-
-
-
-
 	}
 
 	protected void close() {
@@ -87,20 +78,20 @@ public class WaveCraftSP implements UiEventListener {
 
 	@Override
 	public void handle(UiEvent event) {
-		if (event instanceof UiEventKeyboardPressed){
-			UiEventKeyboardPressed eventKeyboard = (UiEventKeyboardPressed) (event);
-			switch (eventKeyboard.key) {
-			case KEYBOARD_APP_CLOSE:
-				Date date = new Date();
-				String dateStr = DateFormat.getDateInstance().format(date);
-				Profiler.getInstance().writeLogInFile("wavecraft_profiler_output"+dateStr);
-				quitNotification = true;
-				System.out.println("quiting application");
-				break;
-			default:
-				break;
+		if (event instanceof UiEventMenu){
+			UiEventMenu eMenu = (UiEventMenu) event;
+			if (eMenu == UiEventMenu.QUIT){
+				quit();
 			}
 		}
+	}
+	
+	public void quit(){
+		//Date date = new Date();
+		//String dateStr = DateFormat.getDateInstance().format(date);
+		//Profiler.getInstance().writeLogInFile("wavecraft_profiler_output"+dateStr);
+		quitNotification = true;
+		System.out.println("quiting application");
 	}
 
 

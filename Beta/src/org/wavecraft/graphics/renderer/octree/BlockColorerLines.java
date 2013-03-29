@@ -12,14 +12,9 @@ import org.wavecraft.geometry.octree.OctreeStateFatherWorried;
 import org.wavecraft.geometry.octree.OctreeStateGround;
 import org.wavecraft.geometry.octree.OctreeStateLeaf;
 import org.wavecraft.geometry.octree.OctreeStateNotYetVisited;
-import org.wavecraft.geometry.octree.builder.OctreeBuilder;
-import org.wavecraft.geometry.octree.builder.OctreeBuilderWorldFuntionCullerModif;
-import org.wavecraft.geometry.worldfunction.ThreeDimContent;
-import org.wavecraft.geometry.worldfunction.ThreeDimContentBiome;
+
 import org.wavecraft.geometry.worldfunction.ThreeDimFunction;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
-import org.wavecraft.geometry.worldfunction.WorldFunction;
-import org.wavecraft.geometry.worldfunction.WorldFunctionWrapper;
 import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
@@ -51,25 +46,8 @@ public class BlockColorerLines implements UiEventListener{
 		functionForColormap = new ThreeDimFunctionFlat(0);
 		vminForColormap = 0;
 		vminForColormap = Math.pow(2, Octree.JMAX);
-		OctreeBuilder builder = GameEngine.getOctreeBuilder();
-		if (builder instanceof OctreeBuilderWorldFuntionCullerModif){
-			WorldFunction wf = ((OctreeBuilderWorldFuntionCullerModif) builder).getWorldFunction();
-			if (wf instanceof WorldFunctionWrapper){
-				functionForColormap = ((WorldFunctionWrapper) wf).getThreeDimFunction();
-				vminForColormap = -64;
-				vmaxForColormap = 64;
-
-				ThreeDimContent content = ((WorldFunctionWrapper) wf).getThreeDimContent();
-				if (content instanceof ThreeDimContentBiome){
-					functionForColormap = ((ThreeDimContentBiome) content).humidity;
-					vminForColormap = -0.4;
-					vmaxForColormap = 0.4;
-				}
-			}
-
-		}
-
-		UiEventMediator.addListener(this);
+		
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 	public static BlockColorerLines getInstance(){
 		if (instance == null){
