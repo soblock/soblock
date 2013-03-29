@@ -23,10 +23,10 @@ public class Player extends GameObjectMovingOriented implements UiEventListener{
 			double phi = this.getPhi();
 			theta -= ((UiEventMouseMoved) event).move.x;
 			phi += ((UiEventMouseMoved) event).move.y;
-			if (phi > Math.PI/2) {
+			if (phi > Math.PI/2 - 0.01) {
 				phi = Math.PI/2 - 0.01;
 			}
-			if (phi < - Math.PI/2){
+			if (phi < - Math.PI/2  + 0.01){
 				phi = - Math.PI/2 + 0.01;
 			}
 			this.setTheta(theta);

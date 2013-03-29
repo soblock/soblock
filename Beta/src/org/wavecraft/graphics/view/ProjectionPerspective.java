@@ -38,7 +38,7 @@ public class ProjectionPerspective implements Projection,UiEventListener{
 	
 	public void handle(UiEvent event) {
 		if (event instanceof UiEventWindowResized){
-			int margin = 10;
+			int margin = 0;
 			xm = margin;
 			ym = margin ;
 			xM = ((UiEventWindowResized) event).w - margin;
