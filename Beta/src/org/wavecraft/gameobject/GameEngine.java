@@ -66,8 +66,6 @@ public class GameEngine implements UiEventListener{
 	private static Player player;
 	private static Physics physicsPlayer;
 	
-	
-	
 	private static ModifOctree modif;
 	
 	private static Blocktree blocktree;
@@ -94,8 +92,6 @@ public class GameEngine implements UiEventListener{
 		return player;
 	}
 
-
-
 	private GameEngine(){
 		UiEventMediator.getUiEventMediator().addListener(this);
 		initPlayer();
@@ -106,16 +102,10 @@ public class GameEngine implements UiEventListener{
 
 
 
-		modif.computeBounds();
-		modif.sumAncestors = 0;
-		modif.computeSumAncestors();
-
-
-
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
 
 
-		//
+		
 		
 
 		OctreeEventMediator.getInstance();

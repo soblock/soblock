@@ -3,14 +3,23 @@ package org.wavecraft.ui.menu.twl;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.ui.events.UiEventMenu;
 
+import de.matthiasmann.twl.Alignment;
+import de.matthiasmann.twl.BoxLayout;
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.Widget;
+import de.matthiasmann.twl.BoxLayout.Direction;
 
 public class OptionsMenu extends Widget implements ResizableWidget {
 
-	private Button buttonGraphics;
-	private Button buttonControlls;
-	private Button buttonBackToMain;
+	private Button buttonGraphics = new Button("Graphics");;
+	private Button buttonControlls = new Button("Controlls");
+	private Button buttonBackToMain = new Button("Back to Main Menu");
+	
+	private int buttonW = 150;
+	private int buttonH= 33;
+	private int buttonSpacing = 40;
+
+	private BoxLayout boxLayout = new BoxLayout(Direction.VERTICAL);
 	
 	private static OptionsMenu instance;
 	public static OptionsMenu getInstance(){
@@ -25,55 +34,40 @@ public class OptionsMenu extends Widget implements ResizableWidget {
 	}
 	
 	private void initButtons(){
-		buttonGraphics = new Button("Graphics");
-		buttonControlls = new Button("Controlls");
-		buttonBackToMain = new Button("Back to Main Menu");
-		
-		buttonGraphics.setTheme("button");
-		buttonControlls.setTheme("button");
-		buttonBackToMain.setTheme("button");
 		
 		buttonBackToMain.addCallback(new Runnable() {
-			
 			@Override
 			public void run() {
 				UiEventMediator.getUiEventMediator().add(UiEventMenu.NAV_MENU_MAIN);
 			}
 		});
-		
 
-		add(buttonGraphics);
-		add(buttonControlls);
-		add(buttonBackToMain);
+		boxLayout.add(buttonGraphics);
+		boxLayout.add(buttonControlls);
+		boxLayout.add(buttonBackToMain);
+		add(boxLayout);
 	}
 	
-	@Override
-	public void resize(int w, int h) {
-		int buttonW = 150;
-		int buttonH= 33;
+	public void resize(int w, int h){
 		int left = w/2 - buttonW/2;
 		int top = Math.max(40, h/2 - 5 * buttonH);
-		int dy = 50;
-		
-		buttonGraphics.setPosition(left, top);
+
 		buttonGraphics.setSize(buttonW, buttonH);
-		
-		buttonControlls.setPosition(left, top + dy);
 		buttonControlls.setSize(buttonW, buttonH);
-		
-		buttonBackToMain.setPosition(left, top + 2*dy);
 		buttonBackToMain.setSize(buttonW, buttonH);
 		
+		boxLayout.setSize(w, h);
+		boxLayout.setSpacing(buttonSpacing);
+		boxLayout.setPosition(left, top);
+		boxLayout.setAlignment(Alignment.TOPLEFT);
+
 	}
+
 
 	@Override
 	public Widget asWidget() {
 		return this;
 	}
 
-	@Override
-	public String getPathToThemeFile() {
-		return "optionsmenu.xml";
-	}
 
 }

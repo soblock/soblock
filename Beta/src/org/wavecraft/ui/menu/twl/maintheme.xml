@@ -44,13 +44,19 @@
     </theme>
 
     <theme name="mainmenu" ref="-defaults">
+        
+        <theme name="boxlayout" ref="-defaults">
         <theme name="button" ref="-defaults">
             <param name=""><image>button.*</image></param>
         </theme>
+        </theme>
     </theme>
       <theme name="optionsmenu" ref="-defaults">
+        
+        <theme name="boxlayout" ref="-defaults">
         <theme name="button" ref="-defaults">
             <param name=""><image>button.*</image></param>
+        </theme>
         </theme>
     </theme>
 </themes>

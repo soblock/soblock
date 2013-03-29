@@ -91,7 +91,7 @@ public class Mouse implements UiEventListener{
 		if (e instanceof UiEventMenu){
 			UiEventMenu eMenu = (UiEventMenu) e;
 			switch (eMenu) {
-			case START_NEW_GAME:
+			case START_NEW_GAME: case RESUME_GAME:
 				setState(State.IN_GAME);
 				break;
 

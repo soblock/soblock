@@ -130,7 +130,7 @@ public class GraphicEngine {
 		viewWindowCoord.initRendering();
 
 
-		Profiler.getInstance().display();
+		//Profiler.getInstance().display();
 		// GL11.glFlush();
 		menuController.display();
 		
@@ -159,14 +159,7 @@ public class GraphicEngine {
 		OctreeRendererLines.render(octree);
 
 		gameObjectRenderer.render(GameEngine.getPlayer());
-		// light.setPositionSunLight();
 
-
-
-
-		//Blocktree nearest = BlocktreeGrabber.nearestIntersectedLeaf(GameEngine.getBlocktree(), GameEngine.getPlayer().getPosition(), GameEngine.getPlayer().getVectorOfSight());
-		//BlockRendererLines.getInstance().renderEmphasize(nearest, 0);
-		
 		
 		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToRemove(GameEngine.getPlayer()), 0);
 		BlockRendererLines.getInstance().renderEmphasize(ModifAdderBlocktree.getNodeToAdd(GameEngine.getPlayer()), 1);
