@@ -26,14 +26,11 @@ public class MainMenu extends Widget implements ResizableWidget{
 	}
 	
 	private MainMenu(){
-		createButton();
+		initButton();
 	}
 
-	public String getPathToTheme() {
-		return pathToTheme;
-	}	
 
-	private void createButton() {
+	private void initButton() {
 		buttonNewGame = new Button("New Game");
 		buttonLoadGame = new Button("Load Game");
 		buttonOptions = new Button("Options");
@@ -55,6 +52,13 @@ public class MainMenu extends Widget implements ResizableWidget{
 			@Override
 			public void run() {
 				UiEventMediator.getUiEventMediator().add(UiEventMenu.QUIT);
+			}
+		});
+		
+		buttonOptions.addCallback(new Runnable() {
+			@Override
+			public void run() { 
+				UiEventMediator.getUiEventMediator().add(UiEventMenu.NAV_MENU_OPTIONS);
 			}
 		});
 		

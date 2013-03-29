@@ -25,11 +25,7 @@ public class MenuController implements UiEventListener{
 
 	private GUI gui;
 	private ResizableWidget widget;
-	public enum Menu {
-		MAIN_MENU,
-		IN_GAME_CLEAN,
-		IN_GAME_DEBUG
-	}
+
 
 	private Map<ResizableWidget, GUI> allMenus = new HashMap<ResizableWidget, GUI>();
 
@@ -53,15 +49,17 @@ public class MenuController implements UiEventListener{
 	}
 
 	private void initGuiWithWidget(){
-
 		// check gui is not yet instanciated
 		if (allMenus.containsKey(widget)){
 			this.gui = allMenus.get(widget);
 		} // if not instantiate it
 		else {
 			try {
-				String path = widget.getPathToThemeFile();
-				themeManager = ThemeManager.createThemeManager(widget.getClass().getResource(path), renderer);
+				//String path =widget.getPathToThemeFile();
+				String path = "mainmenu.xml";	
+				if (themeManager==null){
+					themeManager = ThemeManager.createThemeManager(MainMenu.getInstance().getClass().getResource(path), renderer);
+				}
 			}
 			catch (IOException e){
 				e.printStackTrace();
@@ -76,7 +74,9 @@ public class MenuController implements UiEventListener{
 
 	public void refreshDimension(){
 		renderer.syncViewportSize();
-		widget.resize(WindowSize.getInstance().getW(), WindowSize.getInstance().getH());
+		if (widget!=null){
+			widget.resize(WindowSize.getInstance().getW(), WindowSize.getInstance().getH());
+		}
 	}
 
 	public void display(){
@@ -89,29 +89,13 @@ public class MenuController implements UiEventListener{
 		return widget;
 	}
 
-	public void setMenu(Menu menu) {
-		switch (menu) {
-		case IN_GAME_CLEAN:
-			gui = null;
-			Mouse.getInstance().setState(State.IN_GAME);
-			break;
-
-		case MAIN_MENU:
-			widget = MainMenu.getInstance();
-			initGuiWithWidget();
-			Mouse.getInstance().setState(State.NAV_MENU);
-			
-		default:
-			break;
-		}
-	}
-
 	@Override
 	public void handle(UiEvent e) {
 		if (e instanceof UiEventKeyboardPressed){
 			UiEventKeyboardPressed ePressed = (UiEventKeyboardPressed) e;
 			if (ePressed.key == KeyboardBinding.KEYBOARD_MENU){
-				setMenu(Menu.MAIN_MENU);
+				widget = MainMenu.getInstance();
+				initGuiWithWidget();
 			}
 		}
 		
@@ -119,9 +103,20 @@ public class MenuController implements UiEventListener{
 			UiEventMenu eMenu = (UiEventMenu) e;
 			switch (eMenu) {
 			case START_NEW_GAME:
-				setMenu(Menu.IN_GAME_CLEAN);
+				widget = null;
+				gui = null;
 				break;
 
+			case NAV_MENU_OPTIONS:
+				widget = OptionsMenu.getInstance();
+				initGuiWithWidget();
+				break;
+				
+			case NAV_MENU_MAIN:
+				widget = MainMenu.getInstance();
+				initGuiWithWidget();
+				break;
+				
 			default:
 				break;
 			}

@@ -43,12 +43,7 @@
         <param name="inputMap"><inputMap>-defaultInputMap</inputMap></param>
     </theme>
 
-    <theme name="mainmenu" ref="-defaults">
-        <theme name="button" ref="-defaults">
-            <param name=""><image>button.*</image></param>
-        </theme>
-    </theme>
-      <theme name="optionsmenu" ref="-defaults">
+    <theme name="optionsmenu" ref="-defaults">
         <theme name="button" ref="-defaults">
             <param name=""><image>button.*</image></param>
         </theme>

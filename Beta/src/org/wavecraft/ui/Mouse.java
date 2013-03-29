@@ -4,14 +4,18 @@ import javax.vecmath.Point2d;
 
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.ui.events.UiEvent;
+import org.wavecraft.ui.events.UiEventKeyboardPressed;
+import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
+import org.wavecraft.ui.events.UiEventMenu;
 import org.wavecraft.ui.events.UiEventMouseClicked;
 import org.wavecraft.ui.events.UiEventMouseMoved;
+import org.wavecraft.ui.menu.twl.MainMenu;
 
 
 // singleton 
 
-public class Mouse {
+public class Mouse implements UiEventListener{
 	private double sensitivity=0.01;
 	private Point2d lastMove;
 
@@ -32,7 +36,8 @@ public class Mouse {
 	}
 	private Mouse(){
 		lastMove = new Point2d(0,0);
-		org.lwjgl.input.Mouse.setGrabbed(false);
+		setState(State.NAV_MENU);
+		UiEventMediator.getUiEventMediator().addListener(this);
 	}
 	private void getUpdate(){
 		if (state == State.IN_GAME){
@@ -80,6 +85,30 @@ public class Mouse {
 		default:
 			break;
 		}
+	}
+	@Override
+	public void handle(UiEvent e) {
+		if (e instanceof UiEventMenu){
+			UiEventMenu eMenu = (UiEventMenu) e;
+			switch (eMenu) {
+			case START_NEW_GAME:
+				setState(State.IN_GAME);
+				break;
+
+			case NAV_MENU_OPTIONS:
+				setState(State.NAV_MENU);
+			default:
+				break;
+			}
+		}
+		
+		if (e instanceof UiEventKeyboardPressed){
+			UiEventKeyboardPressed ePressed = (UiEventKeyboardPressed) e;
+			if (ePressed.key == KeyboardBinding.KEYBOARD_MENU){
+				setState(State.NAV_MENU);
+			}
+		}
+		
 	}
 
 }
