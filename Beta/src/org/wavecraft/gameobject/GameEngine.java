@@ -98,7 +98,7 @@ public class GameEngine implements UiEventListener{
 
 
 
-		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 512, 10);
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 50, 10);
 
 
 		

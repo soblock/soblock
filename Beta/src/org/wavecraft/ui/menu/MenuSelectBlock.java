@@ -15,7 +15,10 @@ public class MenuSelectBlock {
 	
 	private static MenuSelectBlock instance = null;
 	
-	private List<Terran> selectableTerran = Arrays.asList(new Terran[]{Terran.MAN_BRICK,
+	private List<Terran> selectableTerran = Arrays.asList(new Terran[]{
+			Terran.MAN_BRICK,
+			Terran.MAN_PARQUET,
+			Terran.MAN_METAL,
 			Terran.NAT_DIRT,
 			Terran.NAT_GRASS,
 			Terran.NAT_STONE

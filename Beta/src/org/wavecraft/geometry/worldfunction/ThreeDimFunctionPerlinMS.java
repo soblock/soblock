@@ -14,9 +14,9 @@ public class ThreeDimFunctionPerlinMS implements ThreeDimFunction {
 		Random gener = new Random(0);
 		perlinArr = new ThreeDimFunctionPerlin[3];
 		
-		perlinArr[0] = new ThreeDimFunctionPerlin(gener, N, 1, -0.3, 0.3);
-		perlinArr[1] = new ThreeDimFunctionPerlin(gener, N, 3, -1, 1);
-		perlinArr[2] = new ThreeDimFunctionPerlin(gener, N, 5, -10, 10);
+		perlinArr[0] = new ThreeDimFunctionPerlin(gener, N, 1, -0.3/10, 0.3/10);
+		perlinArr[1] = new ThreeDimFunctionPerlin(gener, N, 3, -1/10, 1/10);
+		perlinArr[2] = new ThreeDimFunctionPerlin(gener, N, 5, -1, 1);
 		
 	}
 	
@@ -38,6 +38,17 @@ public class ThreeDimFunctionPerlinMS implements ThreeDimFunction {
 			perlinArr[j] = new ThreeDimFunctionPerlin(gener, N ,j , minj,maxj);
 		}
 	}
+	
+	public ThreeDimFunctionPerlinMS(int J,int N, double minv, double maxv, int seed){
+		Random gener = new Random(seed);
+		perlinArr = new ThreeDimFunctionPerlin[J];
+		for (int j = 0 ;j<J;j++){
+			double minj = Math.pow(2, j)/((-1+Math.pow(2,J)))*minv;
+			double maxj = Math.pow(2, j)/((-1+Math.pow(2,J)))*maxv;
+			perlinArr[j] = new ThreeDimFunctionPerlin(gener, N ,j , minj,maxj);
+		}
+	}
+	
 	
 	public double valueAt(Coord3d coord) {
 		double value = 0;

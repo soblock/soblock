@@ -121,6 +121,11 @@ public class MegaTexture {
 			terrainCoord =new int[]{2,0};
 			break;
 
+		case NAT_GALET:
+			terrainCoord =new int[]{0,1};
+			break;
+
+			
 		case NAT_GRASS:
 			if (normal==3){
 				terrainCoord =new int[]{5,8};
@@ -134,8 +139,7 @@ public class MegaTexture {
 			}
 			break;
 
-		case NAT_ICE:
-
+		case NAT_GROUNDICE:
 			if (normal==3){
 				terrainCoord =new int[]{2,4};
 			}
@@ -148,7 +152,7 @@ public class MegaTexture {
 			}
 			break;
 
-		case NAT_SNOW:
+		case NAT_GROUNDSNOW:
 			if (normal==3){
 				terrainCoord =new int[]{3,4};
 			}
@@ -160,15 +164,36 @@ public class MegaTexture {
 					terrainCoord =new int[]{4,4};
 			}
 			break;
+			
+		case NAT_ICE:
+			terrainCoord =new int[]{2,4};
+			break;
 
 		case NAT_SAND:
 			terrainCoord =new int[]{2,1};
 			break;
 
+		case NAT_SOLIDSAND:
+			terrainCoord =new int[]{0,13};
+			break;
+			
 		case NAT_STONE:
-			terrainCoord =new int[]{7,0};
+			terrainCoord =new int[]{1,0};
+			break;
+			
+		case NAT_HERBY_ROCK:
+			terrainCoord =new int[]{4,2};
 			break;
 		case MAN_BRICK:
+			terrainCoord =new int[]{7,0};
+			break;
+			
+		case MAN_PARQUET:
+			terrainCoord =new int[]{4,0};
+			break;
+			
+		case  MAN_METAL:
+			terrainCoord =new int[]{6,0};
 			break;
 		default:
 			break;
@@ -188,7 +213,6 @@ public class MegaTexture {
 	public static void bind(){
 		texture.bind();
 	}
-
 
 
 	//xmin xmax ymin ymax
