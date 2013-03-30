@@ -11,11 +11,12 @@ public class ProjectionPerspective implements Projection,UiEventListener{
 
 	private float fovy=70;
 	private float zNear=0.01f;
-	private float zFar=1E13f;
+	private float zFar=1E14f;
 	private int xm = 0;
 	private int xM = 200;
 	private int ym = 0;
 	private int yM = 200;
+	private float aspect;
 	
 	public ProjectionPerspective(){
 		UiEventMediator.getUiEventMediator().addListener(this);
@@ -25,10 +26,18 @@ public class ProjectionPerspective implements Projection,UiEventListener{
 	public void setProjectionMatrix() {
 		int w=xM-xm;
 		int h=yM-ym;
-		float aspect= w / (h * 1.0f);
+		aspect= w/(h*1.0f);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();	
 		GLU.gluPerspective(fovy, aspect, zNear, zFar);
+	}
+
+	public float getFovy() {
+		return fovy;
+	}
+
+	public float getAspect() {
+		return aspect;
 	}
 
 	@Override

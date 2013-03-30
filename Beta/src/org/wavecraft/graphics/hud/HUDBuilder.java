@@ -10,7 +10,7 @@ public class HUDBuilder {
 	
 	public static void bind(HUD hud){
 		if (hud instanceof HUDDebug){
-			((HUDDebug) hud).setFpsGraphPanel(new GraphPanel(StatisticsClient.getFpsGraph(),0,60,1));
+			((HUDDebug) hud).setFpsGraphPanel(new GraphPanel(StatisticsClient.getFpsGraph(),0,200,1));
 			//((HUDDebug) hud).setEventCountPanel(new GraphPanel(StatisticsClient.getEventCountGraph(), 0, 10,2));
 		}
 		

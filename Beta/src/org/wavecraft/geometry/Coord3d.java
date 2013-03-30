@@ -31,6 +31,10 @@ public class Coord3d extends Point3d{
 		z = z/scales.z;
 	}
 	
+	/**
+	 * @param toAdd
+	 * @return a new Coord3d instance with the sum of the current instance and toAdd
+	 */
 	public Coord3d addInNewVector(Coord3d toAdd){
 		return new Coord3d(this.x + toAdd.x, this.y + toAdd.y, this.z + toAdd.z);
 	}
@@ -39,8 +43,17 @@ public class Coord3d extends Point3d{
 		return new Coord3d(x + trans.x, y +trans.y, z + trans.z);
 	}
 
-	public Coord3d scalarMult(double i) {
-		return new Coord3d(i*this.x, i*this.y, i*this.z);
-		
+	/**
+	 * 
+	 * @param p
+	 * @return a new Coord3d instance with the scaled version of p
+	 */
+	public Coord3d scalarMult(double p) {
+		return new Coord3d(p*this.x, p*this.y, p*this.z);
+	}
+	
+	public Coord3d normalize(){
+		double norm = Math.sqrt(x*x + y*y + z*z);
+		return this.scalarMult(1/norm);
 	}
 }

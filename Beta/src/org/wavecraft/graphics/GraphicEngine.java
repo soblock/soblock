@@ -65,7 +65,7 @@ public class GraphicEngine {
 
 		WindowSize.getInstance();
 
-		Coord3i ci = new Coord3i(300, 150, 250);
+		
 
 		
 
