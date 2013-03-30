@@ -69,7 +69,7 @@ public class GameEngine implements UiEventListener{
 	private static Thread refinerThread; 
 	private static BlocktreeBuilder builder;
 	
-	public static int JMAX = 10;
+	public static int JMAX = 11;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){
@@ -110,19 +110,12 @@ public class GameEngine implements UiEventListener{
 		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();
 		priority.setPosition(player.position);
 		builder = new BlocktreeBuilderThreeDimFun(wf, priority);
-		//ModifOctree modif = new ModifOctree(0, 0, 0, 10, 0, 0);
+	
 		modif =new ModifOctree(0,0,0,10,null,0.);
 		
 		builder = new BlocktreeBuilderThreeDimFunModif(wf, priority, modif);
 
-		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getFlatlandGeoCulling(0.1));
-		//builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getSphereGeoCullin(new Coord3d(512, 512, 512), 500));
-
-
-
-		//	builder = new BlocktreeBuilderAdapter(OctreeBuilderBuilder.getPerlinMSGeoCulling());
-
-		blocktree = new Blocktree(0,0,0,10);
+		blocktree = new Blocktree(0,0,0,JMAX);
 
 
 
@@ -142,8 +135,8 @@ public class GameEngine implements UiEventListener{
 	
 	private void initPlayer(){
 		player = new Player();
-		player.position.x = 512;
-		player.position.y = 512;
+		player.position.x = 1024;
+		player.position.y = 1024;
 		player.position.z = 640;
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
