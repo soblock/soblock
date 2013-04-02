@@ -177,12 +177,15 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		boolean shock_zp=false;
 		boolean shock_zm=false;
 		velocitynm1= new Coord3d(velocity);
-		avoid_blocks(listOfIntersectedLeaf, movingObject, dt,shock_zp,shock_zm);
+		avoid_blocks(listOfIntersectedLeaf, movingObject, dt,shock_zp,shock_zm, 0);
 
 	}
 
-	public void avoid_blocks(List<? extends DyadicBlock> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm) {
+	public void avoid_blocks(List<? extends DyadicBlock> listOfIntersectedLeaf,GameObjectMoving movingObject, double dt,boolean shock_zp, boolean shock_zm, int count) {
 		// / the player is a considered a sphere of radius size_player
+//		if (count >3){
+//			System.out.println("more than 3 calls");
+//		}
 		double playerWidth = 0.15; 
 		double playerHeightDown = 1.5; // under-the-eye player size
 		double playerHeightUp = 0.30; // up-ther eye player size
@@ -193,13 +196,22 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		boolean is_blocked_y = false;
 		boolean is_blocked_z = false;
 		// zero tolerance for dt
-		double eps_dt=1E-5;
+		double eps_dt=1E-15;
 
 		// double precision for the velocity
-		double eps_vel=1E-5;
-		if (Math.abs(velocity.x)<eps_vel) velocity.x=0.;
-		if (Math.abs(velocity.y)<eps_vel) velocity.y=0.;
-		if (Math.abs(velocity.z)<eps_vel) velocity.z=0.;
+		double eps_vel=1E-15;
+		if (Math.abs(velocity.x)<eps_vel) {
+			velocity.x=0.; 
+			//	is_blocked_x = true;
+		} // otherwise, might stackoverflow
+		if (Math.abs(velocity.y)<eps_vel) {
+			velocity.y=0.;
+			//	is_blocked_y = true;
+		}
+		if (Math.abs(velocity.z)<eps_vel) {
+			velocity.z=0.;
+			//is_blocked_z = true;
+		}
 		double ux = velocity.x;
 		double uy = velocity.y;
 		double uz = velocity.z;
@@ -316,7 +328,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 		}
 		if (Math.abs(dt)> eps_dt) {
-					
+
 			position.x += ux * dt;
 			position.y += uy * dt;
 			position.z += uz * dt;
@@ -334,7 +346,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 
 		} else {
-			
+
 			if (is_blocked_x){
 				//System.out.printf("XXX \n");
 				velocity.x = 0;
@@ -348,8 +360,9 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 				velocity.z = 0;
 			}
 
-			if(!(is_blocked_x && is_blocked_y && is_blocked_z)){
-				avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm);
+			//System.out.println("is block x " + is_blocked_x + "ib y" + is_blocked_y + "ibz " + is_blocked_z);
+			if(dt_save>0 && !(is_blocked_x && is_blocked_y && is_blocked_z)){// one of the direction is not blocked
+				avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm, count+1);
 			}
 		}
 

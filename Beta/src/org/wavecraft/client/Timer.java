@@ -12,8 +12,8 @@ public class Timer {
 	private static int nFrame;
 	
 	private Timer(){
-		lastTime = System.currentTimeMillis();
-		currTime = System.currentTimeMillis();
+		lastTime = System.nanoTime();
+		currTime = System.nanoTime();
 		nFrame = 0;
 	}
 	
@@ -25,11 +25,11 @@ public class Timer {
 	}
 	
 	public static double getDt(){
-		return currTime - lastTime;
+		return (currTime - lastTime)/1E6;
 	}
 	
 	public static double getCurrT(){
-		return currTime;
+		return currTime/1E6;
 	}
 	
 	public static int getNframe(){
@@ -38,7 +38,7 @@ public class Timer {
 	
 	public static void update(){
 		lastTime = currTime;
-		currTime = System.currentTimeMillis();
+		currTime = System.nanoTime();
 		nFrame++;
 	}
 }

@@ -73,7 +73,7 @@ public class LightFace {
 	}
 	
 	public static float getSizeFaceLight(Face face){
-		return 1-face.getJ()*1.0f/5;
+		return Math.max(0.35f, 1-face.getJ()*1.0f/6);
 	}
 	
 	public static HashMap<DyadicBlock , Float> initCacheFromBlocktree(List<Blocktree> blocktrees){

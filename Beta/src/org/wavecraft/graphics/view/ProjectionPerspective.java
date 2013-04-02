@@ -2,6 +2,7 @@ package org.wavecraft.graphics.view;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
@@ -11,7 +12,7 @@ public class ProjectionPerspective implements Projection,UiEventListener{
 
 	private float fovy=70;
 	private float zNear=0.01f;
-	private float zFar=1E14f;
+	private float zFar=10000;
 	private int xm = 0;
 	private int xM = 200;
 	private int ym = 0;
@@ -27,6 +28,8 @@ public class ProjectionPerspective implements Projection,UiEventListener{
 		int w=xM-xm;
 		int h=yM-ym;
 		aspect= w/(h*1.0f);
+		//if (GameEngine.getPlayer().getPosition()>1000)
+		// = (float) Math.max(1E11f, GameEngine.getPlayer().getPosition().z);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();	
 		GLU.gluPerspective(fovy, aspect, zNear, zFar);
