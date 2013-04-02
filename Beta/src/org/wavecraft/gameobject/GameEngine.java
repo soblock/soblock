@@ -69,7 +69,7 @@ public class GameEngine implements UiEventListener{
 	private static Thread refinerThread; 
 	private static BlocktreeBuilder builder;
 	
-	public static int JMAX = 11;
+	public static int JMAX = 13;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){

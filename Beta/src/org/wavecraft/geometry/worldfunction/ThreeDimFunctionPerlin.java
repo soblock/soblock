@@ -57,11 +57,15 @@ public class ThreeDimFunctionPerlin implements ThreeDimFunction {
 	}
 
 	private double pseudoRandomInt(int i,int j,int k){
-		i = (i<0)? i+N:i;
-		j = (j<0)? j+N:j;
-		k = (k<0)? k+N:k;
+		i = periodize(i, N);
+		j = periodize(j, N);
+		k = periodize(k, N);
 		int ind=perm[(i+perm[(j+perm[k % N]) % N]) % N];
 		return noise[ind];
+	}
+	
+	public static int periodize(int i, int per){
+		return (i<0)? (i+ per*((-i/per)+1))%per : i%per;
 	}
 	
 	private double pseudoRandomDouble(double x,double y,double z,double scaling){
