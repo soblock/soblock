@@ -1,6 +1,5 @@
 package org.wavecraft.gameobject.physics;
 
-//import Coord3d;
 
 
 import org.wavecraft.Soboutils.MathSoboutils;

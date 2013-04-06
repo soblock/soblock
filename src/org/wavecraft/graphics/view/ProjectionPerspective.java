@@ -2,7 +2,6 @@ package org.wavecraft.graphics.view;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
@@ -11,8 +10,8 @@ import org.wavecraft.ui.events.UiEventWindowResized;
 public class ProjectionPerspective implements Projection,UiEventListener{
 
 	private float fovy=70;
-	private float zNear=0.01f;
-	private float zFar=10000;
+	private float zNear=0.08f;
+	private float zFar= 5000;
 	private int xm = 0;
 	private int xM = 200;
 	private int ym = 0;
