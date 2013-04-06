@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="data"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-2.6/jar/jinput.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-2.6/jar/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-2.6/jar/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="wavecraft/lib/lwjgl-2.6/native/macosx"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/slick-util.jar"/>
+	<classpathentry kind="lib" path="lib/TWL.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3-1.1.4c.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
