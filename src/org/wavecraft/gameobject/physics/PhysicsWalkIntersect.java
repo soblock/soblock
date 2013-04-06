@@ -196,7 +196,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 		boolean is_blocked_y = false;
 		boolean is_blocked_z = false;
 		// zero tolerance for dt
-		double eps_dt=1E-15;
+		double eps_dt=1E-3;
 
 		// double precision for the velocity
 		double eps_vel=1E-15;
@@ -361,7 +361,7 @@ public class PhysicsWalkIntersect extends Physics implements UiEventListener{
 			}
 
 			//System.out.println("is block x " + is_blocked_x + "ib y" + is_blocked_y + "ibz " + is_blocked_z);
-			if(dt_save>0 && !(is_blocked_x && is_blocked_y && is_blocked_z)){// one of the direction is not blocked
+			if(dt_save>eps_dt && !(is_blocked_x && is_blocked_y && is_blocked_z)){// one of the direction is not blocked
 				avoid_blocks(listOfIntersectedLeaf, movingObject, dt_save,shock_zp,shock_zm, count+1);
 			}
 		}

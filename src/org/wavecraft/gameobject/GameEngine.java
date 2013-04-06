@@ -135,8 +135,8 @@ public class GameEngine implements UiEventListener{
 	
 	private void initPlayer(){
 		player = new Player();
-		player.position.x = 1024;
-		player.position.y = 1024;
+		player.position.x = 4024;
+		player.position.y = 4024;
 		player.position.z = 1024;
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
