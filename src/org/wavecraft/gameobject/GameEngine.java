@@ -98,13 +98,7 @@ public class GameEngine implements UiEventListener{
 
 
 
-		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(Math.pow(2, JMAX-1), 50, 10);
-
-
-		
-		
-
-		
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(Math.pow(2, JMAX-1), 50, 10);		
 
 		
 		BlocktreePriorityPosition priority =  new BlocktreePriorityPosition();

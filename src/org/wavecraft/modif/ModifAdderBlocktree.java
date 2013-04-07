@@ -1,7 +1,9 @@
 package org.wavecraft.modif;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 import org.wavecraft.gameobject.GameEngine;
@@ -26,7 +28,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 	private static ModifOctree modif ;
 	private static Blocktree root;
 	private static Terran targetContent = Terran.MAN_BRICK;
-	private static int targetJ = 1; // the size of the modif
+	private static int targetJ = 0; // the size of the modif
 	private static final int MAX_TARGET_J = 10;
 	private static ModifAdderBlocktree instance;
 	private static boolean whenLeftClickAddBlock = true;
@@ -156,13 +158,21 @@ public class ModifAdderBlocktree implements UiEventListener {
 		// modif handle the content properly
 		modif.addModif(nodeToRemove, value, null);
 		modif.computeBounds();
+		Set<Blocktree> toRecomputeSet = new HashSet<Blocktree>();
 		Blocktree nodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(nodeToRemove);
-		toRecomputeVBO.add(nodeToRecomputeVBO);
-		for (DyadicBlock neighbor : nodeToRecomputeVBO.eighteenNeighbors()){
-
-			Blocktree neighBorNodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(neighbor);
-			toRecomputeVBO.add(neighBorNodeToRecomputeVBO);
+		toRecomputeSet.add(nodeToRecomputeVBO);
+		for (DyadicBlock neighbor : nodeToRemove.eighteenNeighbors()){
+			Blocktree neighToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(neighbor);
+			toRecomputeSet.add(neighToRecomputeVBO);
 		}
+		toRecomputeVBO.addAll(toRecomputeSet);
+		//Blocktree nodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(nodeToRemove);
+		//toRecomputeVBO.add(nodeToRecomputeVBO);
+		//for (DyadicBlock neighbor : nodeToRecomputeVBO.eighteenNeighbors()){
+
+			//Blocktree neighBorNodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(neighbor);
+		//	toRecomputeVBO.add(neighBorNodeToRecomputeVBO);
+		//}
 	}
 
 	//

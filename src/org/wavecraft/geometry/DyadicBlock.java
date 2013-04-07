@@ -112,7 +112,7 @@ public class DyadicBlock extends Coord3i {
 		// all those 15485867 ... are prime
 		//return (x*15485867)^(y*15485927)^(z*15485941)^(J*15485989);
 		// from effective java joshua bloch
-		return 31*(17 + 31*(x + 31*(y + 31*z)));
+		return 31*(17 + 31*(x + 31*(y + 31*(z + 31*J))));
 	}
 
 	@Override
