@@ -151,7 +151,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 
 
 	private void removeBlock(DyadicBlock nodeToRemove){
-		double value =  1E16*(1 + ModifOctree.JMAX - nodeToRemove.getJ())	;
+		double value =  1E16*(1 + Blocktree.JMAX - nodeToRemove.getJ())	;
 		// it is crucial to make the value vary with J so that recursive 
 		// modif handle the content properly
 		modif.addModif(nodeToRemove, value, null);

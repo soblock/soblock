@@ -15,7 +15,7 @@ import org.wavecraft.geometry.blocktree.Terran;
 public class ModifOctree extends DyadicBlock {
 	public ModifOctree[] sons = null;
 	public ModifOctree father = null;
-	public static int JMAX = Blocktree.JMAX;
+	//public static int JMAX = Blocktree.JMAX;
 	public double value;
 	public double sumAncestors;
 	public double boundMin;
@@ -156,7 +156,7 @@ public class ModifOctree extends DyadicBlock {
 	}
 
 	public double jumpMax(DyadicBlock b) {
-		int size_max = (int) Math.pow(2,JMAX - b.getJ());
+		int size_max = (int) Math.pow(2,Blocktree.JMAX - b.getJ());
 		double jumpMax = 0;
 
 		double vMin = minValueAtFrRoot(b);

@@ -69,7 +69,7 @@ public class GameEngine implements UiEventListener{
 	private static Thread refinerThread; 
 	private static BlocktreeBuilder builder;
 	
-	public static int JMAX = 13;
+	public static int JMAX = 12;
 
 	public static GameEngine getGameEngine(){
 		if (gameEngine == null){
@@ -98,7 +98,7 @@ public class GameEngine implements UiEventListener{
 
 
 
-		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(512, 50, 10);
+		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(Math.pow(2, JMAX-1), 50, 10);
 
 
 		
@@ -135,9 +135,9 @@ public class GameEngine implements UiEventListener{
 	
 	private void initPlayer(){
 		player = new Player();
-		player.position.x = 4024;
-		player.position.y = 4024;
-		player.position.z = 1024;
+		player.position.x = Math.pow(2, JMAX-1);
+		player.position.y = Math.pow(2, JMAX-1);
+		player.position.z = Math.pow(2, JMAX-1)+100;
 		// register main player to UiEvents
 		// other player should NOT listen to UiEvents
 		UiEventMediator.getUiEventMediator().addListener(player);

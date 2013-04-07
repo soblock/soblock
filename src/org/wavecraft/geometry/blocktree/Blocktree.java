@@ -9,7 +9,7 @@ import org.wavecraft.geometry.DyadicBlock;
 public class Blocktree extends DyadicBlock{
 
 	public static int BLOCK_LOG_SIZE = 3;
-	public static int JMAX = 11;
+	public static int JMAX = 13;
 
 	public enum State{
 		PATRIARCH,
@@ -19,7 +19,7 @@ public class Blocktree extends DyadicBlock{
 		DEAD_AIR,
 		LEAF;
 	}
-	
+
 	private State state;
 	private Blocktree[] sons;
 	private Blocktree father;
@@ -142,15 +142,12 @@ public class Blocktree extends DyadicBlock{
 		}
 		return null;
 	}
-	
+
 	public Blocktree smallestPatriarchOrGrandFatherContaining(DyadicBlock block){
-		if (this.equals(block))
+		if (this.geoEquals(block))
 			return this;
 		else {
 			if (this.contains(block)){
-				if (this.getJ() == block.getJ()){
-					return this;
-				}
 				if (this.getState()==State.PATRIARCH){
 					int offset = this.findSonContaining(block);
 					Blocktree son = sons[offset];
@@ -171,9 +168,9 @@ public class Blocktree extends DyadicBlock{
 
 	@Override
 	public int hashCode() {
-		
+
 		int result = super.hashCode();
-		
+
 		return result;
 	}
 
@@ -187,6 +184,10 @@ public class Blocktree extends DyadicBlock{
 			return false;
 		Blocktree other = (Blocktree) obj;
 		return (x==other.x && y==other.y && z==other.z && getJ()==other.getJ()); 
+	}
+
+	public boolean geoEquals(DyadicBlock block){
+		return (x==block.x && y==block.y && z==block.z && getJ()==block.getJ());
 	}
 	
 	/**
@@ -209,13 +210,13 @@ public class Blocktree extends DyadicBlock{
 			}
 		}
 	}
-	
+
 	public List<Blocktree> listOfGreatChildren(){
 		List<Blocktree> list = new ArrayList<Blocktree>();
 		listOfGreatChildrenInner(list, this.getJ());
 		return list;
 	}
-	
+
 	private void listOfGreatChildrenInner(List<Blocktree> list, int J){
 		if (this.getJ() >= J - BLOCK_LOG_SIZE){
 			if (this.hasSons()){
@@ -233,6 +234,6 @@ public class Blocktree extends DyadicBlock{
 
 	//private void listOfL
 
-	
+
 
 }
