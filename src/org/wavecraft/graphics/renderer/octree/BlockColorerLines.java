@@ -4,10 +4,10 @@ import static org.lwjgl.opengl.GL11.*;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
+import org.wavecraft.geometry.blocktree.modif.ModifOctree;
 
 import org.wavecraft.geometry.worldfunction.ThreeDimFunction;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionFlat;
-import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 import org.wavecraft.ui.events.UiEventListener;

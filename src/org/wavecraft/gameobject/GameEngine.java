@@ -13,6 +13,9 @@ import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
+import org.wavecraft.geometry.blocktree.modif.BlocktreeGrabber;
+import org.wavecraft.geometry.blocktree.modif.ModifAdderBlocktree;
+import org.wavecraft.geometry.blocktree.modif.ModifOctree;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFun;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunModif;
 import org.wavecraft.geometry.blocktree.BlocktreePriority;
@@ -43,10 +46,7 @@ import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventListener;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.ui.events.UiEventMenu;
-import org.wavecraft.modif.BlocktreeGrabber;
 
-import org.wavecraft.modif.ModifAdderBlocktree;
-import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.Soboutils.MathSoboutils;
 
 

@@ -1,9 +1,9 @@
 package org.wavecraft.geometry.blocktree;
 
 import org.wavecraft.geometry.DyadicBlock;
+import org.wavecraft.geometry.blocktree.modif.ModifOctree;
 import org.wavecraft.geometry.worldfunction.ThreeDimFunctionUtils;
 import org.wavecraft.geometry.worldfunction.WorldFunction;
-import org.wavecraft.modif.ModifOctree;
 
 
 public class BlocktreeBuilderThreeDimFunModif implements BlocktreeBuilder{

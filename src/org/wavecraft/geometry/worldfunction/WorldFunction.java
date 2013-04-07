@@ -1,5 +1,7 @@
 package org.wavecraft.geometry.worldfunction;
 
-public interface WorldFunction extends ThreeDimContent, ThreeDimFunction{
+import java.io.Serializable;
+
+public interface WorldFunction extends ThreeDimContent, ThreeDimFunction, Serializable{
 		
 }

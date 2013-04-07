@@ -4,8 +4,8 @@ package org.wavecraft.ui.menu;
 import org.lwjgl.opengl.GL11;
 import org.wavecraft.geometry.Coord2d;
 import org.wavecraft.geometry.blocktree.Terran;
+import org.wavecraft.geometry.blocktree.modif.ModifAdderBlocktree;
 import org.wavecraft.graphics.texture.MegaTexture;
-import org.wavecraft.modif.ModifAdderBlocktree;
 import org.wavecraft.ui.events.UiEvent;
 import org.wavecraft.ui.events.UiEventKeyboardPressed;
 

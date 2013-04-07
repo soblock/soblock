@@ -28,6 +28,10 @@ public class Timer {
 		return (currTime - lastTime)/1E6;
 	}
 	
+	/**
+	 * 
+	 * @return the time in miliseconds
+	 */
 	public static double getCurrT(){
 		return currTime/1E6;
 	}

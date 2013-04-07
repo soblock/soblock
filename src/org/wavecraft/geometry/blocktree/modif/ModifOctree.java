@@ -1,4 +1,4 @@
-package org.wavecraft.modif;
+package org.wavecraft.geometry.blocktree.modif;
 
 
 

@@ -13,6 +13,9 @@ import org.wavecraft.geometry.Coord3i;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.BlocktreeBuilderThreeDimFunModif;
+import org.wavecraft.geometry.blocktree.modif.BlocktreeGrabber;
+import org.wavecraft.geometry.blocktree.modif.ModifAdderBlocktree;
+import org.wavecraft.geometry.blocktree.modif.ModifOctree;
 
 import org.wavecraft.graphics.hud.HUD;
 import org.wavecraft.graphics.hud.HUDBuilder;
@@ -31,10 +34,7 @@ import org.wavecraft.graphics.vbo.VBOWrapper.VboMode;
 import org.wavecraft.graphics.view.View;
 import org.wavecraft.graphics.view.ViewBuilder;
 import org.wavecraft.graphics.view.WindowSize;
-import org.wavecraft.modif.BlocktreeGrabber;
 
-import org.wavecraft.modif.ModifAdderBlocktree;
-import org.wavecraft.modif.ModifOctree;
 import org.wavecraft.stats.Profiler;
 import org.wavecraft.ui.menu.MenuSelectBlock;
 import org.wavecraft.ui.menu.twl.MenuController;

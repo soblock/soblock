@@ -1,4 +1,4 @@
-package org.wavecraft.modif;
+package org.wavecraft.geometry.blocktree.modif;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Set;
 
 
+import org.wavecraft.client.Timer;
 import org.wavecraft.gameobject.GameEngine;
 import org.wavecraft.gameobject.Player;
+import org.wavecraft.gameobjet.save.GameSave;
+import org.wavecraft.gameobjet.save.GameSaveAtom;
+import org.wavecraft.gameobjet.save.GameSaveManager;
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.Face;
 import org.wavecraft.geometry.blocktree.Blocktree;
@@ -111,6 +115,10 @@ public class ModifAdderBlocktree implements UiEventListener {
 		// it is crucial to make the value vary with J so that recursive 
 		// modif handle the content properly
 		modif.addModif(nodeToAdd, value, content);
+		long time = (long) Timer.getCurrT();
+		GameSaveAtom atom = new GameSaveAtom(nodeToAdd, content, value, time);
+		GameSaveManager.getInstance().getGameSave().addAtom(atom);
+		
 		modif.computeBounds();
 
 		// find the smallest grand father or patriarch to repush to GC
@@ -158,6 +166,10 @@ public class ModifAdderBlocktree implements UiEventListener {
 		// modif handle the content properly
 		modif.addModif(nodeToRemove, value, null);
 		modif.computeBounds();
+		long time = (long) Timer.getCurrT();
+		GameSaveAtom atom = new GameSaveAtom(nodeToRemove, null, value, time);
+		GameSaveManager.getInstance().getGameSave().addAtom(atom);
+		
 		Set<Blocktree> toRecomputeSet = new HashSet<Blocktree>();
 		Blocktree nodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(nodeToRemove);
 		toRecomputeSet.add(nodeToRecomputeVBO);
