@@ -1,11 +1,16 @@
 package org.wavecraft.geometry.worldfunction;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 
-public class ThreeDimFunctionPerlinMS implements ThreeDimFunction {
+public class ThreeDimFunctionPerlinMS implements ThreeDimFunction, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4164195245194200811L;
 	private ThreeDimFunctionPerlin[] perlinArr;
 
 	public ThreeDimFunctionPerlinMS(){

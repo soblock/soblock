@@ -1,5 +1,6 @@
 package org.wavecraft.gameobjet.save;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +12,13 @@ import org.wavecraft.geometry.worldfunction.WorldFunction;
  * @author laurentsifre
  *
  */
-public class GameSave {
+public class GameSave implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1370534697929154607L;
+
 	private WorldFunction worldFunction;
 	
 	private List<GameSaveAtom> listOfAtoms;
@@ -39,20 +45,14 @@ public class GameSave {
 	public WorldFunction getWorldFunction() {
 		return worldFunction;
 	}
-	
-	
-	/**
-	 * writes this gamesave into the specified file
-	 * @param path
-	 */
-	public void write(String path){
-		// TODO : max 
-	}
-	
-	public GameSave load(String path){
-		// TODO : max
-		return null;
-	}
 
+	/**
+	 * @return the listOfAtoms
+	 */
+	public List<GameSaveAtom> getListOfAtoms() {
+		return listOfAtoms;
+	}
+	
+	
 
 }

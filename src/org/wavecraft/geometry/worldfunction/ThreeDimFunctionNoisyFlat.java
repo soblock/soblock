@@ -1,10 +1,16 @@
 package org.wavecraft.geometry.worldfunction;
 
+import java.io.Serializable;
+
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.DyadicBlock;
 
-public class ThreeDimFunctionNoisyFlat implements ThreeDimFunction {
+public class ThreeDimFunctionNoisyFlat implements ThreeDimFunction, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7458689788854365324L;
 	private ThreeDimFunctionPerlinMS noise;
 	private double z0;
 	private double deltaz;

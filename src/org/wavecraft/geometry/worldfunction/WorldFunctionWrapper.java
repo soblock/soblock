@@ -6,6 +6,10 @@ import org.wavecraft.geometry.blocktree.Terran;
 
 public class WorldFunctionWrapper implements WorldFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9172609078999848415L;
 	private ThreeDimContent content;
 	private ThreeDimFunction fun;
 

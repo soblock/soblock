@@ -1,15 +1,11 @@
 package org.wavecraft.geometry.blocktree.modif;
 
-import org.wavecraft.geometry.BoundingBox;
 import org.wavecraft.geometry.Coord3d;
 import org.wavecraft.geometry.blocktree.Blocktree;
 import org.wavecraft.geometry.blocktree.Blocktree.State;
 
 
-
-public class BlocktreeGrabber {
-
-	
+public class BlocktreeGrabber {	
 	
 	public static Blocktree nearestIntersectedLeaf(Blocktree root, Coord3d origin, Coord3d vector){
 		MinAndArgmin best = nearestIntersectedLeafInner(root, origin, vector);
@@ -40,8 +36,6 @@ public class BlocktreeGrabber {
 				}
 			}
 			else {
-			//	if ((node.getState() instanceof OctreeStateLeaf) || 
-				//		(node.getState() instanceof OctreeStateNotYetVisited)){
 				if (node.getState() == State.LEAF){
 					double d = node.nearestIntersectedFaceDistance(origin, vector);
 					if (d>0 || d<1E20){

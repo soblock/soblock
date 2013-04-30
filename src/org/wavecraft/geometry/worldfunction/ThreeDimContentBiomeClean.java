@@ -1,11 +1,17 @@
 package org.wavecraft.geometry.worldfunction;
 
+import java.io.Serializable;
+
 import org.wavecraft.geometry.DyadicBlock;
 import org.wavecraft.geometry.blocktree.Terran;
 
-public class ThreeDimContentBiomeClean implements ThreeDimContent {
+public class ThreeDimContentBiomeClean implements ThreeDimContent, Serializable {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4481345772750503501L;
 	private final ThreeDimFunctionPerlinMS humidityRandomness  = new ThreeDimFunctionPerlinMS(7,256,0,1);
 	private final ThreeDimFunctionPerlinMS temperatureRandomness = new ThreeDimFunctionPerlinMS(7,256,0,1, 1234567890);
 	private final ThreeDimFunctionPerlinMS soilRandomness = new ThreeDimFunctionPerlinMS(3,256,0,1, 23456789);

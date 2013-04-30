@@ -43,7 +43,7 @@ public class VBOBlocktreePool implements UiEventListener{
 	private HashMap<Blocktree, VBOBlockTreeGrandFather> uploaded;
 	private HashMap<Blocktree, VBOBlockTreeGrandFather> toUpload;
 	private List<Blocktree> toUnload;
-
+	
 	public static VBOBlocktreePool getInstance(){
 		if (instance == null){
 			instance = new VBOBlocktreePool();
@@ -92,6 +92,17 @@ public class VBOBlocktreePool implements UiEventListener{
 		toUnload.clear();
 	}
 
+	/**
+	 * removes all vbo from the pool and unload them from graphic card
+	 */
+	public void clearAll(){
+		for (Blocktree blocktree : uploaded.keySet()){
+			VBOBlockTreeGrandFather vbo = uploaded.get(blocktree);
+			vbo.unloadFromGraphicCard();
+		}
+		uploaded.clear();
+	}
+	
 	public void render(){
 		switch (state) {
 		case DRAW_ALL:

@@ -1,6 +1,9 @@
 package org.wavecraft.ui.menu.twl;
 
 
+import java.io.IOException;
+
+import org.wavecraft.gameobjet.save.GameSaveManager;
 import org.wavecraft.ui.events.UiEventMediator;
 import org.wavecraft.ui.events.UiEventMenu;
 
@@ -56,6 +59,34 @@ public class MainMenu extends Widget implements ResizableWidget{
 			}
 		});
 
+		buttonSaveGame.addCallback(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GameSaveManager.getInstance().writeSaveInFile("wavecraftmap1.wcm");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		buttonLoadGame.addCallback(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GameSaveManager.getInstance().loadAnApply("wavecraftmap1.wcm");
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				UiEventMediator.getUiEventMediator().add(UiEventMenu.START_NEW_GAME);
+			}
+		});
+		
 		buttonResumeGame.addCallback(new Runnable() {
 			@Override
 			public void run() {
