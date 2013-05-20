@@ -88,6 +88,7 @@ public class GameEngine implements UiEventListener{
 		new MathSoboutils();
 
 		WorldFunction wf = WorldFunctionBuilder.getWorldFunctionNoisyFlastNoisyContent(Math.pow(2, JMAX-1), 50, 10);
+		//WorldFunction wf = WorldFunctionBuilder.getWorldFunctionFlatUniform(32);
 		GameSaveManager.getInstance().getGameSave().setWorldFunction(wf);
 		initBlocktree(GameSaveManager.getInstance().getGameSave());
 

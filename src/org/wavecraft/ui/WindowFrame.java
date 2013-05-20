@@ -60,7 +60,7 @@ public class WindowFrame implements UiEventListener {
 		try {
 			Display.setParent(canvas);
 			Display.setVSyncEnabled(true);
-			frame.setPreferredSize(new Dimension(800, 600));
+			frame.setPreferredSize(new Dimension(1280, 720));
 			frame.setMinimumSize(new Dimension(320, 200));
 			frame.pack();
 			frame.setVisible(true);

@@ -52,7 +52,7 @@ public class ModifOctree extends DyadicBlock {
 		this.sumAncestors = 0;
 		this.computeSumAncestors();
 	}
-	
+
 	public void computeBounds() {
 		boundMin = 0.0;
 		boundMax = 0.0;
@@ -80,7 +80,7 @@ public class ModifOctree extends DyadicBlock {
 	}
 
 	public void computeSumAncestors() {
-	    if (father == null) sumAncestors = 0;
+		if (father == null) sumAncestors = 0;
 		if (sons != null) {
 			for (int offset = 0; offset < 8; offset++) {
 				if (sons[offset] != null) {
@@ -94,8 +94,8 @@ public class ModifOctree extends DyadicBlock {
 
 	public int findSonContainingBlock(DyadicBlock block) {
 		return MathSoboutils.ithbit(block.x, this.getJ() - block.getJ()) + 
-		2 * MathSoboutils.ithbit(block.y, this.getJ() - block.getJ())
-		+ 4 * MathSoboutils.ithbit(block.z, this.getJ() - block.getJ());
+				2 * MathSoboutils.ithbit(block.y, this.getJ() - block.getJ())
+				+ 4 * MathSoboutils.ithbit(block.z, this.getJ() - block.getJ());
 
 	}
 
@@ -135,7 +135,7 @@ public class ModifOctree extends DyadicBlock {
 				return sons[offset].smallestCellContainingBlock(block);
 		}
 	}
-	
+
 	private ModifOctree smallestNegativeCellContainingBlockRec(DyadicBlock block,ModifOctree save) {
 		if (this.value<0){
 			save = this;
@@ -150,7 +150,7 @@ public class ModifOctree extends DyadicBlock {
 				return sons[offset].smallestNegativeCellContainingBlockRec(block,save);
 		}
 	}
-	
+
 	public ModifOctree smallestNegativeCellContainingBlock(DyadicBlock block) {
 		return smallestNegativeCellContainingBlockRec(block,null);
 	}
@@ -214,14 +214,14 @@ public class ModifOctree extends DyadicBlock {
 							this.subBlock(ind).z,this.getJ()-1,null,0, sumAncestorOfMySons);
 					sons[ind].father = this;
 				}
-			
+
 				sons[ind].addModif(block, val, content);
-				
+
 			}
 
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "ModifOctree [value=" + value + ", sumAncestors=" + sumAncestors

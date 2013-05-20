@@ -83,7 +83,7 @@ public class GraphicEngine implements UiEventListener {
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
-		hud.draw();
+		//hud.draw();
 
 		MenuSelectBlock.getInstance().draw();
 		//Console.getInstance().draw();

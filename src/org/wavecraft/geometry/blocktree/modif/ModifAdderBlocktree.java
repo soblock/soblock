@@ -107,7 +107,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 
 	private void addBlock(DyadicBlock nodeToAdd, Terran content){
 		// modify the modif tree properly
-		double value = -1E16*(1 + Blocktree.JMAX - nodeToAdd.getJ());
+		double value = -1E16*Math.pow(2,(1 + Blocktree.JMAX - nodeToAdd.getJ()));
 		// it is crucial to make the value vary with J so that recursive 
 		// modif handle the content properly
 		modif.addModif(nodeToAdd, value, content);
@@ -116,6 +116,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 		GameSaveManager.getInstance().getGameSave().addAtom(atom);
 
 		modif.computeBounds();
+		modif.computeSumAncestors();
 
 		Blocktree nodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(nodeToAdd);
 		System.out.println(nodeToRecomputeVBO);
@@ -132,7 +133,7 @@ public class ModifAdderBlocktree implements UiEventListener {
 	}
 
 	public void applyGameSaveAtom(GameSaveAtom atom){
-		double value =  1E16*(1 + Blocktree.JMAX - atom.getBlock().getJ())	;
+		double value =  1E16*Math.pow(2,(1 + Blocktree.JMAX - atom.getBlock().getJ()));
 		switch (atom.getType()) {
 		case ADD:
 			modif.addModif(atom.getBlock(), -value, atom.getTerran());
@@ -146,15 +147,17 @@ public class ModifAdderBlocktree implements UiEventListener {
 			break;
 		}
 		modif.computeBounds();
+		modif.computeSumAncestors();
 	}
 
 
 	private void removeBlock(DyadicBlock nodeToRemove){
-		double value =  1E16*(1 + Blocktree.JMAX - nodeToRemove.getJ())	;
+		double value =  1E16*Math.pow(2,(1 + Blocktree.JMAX - nodeToRemove.getJ()));
 		// it is crucial to make the value vary with J so that recursive 
 		// modif handle the content properly
 		modif.addModif(nodeToRemove, value, null);
 		modif.computeBounds();
+		modif.computeSumAncestors();
 		long time = (long) Timer.getCurrT();
 		GameSaveAtom atom = new GameSaveAtom(nodeToRemove, null, time, GameSaveAtom.Type.REMOVE);
 		GameSaveManager.getInstance().getGameSave().addAtom(atom);
@@ -163,8 +166,10 @@ public class ModifAdderBlocktree implements UiEventListener {
 		Blocktree nodeToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(nodeToRemove);
 		toRecomputeSet.add(nodeToRecomputeVBO);
 		for (DyadicBlock neighbor : nodeToRemove.eighteenNeighbors()){
-			Blocktree neighToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(neighbor);
-			toRecomputeSet.add(neighToRecomputeVBO);
+			if (neighbor!=null){
+				Blocktree neighToRecomputeVBO = root.smallestPatriarchOrGrandFatherContaining(neighbor);
+				toRecomputeSet.add(neighToRecomputeVBO);
+			}
 		}
 		toRecomputeVBO.addAll(toRecomputeSet);
 	}
