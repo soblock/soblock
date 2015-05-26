@@ -1,21 +1,17 @@
-Wavecraft source repository
+# SoBlock source repository
 
-Install
+## Install
 
-1) create an empty dir and init git
+0) Get Eclipse and Java 1.6 and figure out how to make eclipse to work with Java 1.6.
 
-mkdir wavecraft
-cd wavecraft
-git init
+1) Clone the repo
 
-2) pull the repo
+git clone THIS_REPO
 
-git pull git@bitbucket.org:wavecraftinc/wavecraft.git
-
-3) import project from eclipse
+2) import project from eclipse
 
 file -> import -> general -> existing project into workspace
 
-4) laucnh
+3) laucnh
  
 
