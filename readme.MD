@@ -16,9 +16,7 @@ It is written in Java and uses LWJGL for interfacing with OpenGL.
 
 2. Clone this repo
 
-3. Import project from eclipse
-
-file -> import -> general -> existing project into workspace
+3. Import project from eclipse with file -> import -> general -> existing project into workspace
 
 4. Laucnh
  
