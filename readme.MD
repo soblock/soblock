@@ -10,6 +10,15 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 It is written in Java and uses LWJGL for interfacing with OpenGL.
 
+## Play it in a browser
+
+`web/index.html` is a standalone port of the game to JavaScript and WebGL2 :
+one self contained file, no install, no server — open it in Chrome and play.
+It generates exactly the same world as the Java version, and keeps the same
+octree, level of detail, physics and building rules. See
+[web/README.md](web/README.md) for the controls and for how the port is
+organised.
+
 ## Install
 
 1. Get Eclipse and Java 1.6 and figure out how to make eclipse to work with Java 1.6.
