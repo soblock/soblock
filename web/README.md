@@ -86,13 +86,21 @@ checks the javascript against values produced by the original code
 
 ```
 node web/test/world-reference.js      # 52 reference values, 0 mismatches
+node web/test/edits.js                # digging and building, no browser needed
 node web/test/smoke.js                # drives the real page in headless chromium
 node web/test/touch.js                # the same page on an emulated phone
 ```
 
+`edits.js` runs the game logic against a stub renderer, so a world of edits at
+every build size can be checked in a few seconds. After each dig and each build
+it asks that every chunk being drawn is still part of the octree, and that every
+chunk's mesh matches what a fresh build of it would produce — a chunk that has
+been replaced but is still drawn leaves its faces hanging in the air for good.
+
 The two page tests need `playwright`. `smoke.js` checks that a world generates,
 that the player falls and lands, walks, flies, digs, builds, saves and reloads,
-and that no holes open at the seams between levels of detail. `touch.js` loads
+that no holes open at the seams between levels of detail, and that the level of
+detail keeps following the player once the budget is spent. `touch.js` loads
 the page in a phone sized viewport with a touch screen and no pointer lock, and
 checks the thumb stick, the look drag and every button. Both drive chromium :
 they cover the touch behaviour, not Safari itself.
@@ -107,9 +115,17 @@ were changed on purpose :
 * **Walking speed no longer depends on the pitch.** In the Java code the ground
   speed is multiplied by `cos(phi)`, so looking at your feet while building
   slowed you to a crawl. Free flight still goes where you look.
-* **A detail budget.** Refinement stops at about 1100 chunks (the option panel
-  still exposes the level of detail radius). The Java version had a background
-  thread refining forever, which a browser tab cannot afford.
+* **A detail budget.** The Java version had a background thread refining for
+  ever, which a browser tab cannot afford, so there is a budget of about 1600
+  meshed chunks (700 on a phone). It is spent by moving the level of detail
+  radius rather than by refusing to split : the radius starts at roughly what
+  the budget can pay for, then follows the chunk count, stepping at most 6% a
+  quarter of a second and holding still while the count is already moving.
+  Refusing to split instead would freeze the whole level of detail as soon as
+  the budget was full — nothing could be refined ahead of the player, because
+  nothing far behind had crossed its merge threshold yet. The option panel sets
+  the radius the player would like; the budget may keep the effective one lower,
+  and the debug stats show both.
 * **Flying out of the ground.** If the camera ends up inside a block — flying
   fast into a hillside — collisions are skipped until it is out, instead of
   being stuck for good.

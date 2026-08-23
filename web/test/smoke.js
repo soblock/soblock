@@ -109,12 +109,51 @@ function ok(name, cond, extra) {
 		times.sort((a, b) => a - b);
 		return {
 			travelled: +Math.hypot(g.player.x - 2048, g.player.y - 2048).toFixed(0),
-			chunks: ui.renderer.chunks.size, merges: g.stats.merges,
+			chunks: ui.renderer.chunks.size, budget: g.maxChunks, merges: g.stats.merges,
 			p95: +times[380].toFixed(1), max: +times[399].toFixed(1)
 		};
 	});
-	ok('flying keeps the level of detail bounded', roam.chunks <= 1200 && roam.merges > 0, roam);
+	ok('flying keeps the level of detail bounded', roam.chunks <= roam.budget * 1.25 && roam.merges > 0, roam);
 	ok('a frame of background work stays short', roam.p95 < 25, { p95: roam.p95, max: roam.max });
+
+	// Once the detail budget is spent the level of detail still has to follow
+	// the player : the terrain ahead must be refined as it comes into range,
+	// paid for by coarsening what is left behind.
+	const following = await page.evaluate(() => {
+		const ui = window.soblock, g = ui.game;
+		// a budget small enough to bind, as it does on a phone : the terrain
+		// around the player costs more chunks than the budget allows
+		g.setChunkBudget(600);
+		let guard = 0;
+		while (guard++ < 8000 && (g.needsRefinement() || ui.renderer.chunks.size > 600 * 1.1)) {
+			g.runJobs(30);
+		}
+		const splitsBefore = g.stats.splits, mergesBefore = g.stats.merges;
+		const settledAt = ui.renderer.chunks.size;
+		g.setFlying(true);
+		g.player.z += 30; g.player.theta = 1.1; g.player.phi = 0;
+		const from = [g.player.x, g.player.y];
+		g.dirs.forward = true;
+		for (let i = 0; i < 360; i++) { g.speedMult = 4; g.update(16); }
+		g.dirs.forward = false;
+		// the size of the blocks the tree holds under the player
+		let blockSize = null;
+		for (let z = Math.floor(g.player.z) + 8; z > Math.floor(g.player.z) - 90; z--) {
+			const c = g.root.smallestCellContaining(Math.floor(g.player.x), Math.floor(g.player.y), z, 0);
+			if (c && (c.state === 5 || c.state === 3)) { blockSize = Math.pow(2, c.J); break; }
+		}
+		return {
+			travelled: +Math.hypot(g.player.x - from[0], g.player.y - from[1]).toFixed(0),
+			newSplits: g.stats.splits - splitsBefore, newMerges: g.stats.merges - mergesBefore,
+			blockSizeUnderPlayer: blockSize, settledAt: settledAt, chunks: ui.renderer.chunks.size,
+			budget: g.maxChunks, radius: +g.builder.radius.toFixed(1)
+		};
+	});
+	ok('the level of detail follows the player once the budget is spent',
+		following.travelled > 100 && following.newSplits > 20 && following.newMerges > 5, following);
+	ok('the ground under the moving player stays fine grained',
+		following.blockSizeUnderPlayer !== null && following.blockSizeUnderPlayer <= 2, following);
+	ok('the detail budget is respected', following.chunks < following.budget * 1.25, following);
 
 	// A chunk hides the faces it shares with a solid neighbour. When the
 	// neighbour changes level of detail those faces have to be worked out
