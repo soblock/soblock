@@ -60,12 +60,16 @@ async function swipe(page, from, moves, hold) {
 		hiddenBehindTheMenu: getComputedStyle(document.getElementById('touch')).display === 'none',
 		hintHidden: getComputedStyle(document.getElementById('hint')).display === 'none',
 		chunkBudget: window.soblock.game.maxChunks,
+		detailRadius: +window.soblock.game.builder.radius.toFixed(2),
 		pixelRatio: window.soblock.renderer.maxPixelRatio,
 		viewport: [window.innerWidth, window.innerHeight]
 	}));
 	ok('a touch screen turns on the thumb controls', boot.touch && boot.hintHidden, boot);
 	ok('the thumb controls stay out of the way of the menu', boot.hiddenBehindTheMenu, boot);
-	ok('a phone gets a smaller detail budget', boot.chunkBudget === 500 && boot.pixelRatio === 1.5, boot);
+	// a phone is given less to draw than a desktop, and a radius the budget can pay for
+	ok('a phone gets a smaller detail budget',
+		boot.chunkBudget > 0 && boot.chunkBudget < 1600 && boot.pixelRatio === 1.5 &&
+		boot.detailRadius > 1 && boot.detailRadius < 6, boot);
 
 	await page.tap('#btn-new');
 	for (let i = 0; i < 80; i++) {

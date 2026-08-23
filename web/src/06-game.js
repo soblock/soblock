@@ -7,6 +7,11 @@ var SELECTABLE = [Terran.MAN_BRICK, Terran.MAN_PARQUET, Terran.MAN_METAL,
 
 var MAX_TARGET_J = 10;
 
+var CHUNKS_PER_RADIUS2 = 96; // roughly how many chunks a radius of 1 costs, squared
+var ADAPT_EVERY_MS = 250;    // how often the detail radius may move
+var ADAPT_EVERY_CALLS = 60;  // or this many frames, whichever comes first
+var ADAPT_MAX_STEP = 0.06;   // and by how much, so at most about 24% a second
+
 function Game(renderer) {
 	this.renderer = renderer;
 	this.player = new Player();
@@ -21,7 +26,8 @@ function Game(renderer) {
 	this.meshQueue = [];
 	this.regenQueue = [];
 	this.atoms = [];
-	this.maxChunks = 1100;   // detail budget : how many meshed chunks we keep
+	this.maxChunks = 1600;   // detail budget : how many meshed chunks we keep
+	this.targetRadius = 6;   // the level of detail the player asked for
 	this.pending = null;     // batch of meshes being built
 	this.stats = { splits: 0, merges: 0, lodMs: 0 };
 	this.newWorld();
@@ -31,6 +37,7 @@ Game.prototype.newWorld = function () {
 	this.wf = new WorldFunction(POW2[JMAX - 1], 50);
 	this.modif = new ModifNode(0, 0, 0, JMAX, -1, 0, 0);
 	this.builder = new Builder(this.wf, this.modif);
+	this.setChunkBudget(this.maxChunks);
 	this.root = new Node(0, 0, 0, JMAX, null);
 	initChunk(this.builder, this.root);
 	this.renderer.dropAll();
@@ -111,7 +118,6 @@ Game.prototype.lodJob = function () {
 
 Game.prototype.tryLodJob = function (state) {
 	var p = this.player;
-	if (state === GRAND_FATHER && this.renderer.chunks.size >= this.maxChunks) { return false; }
 	var node = argMaxPriority(this.root, state, this.builder, p.x, p.y, p.z);
 	if (!node) { return false; }
 	if (state === GRAND_FATHER) {
@@ -144,8 +150,58 @@ Game.prototype.regenJob = function () {
 	return false;
 };
 
+/** the budget the device can afford, and the radius that roughly fits in it */
+Game.prototype.setChunkBudget = function (chunks) {
+	this.maxChunks = chunks;
+	this.builder.radius = Math.max(1, Math.min(this.targetRadius, Math.sqrt(chunks / CHUNKS_PER_RADIUS2)));
+	this.lastAdapt = 0;
+	this.sinceAdapt = ADAPT_EVERY_CALLS;
+	this.lastChunkCount = undefined;
+};
+
+/**
+ * Keep the number of chunks near the budget by moving the level of detail
+ * radius, rather than by refusing to split. A hard stop would freeze the whole
+ * level of detail once the budget was full : nothing could be refined ahead of
+ * the player because nothing far behind had crossed its merge threshold yet.
+ * Pulling the radius keeps the priorities coherent, and it always leaves the
+ * most deserving chunk splittable.
+ */
+Game.prototype.adaptDetail = function () {
+	// The chunk count answers a change of radius only after many jobs, so step
+	// on a timer rather than every frame : tied to the frame rate it would
+	// adapt at different speeds on different machines, and wind far past the
+	// budget while waiting for the count to catch up.
+	var now = performance.now();
+	this.sinceAdapt = (this.sinceAdapt || 0) + 1;
+	// wall time normally comes first ; the call count keeps it moving when
+	// frames are cheap, as they are once the world has settled
+	if (now - (this.lastAdapt || 0) < ADAPT_EVERY_MS && this.sinceAdapt < ADAPT_EVERY_CALLS) { return; }
+	this.lastAdapt = now;
+	this.sinceAdapt = 0;
+	var chunks = this.renderer.chunks.size;
+	var radius = this.builder.radius;
+	var budget = this.maxChunks;
+	var previous = (this.lastChunkCount === undefined) ? chunks : this.lastChunkCount;
+	this.lastChunkCount = chunks;
+	var tooMany = chunks > budget * 1.05;
+	var tooFew = chunks < budget * 0.9;
+	if (!tooMany && !tooFew) { return; }
+	if (tooFew && radius >= this.targetRadius) { return; }
+	// merging and splitting take many jobs to answer a change of radius : while
+	// the count is already moving the right way, wait rather than wind further
+	if (tooMany && chunks < previous - 2) { return; }
+	if (tooFew && chunks > previous + 2) { return; }
+	// the number of chunks grows about as the square of the radius, so aim
+	// straight at the budget, damped and rate limited to stay stable
+	var factor = Math.pow(budget / Math.max(1, chunks), 0.125);
+	factor = Math.max(1 - ADAPT_MAX_STEP, Math.min(1 + ADAPT_MAX_STEP, factor));
+	this.builder.radius = Math.max(1, Math.min(this.targetRadius, radius * factor));
+};
+
 /** run background work for at most budget milliseconds */
 Game.prototype.runJobs = function (budgetMs) {
+	this.adaptDetail();
 	var t0 = performance.now();
 	var did = false;
 	do {
@@ -159,7 +215,7 @@ Game.prototype.runJobs = function (budgetMs) {
 /** true while chunks are still missing detail around the player */
 Game.prototype.needsRefinement = function () {
 	if (this.meshQueue.length || this.regenQueue.length || this.pending) { return true; }
-	if (this.renderer.chunks.size >= this.maxChunks) { return false; }
+	if (this.renderer.chunks.size >= this.maxChunks * 0.9) { return false; }
 	var p = this.player;
 	return argMaxPriority(this.root, GRAND_FATHER, this.builder, p.x, p.y, p.z) !== null;
 };

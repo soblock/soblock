@@ -73,7 +73,8 @@ function UI() {
 	this.renderer = new Renderer(this.canvas);
 	this.game = new Game(this.renderer);
 	this.options = loadOptions();
-	this.game.builder.radius = this.options.radius;
+	this.game.targetRadius = this.options.radius;
+	this.game.setChunkBudget(this.game.maxChunks);
 	this.state = 'menu';      // menu | loading | playing | paused
 	this.showStats = false;
 	this.showOutlines = false;
@@ -166,7 +167,7 @@ UI.prototype.updateHud = function () {
 			'<br>chunks ' + r.chunks.size + ' (' + r.drawCalls + ' drawn)' +
 			'<br>triangles ' + (r.trianglesDrawn / 1000).toFixed(1) + 'k' +
 			'<br>gpu ' + (r.gpuBytes() / 1e6).toFixed(1) + ' MB' +
-			'<br>lod radius ' + g.builder.radius +
+			'<br>lod radius ' + g.builder.radius.toFixed(1) + ' of ' + g.targetRadius +
 			'<br>splits ' + g.stats.splits + '  merges ' + g.stats.merges +
 			'<br>work ' + g.stats.lodMs.toFixed(1) + ' ms/frame' +
 			'<br>edits ' + g.atoms.length;
@@ -428,13 +429,23 @@ UI.prototype.onKey = function (code, down, event) {
 		case 'KeyX': g.changeTargetJ(-1); this.updateTouchReadouts(); return true;
 		case 'KeyO': this.showOutlines = !this.showOutlines; return true;
 		case 'KeyH': this.showStats = !this.showStats; el('stats').style.display = this.showStats ? 'block' : 'none'; return true;
-		case 'KeyL': g.builder.radius = Math.min(512, g.builder.radius + 1); this.options.radius = g.builder.radius; saveOptions(this.options); return true;
-		case 'Backslash': g.builder.radius = Math.max(1, g.builder.radius - 1); this.options.radius = g.builder.radius; saveOptions(this.options); return true;
+		case 'KeyL': this.setDetailRadius(Math.round(g.targetRadius) + 1); return true;
+		case 'Backslash': this.setDetailRadius(Math.round(g.targetRadius) - 1); return true;
 		case 'Digit1': case 'Digit2': case 'Digit3': case 'Digit4': case 'Digit5': case 'Digit6':
 			this.selectMaterial(parseInt(code.slice(5), 10) - 1);
 			return true;
 	}
 	return false;
+};
+
+/** the radius the player asks for : the budget may keep the effective one lower */
+UI.prototype.setDetailRadius = function (radius) {
+	radius = Math.min(24, Math.max(1, radius));
+	this.options.radius = radius;
+	this.game.targetRadius = radius;
+	this.game.builder.radius = Math.min(radius, this.game.builder.radius);
+	if (radius > this.game.builder.radius) { this.game.lastAdapt = 0; }
+	saveOptions(this.options);
 };
 
 UI.prototype.updateSpeed = function () {
@@ -483,7 +494,7 @@ UI.prototype.enableTouch = function () {
 	// A touch screen on a big display keeps the full one.
 	var screenSide = Math.min(window.screen.width || 9999, window.screen.height || 9999);
 	if (screenSide < 900) {
-		this.game.maxChunks = 500;
+		this.game.setChunkBudget(700);
 		this.renderer.maxPixelRatio = 1.5;
 	}
 	this.buildControlsList();
@@ -736,10 +747,8 @@ function boot() {
 		saveOptions(ui.options);
 	});
 	el('opt-radius').addEventListener('input', function (e) {
-		ui.options.radius = parseInt(e.target.value, 10);
-		ui.game.builder.radius = ui.options.radius;
+		ui.setDetailRadius(parseInt(e.target.value, 10));
 		el('opt-radius-value').textContent = e.target.value;
-		saveOptions(ui.options);
 	});
 	el('opt-invert').addEventListener('change', function (e) {
 		ui.options.invertY = e.target.checked;
