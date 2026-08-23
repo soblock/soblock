@@ -86,9 +86,16 @@ checks the javascript against values produced by the original code
 
 ```
 node web/test/world-reference.js      # 52 reference values, 0 mismatches
+node web/test/edits.js                # digging and building, no browser needed
 node web/test/smoke.js                # drives the real page in headless chromium
 node web/test/touch.js                # the same page on an emulated phone
 ```
+
+`edits.js` runs the game logic against a stub renderer, so a world of edits at
+every build size can be checked in a few seconds. After each dig and each build
+it asks that every chunk being drawn is still part of the octree, and that every
+chunk's mesh matches what a fresh build of it would produce — a chunk that has
+been replaced but is still drawn leaves its faces hanging in the air for good.
 
 The two page tests need `playwright`. `smoke.js` checks that a world generates,
 that the player falls and lands, walks, flies, digs, builds, saves and reloads,

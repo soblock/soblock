@@ -2180,6 +2180,12 @@ Game.prototype.regenJob = function () {
 	while (this.regenQueue.length) {
 		var chunk = this.regenQueue.pop();
 		if (!chunk || (chunk.state !== GRAND_FATHER && chunk.state !== PATRIARCH)) { continue; }
+		// An edit queues the chunk of the block and of its neighbours, and one
+		// of those can be an ancestor of another. Regenerating the ancestor
+		// replaces the subtree, so the descendant is no longer in the world :
+		// rebuilding it here would leave its faces on screen for good. Its
+		// ground was regenerated with the ancestor anyway.
+		if (this.root.smallestCellContaining(chunk.x, chunk.y, chunk.z, chunk.J) !== chunk) { continue; }
 		var descendants = chunk.collectChunks([]);
 		initChunk(this.builder, chunk);
 		this.beginBatch(this.withNeighbours(chunk, [chunk]), descendants);
