@@ -116,6 +116,39 @@ function ok(name, cond, extra) {
 	ok('flying keeps the level of detail bounded', roam.chunks <= 1200 && roam.merges > 0, roam);
 	ok('a frame of background work stays short', roam.p95 < 25, { p95: roam.p95, max: roam.max });
 
+	// A chunk hides the faces it shares with a solid neighbour. When the
+	// neighbour changes level of detail those faces have to be worked out
+	// again, otherwise the seam keeps a stale mesh and the player sees
+	// through the ground. Compare the frame with backface culling against the
+	// same frame without : from outside the terrain they must agree, except
+	// for a few pixels wide edges.
+	const seams = await page.evaluate(() => {
+		const ui = window.soblock, g = ui.game, gl = ui.renderer.gl;
+		ui.state = 'paused';                       // hold the camera still
+		g.player.theta = 0.4; g.player.phi = -0.08;
+		for (let i = 0; i < 60; i++) { g.runJobs(20); }
+		const w = gl.drawingBufferWidth, h = gl.drawingBufferHeight;
+		function frame() {
+			ui.frame(performance.now());
+			const px = new Uint8Array(4 * w * h);
+			gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+			return px;
+		}
+		const culled = frame();
+		gl.disable(gl.CULL_FACE);
+		const notCulled = frame();
+		gl.enable(gl.CULL_FACE);
+		let holes = 0;
+		for (let i = 0; i < culled.length; i += 4) {
+			const sky = Math.abs(culled[i] - 135) < 4 && Math.abs(culled[i + 1] - 206) < 4 && Math.abs(culled[i + 2] - 250) < 4;
+			const covered = !(Math.abs(notCulled[i] - 135) < 4 && Math.abs(notCulled[i + 1] - 206) < 4 && Math.abs(notCulled[i + 2] - 250) < 4);
+			if (sky && covered) { holes++; }
+		}
+		ui.state = 'playing';
+		return { holes: holes, pixels: w * h };
+	});
+	ok('no holes at the level of detail seams', seams.holes < 20, seams);
+
 	const save = await page.evaluate(() => {
 		window.soblock.doSave('smoke test');
 		const saves = JSON.parse(localStorage.getItem('soblock.saves'));
@@ -123,7 +156,7 @@ function ok(name, cond, extra) {
 	});
 	ok('saving writes to local storage', save.names.indexOf('smoke test') >= 0 && save.edits >= 2, save);
 
-	await page.reload();
+	await page.reload({ timeout: 60000 });
 	await page.waitForTimeout(500);
 	const load = await page.evaluate(() => new Promise(resolve => {
 		const ui = window.soblock;

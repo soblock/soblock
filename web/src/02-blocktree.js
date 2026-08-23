@@ -96,6 +96,13 @@ Node.prototype.smallestChunkContaining = function (bx, by, bz, bJ) {
 	return this;
 };
 
+/** the chunk (GRAND_FATHER node) whose mesh draws this node */
+Node.prototype.chunk = function () {
+	var n = this;
+	while (n && n.state !== GRAND_FATHER) { n = n.father; }
+	return n;
+};
+
 /** all GRAND_FATHER descendants (chunks owning a mesh) */
 Node.prototype.collectChunks = function (out) {
 	if (this.state === GRAND_FATHER) { out.push(this); }
@@ -116,6 +123,49 @@ Node.prototype.collectGreatChildren = function (out, rootJ) {
 	}
 	return out;
 };
+
+/** the chunks touching a given side of a node, at whatever level of detail */
+function collectChunksOnPlane(node, axis, plane, needLow, out) {
+	var t = POW2[node.J];
+	var lo = (axis === 0 ? node.x : (axis === 1 ? node.y : node.z)) * t;
+	if ((needLow ? lo : lo + t) !== plane) { return; }
+	if (node.state === GRAND_FATHER) {
+		if (out.indexOf(node) < 0) { out.push(node); }
+		return;
+	}
+	if (node.state === PATRIARCH && node.sons) {
+		for (var o = 0; o < 8; o++) { collectChunksOnPlane(node.sons[o], axis, plane, needLow, out); }
+	}
+}
+
+/**
+ * Every chunk that touches one of the six sides of a node. When a node changes
+ * level of detail its neighbours have to rebuild their meshes : the faces they
+ * hide behind it, or leave open towards it, depend on how finely it is cut.
+ */
+function neighbourChunks(root, node, out) {
+	var t = POW2[node.J];
+	var max = POW2[JMAX - node.J];
+	var coord = [node.x, node.y, node.z];
+	for (var axis = 0; axis < 3; axis++) {
+		for (var side = -1; side <= 1; side += 2) {
+			var n = [node.x, node.y, node.z];
+			n[axis] += side;
+			if (n[axis] < 0 || n[axis] >= max) { continue; }
+			var cell = root.smallestCellContaining(n[0], n[1], n[2], node.J);
+			if (!cell) { continue; }
+			if (cell.state === PATRIARCH || cell.state === GRAND_FATHER) {
+				// the neighbour is cut finer : take every chunk along the seam
+				var plane = (side < 0) ? coord[axis] * t : (coord[axis] + 1) * t;
+				collectChunksOnPlane(cell, axis, plane, side > 0, out);
+			} else {
+				var chunk = cell.chunk();
+				if (chunk && out.indexOf(chunk) < 0) { out.push(chunk); }
+			}
+		}
+	}
+	return out;
+}
 
 // --- modification octree ------------------------------------------------------
 // Player edits are stored as a sparse octree of additive offsets applied to the
@@ -469,6 +519,7 @@ if (typeof module !== 'undefined') {
 		Node: Node, ModifNode: ModifNode, Builder: Builder, JMAX: JMAX, BLOCK_LOG_SIZE: BLOCK_LOG_SIZE,
 		PATRIARCH: PATRIARCH, GRAND_FATHER: GRAND_FATHER, FATHER: FATHER, DEAD_AIR: DEAD_AIR,
 		DEAD_GROUND: DEAD_GROUND, LEAF: LEAF, splitAllLeaf: splitAllLeaf, mergeAllLeaf: mergeAllLeaf,
-		initChunk: initChunk, argMaxPriority: argMaxPriority, POW2: POW2, blockContains: blockContains
+		initChunk: initChunk, argMaxPriority: argMaxPriority, POW2: POW2, blockContains: blockContains,
+		neighbourChunks: neighbourChunks
 	};
 }
