@@ -22,6 +22,7 @@ function Game(renderer) {
 	this.atoms = [];
 	this.maxChunks = 1100;   // detail budget : how many meshed chunks we keep
 	this.pending = null;     // batch of meshes being built
+	this.dirty = [];         // chunks whose seams need a rebuild
 	this.stats = { splits: 0, merges: 0, lodMs: 0 };
 	this.newWorld();
 }
@@ -36,6 +37,7 @@ Game.prototype.newWorld = function () {
 	this.meshQueue = [this.root];
 	this.regenQueue = [];
 	this.pending = null;
+	this.dirty = [];
 	this.atoms = [];
 	this.nextLodState = GRAND_FATHER;
 	this.player.x = POW2[JMAX - 1];
@@ -82,7 +84,33 @@ Game.prototype.step = function () {
 		this.beginBatch([this.meshQueue.pop()], []);
 		return true;
 	}
+	if (this.dirty.length) { return this.remeshJob(); }
 	return this.lodJob();
+};
+
+/**
+ * A chunk hides the faces it shares with a solid neighbour, so when that
+ * neighbour is cut finer or coarser those faces have to be worked out again.
+ * Without this the seam keeps the decisions of the level of detail it was
+ * built against, and the player sees through the ground where the two meet.
+ */
+Game.prototype.markNeighboursDirty = function (node) {
+	var list = neighbourChunks(this.root, node, []);
+	for (var i = 0; i < list.length; i++) {
+		if (this.dirty.indexOf(list[i]) < 0) { this.dirty.push(list[i]); }
+	}
+};
+
+Game.prototype.remeshJob = function () {
+	while (this.dirty.length) {
+		var chunk = this.dirty.pop();
+		// it may have changed level, or have been replaced by an edit, meanwhile
+		if (chunk.state !== GRAND_FATHER) { continue; }
+		if (this.root.smallestCellContaining(chunk.x, chunk.y, chunk.z, chunk.J) !== chunk) { continue; }
+		this.beginBatch([chunk], []);
+		return true;
+	}
+	return false;
 };
 
 /** split the most urgent chunk, or merge the most useless one */
@@ -105,11 +133,13 @@ Game.prototype.tryLodJob = function (state) {
 			if (node.sons[o].state === GRAND_FATHER) { build.push(node.sons[o]); }
 		}
 		this.beginBatch(build, [node]);
+		this.markNeighboursDirty(node);
 		this.stats.splits++;
 	} else {
 		var descendants = node.collectChunks([]);
 		mergeAllLeaf(node);
 		this.beginBatch([node], descendants);
+		this.markNeighboursDirty(node);
 		this.stats.merges++;
 	}
 	return true;
@@ -123,6 +153,7 @@ Game.prototype.regenJob = function () {
 		var descendants = chunk.collectChunks([]);
 		initChunk(this.builder, chunk);
 		this.beginBatch([chunk], descendants);
+		this.markNeighboursDirty(chunk);
 		return true;
 	}
 	return false;
@@ -142,7 +173,7 @@ Game.prototype.runJobs = function (budgetMs) {
 
 /** true while chunks are still missing detail around the player */
 Game.prototype.needsRefinement = function () {
-	if (this.meshQueue.length || this.regenQueue.length || this.pending) { return true; }
+	if (this.meshQueue.length || this.regenQueue.length || this.dirty.length || this.pending) { return true; }
 	if (this.renderer.chunks.size >= this.maxChunks) { return false; }
 	var p = this.player;
 	return argMaxPriority(this.root, GRAND_FATHER, this.builder, p.x, p.y, p.z) !== null;
@@ -220,6 +251,7 @@ Game.prototype.loadAtoms = function (atoms) {
 	this.renderer.dropAll();
 	this.meshQueue = [this.root];
 	this.pending = null;
+	this.dirty = [];
 };
 
 // --- update -------------------------------------------------------------------
@@ -269,7 +301,10 @@ Game.prototype.deserialize = function (save) {
 	this.loadAtoms(save.atoms || []);
 	if (save.player) {
 		this.player.x = save.player.x; this.player.y = save.player.y; this.player.z = save.player.z;
-		this.player.theta = save.player.theta; this.player.phi = save.player.phi;
+		this.player.theta = save.player.theta;
+		// looking exactly along the vertical would make the camera degenerate
+		var lim = Math.PI / 2 - 0.01;
+		this.player.phi = Math.max(-lim, Math.min(lim, save.player.phi || 0));
 	}
 	this.setFlying(!!save.flying);
 };

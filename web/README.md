@@ -86,3 +86,10 @@ were changed on purpose :
   being stuck for good.
 * **Progressive start.** The world keeps sharpening for a few seconds after the
   loading screen hands over, rather than making you wait for the whole map.
+* **Seams are rebuilt.** A chunk hides the faces it shares with a solid
+  neighbour, so those faces depend on how finely the neighbour is cut. The Java
+  version rebuilds a chunk when its own level of detail changes but never its
+  neighbours (it does rebuild them around an edit), which leaves stale seams you
+  can see the sky through. Here a change of level marks the chunks along the six
+  sides for a rebuild; `test/smoke.js` measures the remaining holes by comparing
+  a frame against the same frame with backface culling switched off.
