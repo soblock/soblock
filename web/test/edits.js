@@ -37,7 +37,11 @@ const renderer = new StubRenderer();
 const game = new api.Game(renderer);
 
 function settle(limit) { let n = 0; while (game.needsRefinement() && n++ < limit) { game.runJobs(50); } }
-function drain(limit) { let n = 0; while ((game.regenQueue.length || game.pending || game.meshQueue.length) && n++ < limit) { game.step(); } }
+function pendingWork() {
+	return game.regenQueue.length || game.pending || game.meshQueue.length ||
+		(game.dirty && game.dirty.length);
+}
+function drain(limit) { let n = 0; while (pendingWork() && n++ < limit) { game.step(); } }
 
 /** chunks drawn that the octree no longer holds : their faces would never go away */
 function detachedChunks() {
