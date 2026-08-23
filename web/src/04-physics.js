@@ -41,6 +41,16 @@ function intersectedLeaves(root, bx0, by0, bz0, bx1, by1, bz1, out) {
 	return out;
 }
 
+/**
+ * How much the player wants to move : the keys give -1, 0 or 1, a thumb stick
+ * gives anything in between. Returned as [forward, sideways].
+ */
+function moveAxes(dirs) {
+	var forward = (dirs.forward ? 1 : 0) - (dirs.backward ? 1 : 0) + (dirs.axisY || 0);
+	var sideways = (dirs.right ? 1 : 0) - (dirs.left ? 1 : 0) + (dirs.axisX || 0);
+	return [Math.max(-1, Math.min(1, forward)), Math.max(-1, Math.min(1, sideways))];
+}
+
 // --- walk mode ----------------------------------------------------------------
 
 function PhysicsWalk() {
@@ -65,11 +75,10 @@ PhysicsWalk.prototype.move = function (player, dt, dirs, speedMult, root) {
 	// on foot we walk in the horizontal plane, at a speed that does not depend
 	// on how far up or down we are looking
 	var ux = Math.cos(player.theta), uy = Math.sin(player.theta);
-	var tx = 0, ty = 0, tz = 0;
-	if (dirs.forward) { tx += scalarSpeed * ux; ty += scalarSpeed * uy; }
-	if (dirs.backward) { tx -= scalarSpeed * ux; ty -= scalarSpeed * uy; }
-	if (dirs.left) { tx -= scalarSpeed * uy; ty += scalarSpeed * ux; }
-	if (dirs.right) { tx += scalarSpeed * uy; ty -= scalarSpeed * ux; }
+	var axes = moveAxes(dirs);
+	var tx = scalarSpeed * (axes[0] * ux + axes[1] * uy);
+	var ty = scalarSpeed * (axes[0] * uy - axes[1] * ux);
+	var tz = 0;
 	if (dirs.up && v[2] === 0) { tz += this.jumpCoefft * scalarSpeed; }
 
 	// accelerate towards the target velocity, less in the air than on the ground
@@ -212,11 +221,10 @@ PhysicsFly.prototype.move = function (player, dt, dirs, speedMult, root) {
 	var cp = Math.cos(player.phi);
 	var ux = Math.cos(player.theta) * cp, uy = Math.sin(player.theta) * cp, uz = Math.sin(player.phi);
 	var s = speedMult * this.scalarSpeedDefault;
-	var vx = 0, vy = 0, vz = 0;
-	if (dirs.forward) { vx += s * ux; vy += s * uy; vz += s * uz; }
-	if (dirs.backward) { vx -= s * ux; vy -= s * uy; vz -= s * uz; }
-	if (dirs.left) { vx -= s * uy; vy += s * ux; }
-	if (dirs.right) { vx += s * uy; vy -= s * ux; }
+	var axes = moveAxes(dirs);
+	var vx = s * (axes[0] * ux + axes[1] * uy);
+	var vy = s * (axes[0] * uy - axes[1] * ux);
+	var vz = s * axes[0] * uz;
 	if (dirs.up) { vz += s; }
 	if (dirs.down) { vz -= s; }
 	player.vx = vx; player.vy = vy; player.vz = vz;

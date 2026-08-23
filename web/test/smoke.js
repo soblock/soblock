@@ -118,36 +118,48 @@ function ok(name, cond, extra) {
 
 	// A chunk hides the faces it shares with a solid neighbour. When the
 	// neighbour changes level of detail those faces have to be worked out
-	// again, otherwise the seam keeps a stale mesh and the player sees
-	// through the ground. Compare the frame with backface culling against the
-	// same frame without : from outside the terrain they must agree, except
-	// for a few pixels wide edges.
-	const seams = await page.evaluate(() => {
-		const ui = window.soblock, g = ui.game, gl = ui.renderer.gl;
-		ui.state = 'paused';                       // hold the camera still
-		g.player.theta = 0.4; g.player.phi = -0.08;
-		for (let i = 0; i < 60; i++) { g.runJobs(20); }
-		const w = gl.drawingBufferWidth, h = gl.drawingBufferHeight;
-		function frame() {
-			ui.frame(performance.now());
-			const px = new Uint8Array(4 * w * h);
-			gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
-			return px;
-		}
-		const culled = frame();
-		gl.disable(gl.CULL_FACE);
-		const notCulled = frame();
-		gl.enable(gl.CULL_FACE);
-		let holes = 0;
-		for (let i = 0; i < culled.length; i += 4) {
-			const sky = Math.abs(culled[i] - 135) < 4 && Math.abs(culled[i + 1] - 206) < 4 && Math.abs(culled[i + 2] - 250) < 4;
-			const covered = !(Math.abs(notCulled[i] - 135) < 4 && Math.abs(notCulled[i + 1] - 206) < 4 && Math.abs(notCulled[i + 2] - 250) < 4);
-			if (sky && covered) { holes++; }
-		}
-		ui.state = 'playing';
-		return { holes: holes, pixels: w * h };
+	// again, otherwise the seam keeps a stale mesh and the player sees through
+	// the ground. Compare the frame with backface culling against the same
+	// frame without : from outside the terrain they must agree, except along a
+	// few pixels wide edges.
+	await page.evaluate(() => {
+		window.__countHoles = function () {
+			const ui = window.soblock, gl = ui.renderer.gl;
+			const w = gl.drawingBufferWidth, h = gl.drawingBufferHeight;
+			function frame() {
+				ui.frame(performance.now());
+				const px = new Uint8Array(4 * w * h);
+				gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+				return px;
+			}
+			const culled = frame();
+			gl.disable(gl.CULL_FACE);
+			const notCulled = frame();
+			gl.enable(gl.CULL_FACE);
+			let holes = 0;
+			for (let i = 0; i < culled.length; i += 4) {
+				const sky = Math.abs(culled[i] - 135) < 4 && Math.abs(culled[i + 1] - 206) < 4 && Math.abs(culled[i + 2] - 250) < 4;
+				const covered = !(Math.abs(notCulled[i] - 135) < 4 && Math.abs(notCulled[i + 1] - 206) < 4 && Math.abs(notCulled[i + 2] - 250) < 4);
+				if (sky && covered) { holes++; }
+			}
+			return holes;
+		};
 	});
-	ok('no holes at the level of detail seams', seams.holes < 20, seams);
+	const seams = await page.evaluate(() => {
+		const ui = window.soblock, g = ui.game;
+		ui.state = 'paused';                     // hold the camera still
+		g.player.theta = 0.4; g.player.phi = -0.08;
+		// straight after moving, with chunk rebuilds still in flight : a change
+		// of level of detail has to swap all at once, neighbours included
+		const churning = window.__countHoles();
+		let guard = 0;
+		while (g.needsRefinement() && guard++ < 5000) { g.runJobs(20); }
+		const settled = window.__countHoles();
+		ui.state = 'playing';
+		return { churning: churning, settled: settled };
+	});
+	ok('no holes at the level of detail seams while chunks are being rebuilt', seams.churning < 20, seams);
+	ok('no holes at the level of detail seams once settled', seams.settled < 20, seams);
 
 	const save = await page.evaluate(() => {
 		window.soblock.doSave('smoke test');

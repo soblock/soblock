@@ -1,5 +1,9 @@
 <title>SoBlock</title>
 <meta name="description" content="SoBlock — a sparse voxel octree block building game, playable in the browser.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#87cefa">
 <style>
 :root {
 	/* the palette is taken from the world itself : sky, ice, snow, stone, sand */
@@ -25,10 +29,15 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
 	* { transition: none !important; animation: none !important; }
 }
-#gl { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+#gl {
+	display: block; width: 100vw; height: 100vh; cursor: crosshair;
+	height: 100dvh;   /* the small viewport, so the safari toolbars do not cut it */
+	touch-action: none;
+}
+html, body { touch-action: none; -webkit-touch-callout: none; overscroll-behavior: none; }
 
 /* ---------- heads up display ---------- */
-#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 #crosshair {
 	position: absolute; left: 50%; top: 50%; width: 22px; height: 22px;
 	margin: -11px 0 0 -11px; opacity: 0.85;
@@ -80,14 +89,97 @@ html, body {
 	background: rgba(10, 14, 20, 0.35); padding: 8px 10px; border-radius: 8px;
 }
 
+
+/* ---------- touch controls ---------- */
+/* shown only on a touch device, see UI.enableTouch */
+#touch { position: fixed; inset: 0; display: none; pointer-events: none; z-index: 2; }
+body.touch #touch { display: block; }
+body.touch #hint { display: none; }
+body.touch #gl { cursor: default; }
+
+#stick {
+	position: absolute; width: 132px; height: 132px; border-radius: 50%;
+	left: calc(24px + env(safe-area-inset-left, 0px));
+	bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+	background: rgba(10, 14, 20, 0.28); border: 2px solid rgba(233, 242, 246, 0.35);
+	opacity: 0.5; transition: opacity 0.15s ease;
+}
+#stick.active { opacity: 0.95; }
+#stick-knob {
+	position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px;
+	border-radius: 50%; background: rgba(233, 242, 246, 0.55);
+	border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.tbtn, .tpill {
+	pointer-events: auto; touch-action: none; -webkit-tap-highlight-color: transparent;
+	font-family: var(--ui); color: var(--text); background: rgba(10, 14, 20, 0.55);
+	border: 2px solid rgba(233, 242, 246, 0.3); border-radius: 50%;
+	display: flex; align-items: center; justify-content: center; margin: 0;
+}
+.tbtn { width: 76px; height: 76px; font-size: 26px; }
+.tbtn.small { width: 60px; height: 60px; font-size: 20px; }
+.tbtn.pressed, .tpill.pressed { background: rgba(111, 211, 255, 0.45); border-color: var(--accent); }
+.tbtn .label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
+.tbtn .glyph { font-size: 24px; line-height: 1; }
+.tbtn .stack { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+#touch-actions {
+	position: absolute; display: flex; gap: 14px; align-items: flex-end;
+	right: calc(20px + env(safe-area-inset-right, 0px));
+	bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+}
+#touch-vert {
+	position: absolute; display: flex; flex-direction: column; gap: 12px;
+	right: calc(24px + env(safe-area-inset-right, 0px));
+	bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+}
+#touch-top {
+	position: absolute; display: flex; gap: 8px; align-items: center;
+	right: calc(12px + env(safe-area-inset-right, 0px));
+	top: calc(12px + env(safe-area-inset-top, 0px));
+}
+.tpill {
+	border-radius: 999px; height: 40px; min-width: 44px; padding: 0 13px; font-size: 15px;
+}
+.tpill.readout {
+	background: rgba(10, 14, 20, 0.35); border-style: dashed; color: var(--accent);
+	font-family: var(--data); font-variant-numeric: tabular-nums; pointer-events: none;
+}
+/* the palette sits above the thumb controls on a touch screen */
+body.touch #palette { bottom: calc(126px + env(safe-area-inset-bottom, 0px)); gap: 6px; }
+body.touch .slot { width: 46px; height: 46px; }
+body.touch #build-info { bottom: calc(182px + env(safe-area-inset-bottom, 0px)); }
+body.touch #stats { top: calc(60px + env(safe-area-inset-top, 0px)); }
+
+/* a phone held sideways is short : keep the palette down by the thumbs, well
+   clear of the crosshair in the middle */
+@media (max-height: 500px) {
+	body.touch #palette { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+	body.touch #build-info { bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* a phone held upright has little room : shrink the thumb controls */
+@media (max-width: 500px) and (orientation: portrait) {
+	#stick { width: 112px; height: 112px; }
+	.tbtn { width: 66px; height: 66px; }
+	.tbtn.small { width: 52px; height: 52px; }
+	body.touch #palette { bottom: calc(232px + env(safe-area-inset-bottom, 0px)); }
+	body.touch #build-info { bottom: calc(288px + env(safe-area-inset-bottom, 0px)); }
+	#touch-vert { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
+}
+#rotate-hint { display: none; color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+body.touch #rotate-hint { display: block; }
+
 /* ---------- menus ---------- */
 #menu {
-	position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+	position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 4;
 	background: radial-gradient(circle at 50% 35%, rgba(14, 26, 38, 0.45), rgba(6, 9, 13, 0.86));
 	backdrop-filter: blur(2px);
 }
 .panel {
-	width: min(560px, 92vw); max-height: 88vh; overflow: auto;
+	width: min(560px, 92vw); max-height: 84dvh; overflow: auto;
+	-webkit-overflow-scrolling: touch;
 	background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px;
 	padding: 26px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.5);
 }
@@ -131,7 +223,7 @@ input[type=text] {
 #save-feedback { color: var(--accent); font-size: 13px; min-height: 18px; margin: 4px 0 12px; }
 
 #loading {
-	position: fixed; inset: 0; display: none; flex-direction: column;
+	position: fixed; inset: 0; display: none; flex-direction: column; z-index: 3;
 	align-items: center; justify-content: center; gap: 18px;
 	background: rgba(6, 9, 13, 0.9); color: var(--text);
 }
@@ -141,9 +233,9 @@ input[type=text] {
 #loading .title { font-size: 18px; letter-spacing: 0.01em; }
 
 #fatal {
-	position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none;
+	position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none; z-index: 5;
 	max-width: 80vw; background: #2a1215; border: 1px solid var(--danger); color: #ffd7d7;
-	padding: 18px 22px; border-radius: 12px; font-size: 15px; z-index: 10;
+	padding: 18px 22px; border-radius: 12px; font-size: 15px;
 }
 </style>
 
@@ -163,6 +255,25 @@ input[type=text] {
 	<div id="palette"></div>
 </div>
 
+<div id="touch">
+	<div id="stick"><div id="stick-knob"></div></div>
+	<div id="touch-top">
+		<button class="tpill" id="t-size-down" aria-label="Smaller build size">−</button>
+		<span class="tpill readout" id="t-size">1</span>
+		<button class="tpill" id="t-size-up" aria-label="Bigger build size">+</button>
+		<button class="tpill" id="t-mode" aria-label="Switch between walking and flying">Fly</button>
+		<button class="tpill" id="t-menu" aria-label="Menu">☰</button>
+	</div>
+	<div id="touch-vert">
+		<button class="tbtn small" id="t-up" aria-label="Jump, or fly up">▲</button>
+		<button class="tbtn small" id="t-down" aria-label="Fly down">▼</button>
+	</div>
+	<div id="touch-actions">
+		<button class="tbtn" id="t-dig" aria-label="Dig a block"><span class="stack"><span class="glyph">⛏</span><span class="label">Dig</span></span></button>
+		<button class="tbtn" id="t-build" aria-label="Place a block"><span class="stack"><span class="glyph">▣</span><span class="label">Build</span></span></button>
+	</div>
+</div>
+
 <div id="loading">
 	<div class="title">Carving the world…</div>
 	<div id="loading-track"><div id="loading-bar"></div></div>
@@ -177,6 +288,7 @@ input[type=text] {
 			far away blocks are simply drawn coarser. Dig and build with blocks of any size,
 			from a single cube to a 1024 cube chunk of landscape.
 		</p>
+		<p id="rotate-hint">On a phone, turn it sideways and add the page to your home screen for a full screen game.</p>
 		<button class="primary" id="btn-new">New world</button>
 		<button id="btn-load">Load a world</button>
 		<button id="btn-controls">Controls</button>
@@ -1245,6 +1357,16 @@ function intersectedLeaves(root, bx0, by0, bz0, bx1, by1, bz1, out) {
 	return out;
 }
 
+/**
+ * How much the player wants to move : the keys give -1, 0 or 1, a thumb stick
+ * gives anything in between. Returned as [forward, sideways].
+ */
+function moveAxes(dirs) {
+	var forward = (dirs.forward ? 1 : 0) - (dirs.backward ? 1 : 0) + (dirs.axisY || 0);
+	var sideways = (dirs.right ? 1 : 0) - (dirs.left ? 1 : 0) + (dirs.axisX || 0);
+	return [Math.max(-1, Math.min(1, forward)), Math.max(-1, Math.min(1, sideways))];
+}
+
 // --- walk mode ----------------------------------------------------------------
 
 function PhysicsWalk() {
@@ -1269,11 +1391,10 @@ PhysicsWalk.prototype.move = function (player, dt, dirs, speedMult, root) {
 	// on foot we walk in the horizontal plane, at a speed that does not depend
 	// on how far up or down we are looking
 	var ux = Math.cos(player.theta), uy = Math.sin(player.theta);
-	var tx = 0, ty = 0, tz = 0;
-	if (dirs.forward) { tx += scalarSpeed * ux; ty += scalarSpeed * uy; }
-	if (dirs.backward) { tx -= scalarSpeed * ux; ty -= scalarSpeed * uy; }
-	if (dirs.left) { tx -= scalarSpeed * uy; ty += scalarSpeed * ux; }
-	if (dirs.right) { tx += scalarSpeed * uy; ty -= scalarSpeed * ux; }
+	var axes = moveAxes(dirs);
+	var tx = scalarSpeed * (axes[0] * ux + axes[1] * uy);
+	var ty = scalarSpeed * (axes[0] * uy - axes[1] * ux);
+	var tz = 0;
 	if (dirs.up && v[2] === 0) { tz += this.jumpCoefft * scalarSpeed; }
 
 	// accelerate towards the target velocity, less in the air than on the ground
@@ -1416,11 +1537,10 @@ PhysicsFly.prototype.move = function (player, dt, dirs, speedMult, root) {
 	var cp = Math.cos(player.phi);
 	var ux = Math.cos(player.theta) * cp, uy = Math.sin(player.theta) * cp, uz = Math.sin(player.phi);
 	var s = speedMult * this.scalarSpeedDefault;
-	var vx = 0, vy = 0, vz = 0;
-	if (dirs.forward) { vx += s * ux; vy += s * uy; vz += s * uz; }
-	if (dirs.backward) { vx -= s * ux; vy -= s * uy; vz -= s * uz; }
-	if (dirs.left) { vx -= s * uy; vy += s * ux; }
-	if (dirs.right) { vx += s * uy; vy -= s * ux; }
+	var axes = moveAxes(dirs);
+	var vx = s * (axes[0] * ux + axes[1] * uy);
+	var vy = s * (axes[0] * uy - axes[1] * ux);
+	var vz = s * axes[0] * uz;
 	if (dirs.up) { vz += s; }
 	if (dirs.down) { vz -= s; }
 	player.vx = vx; player.vy = vy; player.vz = vz;
@@ -1748,6 +1868,7 @@ function Renderer(canvas) {
 	this.planes = new Float32Array(24);
 
 	this.chunks = new Map();      // node -> gpu buffers
+	this.maxPixelRatio = 2;
 	this.drawCalls = 0;
 	this.trianglesDrawn = 0;
 	this.showLines = false;
@@ -1837,7 +1958,7 @@ Renderer.prototype.gpuBytes = function () {
 };
 
 Renderer.prototype.resize = function () {
-	var dpr = Math.min(window.devicePixelRatio || 1, 2);
+	var dpr = Math.min(window.devicePixelRatio || 1, this.maxPixelRatio);
 	var w = Math.floor(this.canvas.clientWidth * dpr);
 	var h = Math.floor(this.canvas.clientHeight * dpr);
 	if (this.canvas.width !== w || this.canvas.height !== h) {
@@ -1932,14 +2053,14 @@ function Game(renderer) {
 	this.flying = false;
 	this.targetJ = 0;
 	this.targetContent = Terran.MAN_BRICK;
-	this.dirs = { forward: false, backward: false, left: false, right: false, up: false, down: false };
+	// the keys set the booleans, a thumb stick sets the axes
+	this.dirs = { forward: false, backward: false, left: false, right: false, up: false, down: false, axisX: 0, axisY: 0 };
 	this.speedMult = 1;
 	this.meshQueue = [];
 	this.regenQueue = [];
 	this.atoms = [];
 	this.maxChunks = 1100;   // detail budget : how many meshed chunks we keep
 	this.pending = null;     // batch of meshes being built
-	this.dirty = [];         // chunks whose seams need a rebuild
 	this.stats = { splits: 0, merges: 0, lodMs: 0 };
 	this.newWorld();
 }
@@ -1954,7 +2075,6 @@ Game.prototype.newWorld = function () {
 	this.meshQueue = [this.root];
 	this.regenQueue = [];
 	this.pending = null;
-	this.dirty = [];
 	this.atoms = [];
 	this.nextLodState = GRAND_FATHER;
 	this.player.x = POW2[JMAX - 1];
@@ -2001,33 +2121,22 @@ Game.prototype.step = function () {
 		this.beginBatch([this.meshQueue.pop()], []);
 		return true;
 	}
-	if (this.dirty.length) { return this.remeshJob(); }
 	return this.lodJob();
 };
 
 /**
  * A chunk hides the faces it shares with a solid neighbour, so when that
  * neighbour is cut finer or coarser those faces have to be worked out again.
- * Without this the seam keeps the decisions of the level of detail it was
- * built against, and the player sees through the ground where the two meet.
+ * The neighbours are rebuilt in the same batch as the change, so the swap is
+ * atomic : without this the seam keeps the decisions of the level of detail it
+ * was built against, and the player sees through the ground where they meet.
  */
-Game.prototype.markNeighboursDirty = function (node) {
+Game.prototype.withNeighbours = function (node, build) {
 	var list = neighbourChunks(this.root, node, []);
 	for (var i = 0; i < list.length; i++) {
-		if (this.dirty.indexOf(list[i]) < 0) { this.dirty.push(list[i]); }
+		if (build.indexOf(list[i]) < 0) { build.push(list[i]); }
 	}
-};
-
-Game.prototype.remeshJob = function () {
-	while (this.dirty.length) {
-		var chunk = this.dirty.pop();
-		// it may have changed level, or have been replaced by an edit, meanwhile
-		if (chunk.state !== GRAND_FATHER) { continue; }
-		if (this.root.smallestCellContaining(chunk.x, chunk.y, chunk.z, chunk.J) !== chunk) { continue; }
-		this.beginBatch([chunk], []);
-		return true;
-	}
-	return false;
+	return build;
 };
 
 /** split the most urgent chunk, or merge the most useless one */
@@ -2049,14 +2158,12 @@ Game.prototype.tryLodJob = function (state) {
 		for (var o = 0; o < 8; o++) {
 			if (node.sons[o].state === GRAND_FATHER) { build.push(node.sons[o]); }
 		}
-		this.beginBatch(build, [node]);
-		this.markNeighboursDirty(node);
+		this.beginBatch(this.withNeighbours(node, build), [node]);
 		this.stats.splits++;
 	} else {
 		var descendants = node.collectChunks([]);
 		mergeAllLeaf(node);
-		this.beginBatch([node], descendants);
-		this.markNeighboursDirty(node);
+		this.beginBatch(this.withNeighbours(node, [node]), descendants);
 		this.stats.merges++;
 	}
 	return true;
@@ -2069,8 +2176,7 @@ Game.prototype.regenJob = function () {
 		if (!chunk || (chunk.state !== GRAND_FATHER && chunk.state !== PATRIARCH)) { continue; }
 		var descendants = chunk.collectChunks([]);
 		initChunk(this.builder, chunk);
-		this.beginBatch([chunk], descendants);
-		this.markNeighboursDirty(chunk);
+		this.beginBatch(this.withNeighbours(chunk, [chunk]), descendants);
 		return true;
 	}
 	return false;
@@ -2090,7 +2196,7 @@ Game.prototype.runJobs = function (budgetMs) {
 
 /** true while chunks are still missing detail around the player */
 Game.prototype.needsRefinement = function () {
-	if (this.meshQueue.length || this.regenQueue.length || this.dirty.length || this.pending) { return true; }
+	if (this.meshQueue.length || this.regenQueue.length || this.pending) { return true; }
 	if (this.renderer.chunks.size >= this.maxChunks) { return false; }
 	var p = this.player;
 	return argMaxPriority(this.root, GRAND_FATHER, this.builder, p.x, p.y, p.z) !== null;
@@ -2168,7 +2274,6 @@ Game.prototype.loadAtoms = function (atoms) {
 	this.renderer.dropAll();
 	this.meshQueue = [this.root];
 	this.pending = null;
-	this.dirty = [];
 };
 
 // --- update -------------------------------------------------------------------
@@ -2236,6 +2341,17 @@ var SAVE_KEY = 'soblock.saves';
 var OPTIONS_KEY = 'soblock.options';
 var LOADING_MS = 3500;   // after that the world keeps refining while playing
 
+var TOUCH_LABELS = [
+	['Left thumb', 'Walk : the stick appears where you touch'],
+	['Right thumb', 'Drag to look around'],
+	['▲ / ▼', 'Jump or fly up, fly down'],
+	['⛏ / ▣', 'Dig, build — hold to repeat'],
+	['− 1 +', 'Build size, from 1 to 1024'],
+	['Fly / Walk', 'Switch between the two'],
+	['☰', 'Menu'],
+	['', 'and with a keyboard, if there is one :'],
+];
+
 var KEY_LABELS = [
 	['W A S D', 'Move'],
 	['Space', 'Jump / fly up'],
@@ -2301,6 +2417,7 @@ function UI() {
 	this.fpsFrames = 0;
 	this.fps = 0;
 	this.bindInput();
+	this.bindTouch();
 	this.buildPalette();
 	this.buildControlsList();
 	this.showMenu('main');
@@ -2364,7 +2481,8 @@ UI.prototype.selectMaterial = function (index) {
 };
 
 UI.prototype.buildControlsList = function () {
-	var html = KEY_LABELS.map(function (k) {
+	var rows = this.touchEnabled ? TOUCH_LABELS.concat(KEY_LABELS) : KEY_LABELS;
+	var html = rows.map(function (k) {
 		return '<div class="key">' + k[0] + '</div><div class="what">' + k[1] + '</div>';
 	}).join('');
 	el('controls-list').innerHTML = html;
@@ -2402,6 +2520,8 @@ UI.prototype.showMenu = function (which) {
 	if (which === 'save') { this.refreshSaveList('save'); }
 	if (which === 'options') { this.refreshOptions(); }
 	el('hud').style.display = which ? 'none' : 'block';
+	// the thumb controls belong to the game, not to the menus
+	el('touch').style.display = which ? 'none' : '';
 };
 
 UI.prototype.refreshOptions = function () {
@@ -2505,6 +2625,7 @@ UI.prototype.stepLoading = function () {
 };
 
 UI.prototype.requestPointerLock = function () {
+	if (this.touchEnabled) { return; }
 	var c = this.canvas;
 	if (c.requestPointerLock) {
 		var p = c.requestPointerLock();
@@ -2531,6 +2652,11 @@ UI.prototype.resume = function () {
 UI.prototype.clearKeys = function () {
 	var d = this.game.dirs;
 	d.forward = d.backward = d.left = d.right = d.up = d.down = false;
+	d.axisX = 0;
+	d.axisY = 0;
+	this.stickTouch = null;
+	this.lookTouch = null;
+	if (this.touchEnabled) { this.hideStick(); }
 	this.game.speedMult = 1;
 	this.speedKeys = {};
 	this.drag = null;
@@ -2593,6 +2719,7 @@ UI.prototype.bindInput = function () {
 	this.canvas.addEventListener('wheel', function (e) {
 		if (self.state !== 'playing') { return; }
 		self.game.changeTargetJ(e.deltaY < 0 ? 1 : -1);
+		self.updateTouchReadouts();
 		e.preventDefault();
 	}, { passive: false });
 
@@ -2629,11 +2756,11 @@ UI.prototype.onKey = function (code, down, event) {
 	}
 	if (!down) { return false; }
 	switch (code) {
-		case 'KeyF': g.setFlying(!g.flying); return true;
+		case 'KeyF': g.setFlying(!g.flying); this.updateTouchReadouts(); return true;
 		case 'Enter': this.place(); return true;
 		case 'Backspace': this.dig(); return true;
-		case 'KeyZ': g.changeTargetJ(1); return true;
-		case 'KeyX': g.changeTargetJ(-1); return true;
+		case 'KeyZ': g.changeTargetJ(1); this.updateTouchReadouts(); return true;
+		case 'KeyX': g.changeTargetJ(-1); this.updateTouchReadouts(); return true;
 		case 'KeyO': this.showOutlines = !this.showOutlines; return true;
 		case 'KeyH': this.showStats = !this.showStats; el('stats').style.display = this.showStats ? 'block' : 'none'; return true;
 		case 'KeyL': g.builder.radius = Math.min(512, g.builder.radius + 1); this.options.radius = g.builder.radius; saveOptions(this.options); return true;
@@ -2664,6 +2791,184 @@ UI.prototype.place = function () {
 UI.prototype.dig = function () {
 	var pick = this.game.pick();
 	if (pick.remove) { this.game.removeBlock(pick.remove); }
+};
+
+
+// --- touch controls -----------------------------------------------------------
+// A thumb stick on the left half of the screen, dragging on the right half to
+// look around, and buttons for the things a keyboard would do. The stick
+// follows the thumb : it appears wherever the left half is first touched.
+
+var STICK_RADIUS = 62;       // pixels from the centre for a full push
+var STICK_DEADZONE = 0.18;
+var REPEAT_DELAY = 400;      // holding dig or build repeats the action
+var REPEAT_EVERY = 220;
+
+UI.prototype.isTouchDevice = function () {
+	return (navigator.maxTouchPoints || 0) > 1 ||
+		(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+};
+
+/** switch the interface over to thumb controls (also called on the first touch) */
+UI.prototype.enableTouch = function () {
+	if (this.touchEnabled) { return; }
+	this.touchEnabled = true;
+	document.body.classList.add('touch');
+	// a phone has a smaller budget than a desktop : less detail, fewer pixels.
+	// A touch screen on a big display keeps the full one.
+	var screenSide = Math.min(window.screen.width || 9999, window.screen.height || 9999);
+	if (screenSide < 900) {
+		this.game.maxChunks = 500;
+		this.renderer.maxPixelRatio = 1.5;
+	}
+	this.buildControlsList();
+	this.updateTouchReadouts();
+};
+
+UI.prototype.updateTouchReadouts = function () {
+	if (!this.touchEnabled) { return; }
+	el('t-size').textContent = String(POW2[this.game.targetJ]);
+	el('t-mode').textContent = this.game.flying ? 'Walk' : 'Fly';
+};
+
+UI.prototype.bindTouch = function () {
+	var self = this;
+	this.touchEnabled = false;
+	this.stickTouch = null;    // identifier of the finger on the thumb stick
+	this.lookTouch = null;     // identifier of the finger looking around
+	this.repeats = {};
+
+	if (this.isTouchDevice()) { this.enableTouch(); }
+
+	// hold a button down to keep doing it
+	function holdButton(id, onDown, onUp, repeat) {
+		var node = el(id);
+		var press = function (e) {
+			e.preventDefault();
+			if (node.classList.contains('pressed')) { return; }
+			node.classList.add('pressed');
+			self.enableTouch();
+			onDown();
+			if (repeat) {
+				self.repeats[id] = setTimeout(function tick() {
+					onDown();
+					self.repeats[id] = setTimeout(tick, REPEAT_EVERY);
+				}, REPEAT_DELAY);
+			}
+		};
+		var release = function (e) {
+			if (e) { e.preventDefault(); }
+			node.classList.remove('pressed');
+			clearTimeout(self.repeats[id]);
+			if (onUp) { onUp(); }
+		};
+		node.addEventListener('touchstart', press, { passive: false });
+		node.addEventListener('touchend', release, { passive: false });
+		node.addEventListener('touchcancel', release, { passive: false });
+		node.addEventListener('mousedown', press);
+		node.addEventListener('mouseup', release);
+		node.addEventListener('mouseleave', release);
+	}
+
+	holdButton('t-up', function () { self.game.dirs.up = true; }, function () { self.game.dirs.up = false; });
+	holdButton('t-down', function () { self.game.dirs.down = true; }, function () { self.game.dirs.down = false; });
+	holdButton('t-dig', function () { self.dig(); }, null, true);
+	holdButton('t-build', function () { self.place(); }, null, true);
+	holdButton('t-size-up', function () { self.game.changeTargetJ(1); self.updateTouchReadouts(); }, null, true);
+	holdButton('t-size-down', function () { self.game.changeTargetJ(-1); self.updateTouchReadouts(); }, null, true);
+	holdButton('t-mode', function () { self.game.setFlying(!self.game.flying); self.updateTouchReadouts(); });
+	holdButton('t-menu', function () {
+		if (self.state === 'playing') { self.pause(); } else { self.resume(); }
+	});
+
+	var canvas = this.canvas;
+	canvas.addEventListener('touchstart', function (e) { self.onTouchStart(e); }, { passive: false });
+	canvas.addEventListener('touchmove', function (e) { self.onTouchMove(e); }, { passive: false });
+	canvas.addEventListener('touchend', function (e) { self.onTouchEnd(e); }, { passive: false });
+	canvas.addEventListener('touchcancel', function (e) { self.onTouchEnd(e); }, { passive: false });
+	// safari would otherwise scroll the page, or zoom on a double tap
+	document.addEventListener('touchmove', function (e) {
+		if (self.touchEnabled && self.state === 'playing') { e.preventDefault(); }
+	}, { passive: false });
+	document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+};
+
+UI.prototype.onTouchStart = function (e) {
+	e.preventDefault();
+	this.enableTouch();
+	if (this.state === 'menu' || this.state === 'paused') { return; }
+	for (var i = 0; i < e.changedTouches.length; i++) {
+		var t = e.changedTouches[i];
+		var onTheLeft = t.clientX < window.innerWidth * 0.45;
+		if (onTheLeft && this.stickTouch === null) {
+			this.stickTouch = t.identifier;
+			this.stickOrigin = [t.clientX, t.clientY];
+			this.showStick(t.clientX, t.clientY, 0, 0);
+		} else if (this.lookTouch === null) {
+			this.lookTouch = t.identifier;
+			this.lookFrom = [t.clientX, t.clientY];
+		}
+	}
+};
+
+UI.prototype.onTouchMove = function (e) {
+	e.preventDefault();
+	if (this.state !== 'playing') { return; }
+	for (var i = 0; i < e.changedTouches.length; i++) {
+		var t = e.changedTouches[i];
+		if (t.identifier === this.stickTouch) {
+			var dx = t.clientX - this.stickOrigin[0];
+			var dy = t.clientY - this.stickOrigin[1];
+			var len = Math.hypot(dx, dy);
+			if (len > STICK_RADIUS) { dx *= STICK_RADIUS / len; dy *= STICK_RADIUS / len; }
+			var ax = dx / STICK_RADIUS, ay = -dy / STICK_RADIUS;
+			var push = Math.hypot(ax, ay);
+			this.game.dirs.axisX = (push < STICK_DEADZONE) ? 0 : ax;
+			this.game.dirs.axisY = (push < STICK_DEADZONE) ? 0 : ay;
+			this.showStick(this.stickOrigin[0], this.stickOrigin[1], dx, dy);
+		} else if (t.identifier === this.lookTouch) {
+			var s = this.options.sensitivity * 0.5;   // a thumb travels further than a mouse
+			var p = this.game.player;
+			p.theta -= (t.clientX - this.lookFrom[0]) * s;
+			p.phi += (this.options.invertY ? 1 : -1) * (t.clientY - this.lookFrom[1]) * s;
+			var lim = Math.PI / 2 - 0.01;
+			if (p.phi > lim) { p.phi = lim; }
+			if (p.phi < -lim) { p.phi = -lim; }
+			this.lookFrom = [t.clientX, t.clientY];
+		}
+	}
+};
+
+UI.prototype.onTouchEnd = function (e) {
+	for (var i = 0; i < e.changedTouches.length; i++) {
+		var t = e.changedTouches[i];
+		if (t.identifier === this.stickTouch) {
+			this.stickTouch = null;
+			this.game.dirs.axisX = 0;
+			this.game.dirs.axisY = 0;
+			this.hideStick();
+		} else if (t.identifier === this.lookTouch) {
+			this.lookTouch = null;
+		}
+	}
+};
+
+UI.prototype.showStick = function (cx, cy, dx, dy) {
+	var pad = el('stick');
+	pad.classList.add('active');
+	pad.style.left = (cx - pad.offsetWidth / 2) + 'px';
+	pad.style.bottom = 'auto';
+	pad.style.top = (cy - pad.offsetHeight / 2) + 'px';
+	el('stick-knob').style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)';
+};
+
+UI.prototype.hideStick = function () {
+	var pad = el('stick');
+	pad.classList.remove('active');
+	pad.style.left = '';
+	pad.style.top = '';
+	pad.style.bottom = '';
+	el('stick-knob').style.transform = '';
 };
 
 // --- main loop ----------------------------------------------------------------

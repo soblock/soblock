@@ -26,7 +26,7 @@ const fragment = fs.readFileSync(path.join(srcDir, 'page.html'), 'utf8')
 
 const page = '<!DOCTYPE html>\n<html lang="en">\n<head>\n' +
 	'<meta charset="utf-8">\n' +
-	'<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">\n' +
+	'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">\n' +
 	fragment.slice(0, fragment.indexOf('</style>') + 9) +
 	'</head>\n<body>\n' +
 	fragment.slice(fragment.indexOf('</style>') + 9) +

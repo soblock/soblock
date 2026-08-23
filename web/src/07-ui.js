@@ -6,6 +6,17 @@ var SAVE_KEY = 'soblock.saves';
 var OPTIONS_KEY = 'soblock.options';
 var LOADING_MS = 3500;   // after that the world keeps refining while playing
 
+var TOUCH_LABELS = [
+	['Left thumb', 'Walk : the stick appears where you touch'],
+	['Right thumb', 'Drag to look around'],
+	['▲ / ▼', 'Jump or fly up, fly down'],
+	['⛏ / ▣', 'Dig, build — hold to repeat'],
+	['− 1 +', 'Build size, from 1 to 1024'],
+	['Fly / Walk', 'Switch between the two'],
+	['☰', 'Menu'],
+	['', 'and with a keyboard, if there is one :'],
+];
+
 var KEY_LABELS = [
 	['W A S D', 'Move'],
 	['Space', 'Jump / fly up'],
@@ -71,6 +82,7 @@ function UI() {
 	this.fpsFrames = 0;
 	this.fps = 0;
 	this.bindInput();
+	this.bindTouch();
 	this.buildPalette();
 	this.buildControlsList();
 	this.showMenu('main');
@@ -134,7 +146,8 @@ UI.prototype.selectMaterial = function (index) {
 };
 
 UI.prototype.buildControlsList = function () {
-	var html = KEY_LABELS.map(function (k) {
+	var rows = this.touchEnabled ? TOUCH_LABELS.concat(KEY_LABELS) : KEY_LABELS;
+	var html = rows.map(function (k) {
 		return '<div class="key">' + k[0] + '</div><div class="what">' + k[1] + '</div>';
 	}).join('');
 	el('controls-list').innerHTML = html;
@@ -172,6 +185,8 @@ UI.prototype.showMenu = function (which) {
 	if (which === 'save') { this.refreshSaveList('save'); }
 	if (which === 'options') { this.refreshOptions(); }
 	el('hud').style.display = which ? 'none' : 'block';
+	// the thumb controls belong to the game, not to the menus
+	el('touch').style.display = which ? 'none' : '';
 };
 
 UI.prototype.refreshOptions = function () {
@@ -275,6 +290,7 @@ UI.prototype.stepLoading = function () {
 };
 
 UI.prototype.requestPointerLock = function () {
+	if (this.touchEnabled) { return; }
 	var c = this.canvas;
 	if (c.requestPointerLock) {
 		var p = c.requestPointerLock();
@@ -301,6 +317,11 @@ UI.prototype.resume = function () {
 UI.prototype.clearKeys = function () {
 	var d = this.game.dirs;
 	d.forward = d.backward = d.left = d.right = d.up = d.down = false;
+	d.axisX = 0;
+	d.axisY = 0;
+	this.stickTouch = null;
+	this.lookTouch = null;
+	if (this.touchEnabled) { this.hideStick(); }
 	this.game.speedMult = 1;
 	this.speedKeys = {};
 	this.drag = null;
@@ -363,6 +384,7 @@ UI.prototype.bindInput = function () {
 	this.canvas.addEventListener('wheel', function (e) {
 		if (self.state !== 'playing') { return; }
 		self.game.changeTargetJ(e.deltaY < 0 ? 1 : -1);
+		self.updateTouchReadouts();
 		e.preventDefault();
 	}, { passive: false });
 
@@ -399,11 +421,11 @@ UI.prototype.onKey = function (code, down, event) {
 	}
 	if (!down) { return false; }
 	switch (code) {
-		case 'KeyF': g.setFlying(!g.flying); return true;
+		case 'KeyF': g.setFlying(!g.flying); this.updateTouchReadouts(); return true;
 		case 'Enter': this.place(); return true;
 		case 'Backspace': this.dig(); return true;
-		case 'KeyZ': g.changeTargetJ(1); return true;
-		case 'KeyX': g.changeTargetJ(-1); return true;
+		case 'KeyZ': g.changeTargetJ(1); this.updateTouchReadouts(); return true;
+		case 'KeyX': g.changeTargetJ(-1); this.updateTouchReadouts(); return true;
 		case 'KeyO': this.showOutlines = !this.showOutlines; return true;
 		case 'KeyH': this.showStats = !this.showStats; el('stats').style.display = this.showStats ? 'block' : 'none'; return true;
 		case 'KeyL': g.builder.radius = Math.min(512, g.builder.radius + 1); this.options.radius = g.builder.radius; saveOptions(this.options); return true;
@@ -434,6 +456,184 @@ UI.prototype.place = function () {
 UI.prototype.dig = function () {
 	var pick = this.game.pick();
 	if (pick.remove) { this.game.removeBlock(pick.remove); }
+};
+
+
+// --- touch controls -----------------------------------------------------------
+// A thumb stick on the left half of the screen, dragging on the right half to
+// look around, and buttons for the things a keyboard would do. The stick
+// follows the thumb : it appears wherever the left half is first touched.
+
+var STICK_RADIUS = 62;       // pixels from the centre for a full push
+var STICK_DEADZONE = 0.18;
+var REPEAT_DELAY = 400;      // holding dig or build repeats the action
+var REPEAT_EVERY = 220;
+
+UI.prototype.isTouchDevice = function () {
+	return (navigator.maxTouchPoints || 0) > 1 ||
+		(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+};
+
+/** switch the interface over to thumb controls (also called on the first touch) */
+UI.prototype.enableTouch = function () {
+	if (this.touchEnabled) { return; }
+	this.touchEnabled = true;
+	document.body.classList.add('touch');
+	// a phone has a smaller budget than a desktop : less detail, fewer pixels.
+	// A touch screen on a big display keeps the full one.
+	var screenSide = Math.min(window.screen.width || 9999, window.screen.height || 9999);
+	if (screenSide < 900) {
+		this.game.maxChunks = 500;
+		this.renderer.maxPixelRatio = 1.5;
+	}
+	this.buildControlsList();
+	this.updateTouchReadouts();
+};
+
+UI.prototype.updateTouchReadouts = function () {
+	if (!this.touchEnabled) { return; }
+	el('t-size').textContent = String(POW2[this.game.targetJ]);
+	el('t-mode').textContent = this.game.flying ? 'Walk' : 'Fly';
+};
+
+UI.prototype.bindTouch = function () {
+	var self = this;
+	this.touchEnabled = false;
+	this.stickTouch = null;    // identifier of the finger on the thumb stick
+	this.lookTouch = null;     // identifier of the finger looking around
+	this.repeats = {};
+
+	if (this.isTouchDevice()) { this.enableTouch(); }
+
+	// hold a button down to keep doing it
+	function holdButton(id, onDown, onUp, repeat) {
+		var node = el(id);
+		var press = function (e) {
+			e.preventDefault();
+			if (node.classList.contains('pressed')) { return; }
+			node.classList.add('pressed');
+			self.enableTouch();
+			onDown();
+			if (repeat) {
+				self.repeats[id] = setTimeout(function tick() {
+					onDown();
+					self.repeats[id] = setTimeout(tick, REPEAT_EVERY);
+				}, REPEAT_DELAY);
+			}
+		};
+		var release = function (e) {
+			if (e) { e.preventDefault(); }
+			node.classList.remove('pressed');
+			clearTimeout(self.repeats[id]);
+			if (onUp) { onUp(); }
+		};
+		node.addEventListener('touchstart', press, { passive: false });
+		node.addEventListener('touchend', release, { passive: false });
+		node.addEventListener('touchcancel', release, { passive: false });
+		node.addEventListener('mousedown', press);
+		node.addEventListener('mouseup', release);
+		node.addEventListener('mouseleave', release);
+	}
+
+	holdButton('t-up', function () { self.game.dirs.up = true; }, function () { self.game.dirs.up = false; });
+	holdButton('t-down', function () { self.game.dirs.down = true; }, function () { self.game.dirs.down = false; });
+	holdButton('t-dig', function () { self.dig(); }, null, true);
+	holdButton('t-build', function () { self.place(); }, null, true);
+	holdButton('t-size-up', function () { self.game.changeTargetJ(1); self.updateTouchReadouts(); }, null, true);
+	holdButton('t-size-down', function () { self.game.changeTargetJ(-1); self.updateTouchReadouts(); }, null, true);
+	holdButton('t-mode', function () { self.game.setFlying(!self.game.flying); self.updateTouchReadouts(); });
+	holdButton('t-menu', function () {
+		if (self.state === 'playing') { self.pause(); } else { self.resume(); }
+	});
+
+	var canvas = this.canvas;
+	canvas.addEventListener('touchstart', function (e) { self.onTouchStart(e); }, { passive: false });
+	canvas.addEventListener('touchmove', function (e) { self.onTouchMove(e); }, { passive: false });
+	canvas.addEventListener('touchend', function (e) { self.onTouchEnd(e); }, { passive: false });
+	canvas.addEventListener('touchcancel', function (e) { self.onTouchEnd(e); }, { passive: false });
+	// safari would otherwise scroll the page, or zoom on a double tap
+	document.addEventListener('touchmove', function (e) {
+		if (self.touchEnabled && self.state === 'playing') { e.preventDefault(); }
+	}, { passive: false });
+	document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+};
+
+UI.prototype.onTouchStart = function (e) {
+	e.preventDefault();
+	this.enableTouch();
+	if (this.state === 'menu' || this.state === 'paused') { return; }
+	for (var i = 0; i < e.changedTouches.length; i++) {
+		var t = e.changedTouches[i];
+		var onTheLeft = t.clientX < window.innerWidth * 0.45;
+		if (onTheLeft && this.stickTouch === null) {
+			this.stickTouch = t.identifier;
+			this.stickOrigin = [t.clientX, t.clientY];
+			this.showStick(t.clientX, t.clientY, 0, 0);
+		} else if (this.lookTouch === null) {
+			this.lookTouch = t.identifier;
+			this.lookFrom = [t.clientX, t.clientY];
+		}
+	}
+};
+
+UI.prototype.onTouchMove = function (e) {
+	e.preventDefault();
+	if (this.state !== 'playing') { return; }
+	for (var i = 0; i < e.changedTouches.length; i++) {
+		var t = e.changedTouches[i];
+		if (t.identifier === this.stickTouch) {
+			var dx = t.clientX - this.stickOrigin[0];
+			var dy = t.clientY - this.stickOrigin[1];
+			var len = Math.hypot(dx, dy);
+			if (len > STICK_RADIUS) { dx *= STICK_RADIUS / len; dy *= STICK_RADIUS / len; }
+			var ax = dx / STICK_RADIUS, ay = -dy / STICK_RADIUS;
+			var push = Math.hypot(ax, ay);
+			this.game.dirs.axisX = (push < STICK_DEADZONE) ? 0 : ax;
+			this.game.dirs.axisY = (push < STICK_DEADZONE) ? 0 : ay;
+			this.showStick(this.stickOrigin[0], this.stickOrigin[1], dx, dy);
+		} else if (t.identifier === this.lookTouch) {
+			var s = this.options.sensitivity * 0.5;   // a thumb travels further than a mouse
+			var p = this.game.player;
+			p.theta -= (t.clientX - this.lookFrom[0]) * s;
+			p.phi += (this.options.invertY ? 1 : -1) * (t.clientY - this.lookFrom[1]) * s;
+			var lim = Math.PI / 2 - 0.01;
+			if (p.phi > lim) { p.phi = lim; }
+			if (p.phi < -lim) { p.phi = -lim; }
+			this.lookFrom = [t.clientX, t.clientY];
+		}
+	}
+};
+
+UI.prototype.onTouchEnd = function (e) {
+	for (var i = 0; i < e.changedTouches.length; i++) {
+		var t = e.changedTouches[i];
+		if (t.identifier === this.stickTouch) {
+			this.stickTouch = null;
+			this.game.dirs.axisX = 0;
+			this.game.dirs.axisY = 0;
+			this.hideStick();
+		} else if (t.identifier === this.lookTouch) {
+			this.lookTouch = null;
+		}
+	}
+};
+
+UI.prototype.showStick = function (cx, cy, dx, dy) {
+	var pad = el('stick');
+	pad.classList.add('active');
+	pad.style.left = (cx - pad.offsetWidth / 2) + 'px';
+	pad.style.bottom = 'auto';
+	pad.style.top = (cy - pad.offsetHeight / 2) + 'px';
+	el('stick-knob').style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)';
+};
+
+UI.prototype.hideStick = function () {
+	var pad = el('stick');
+	pad.classList.remove('active');
+	pad.style.left = '';
+	pad.style.top = '';
+	pad.style.bottom = '';
+	el('stick-knob').style.transform = '';
 };
 
 // --- main loop ----------------------------------------------------------------

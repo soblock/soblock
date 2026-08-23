@@ -7,7 +7,11 @@ and WebGL2.
 
 **Play it** by opening `web/index.html` in Chrome (double clicking the file
 works, no server needed), or by dropping that single file on any static host.
-Everything is inside it : code, texture atlas and menus, 205 kB in total.
+Everything is inside it : code, texture atlas and menus, one file.
+
+On a phone or a tablet it switches to thumb controls by itself. On an iPhone,
+open the page in Safari and use Share → Add to Home Screen : it then runs
+without the browser bars, which is worth the two taps.
 
 ## Controls
 
@@ -26,6 +30,26 @@ Everything is inside it : code, texture atlas and menus, 205 kB in total.
 | `O` | show the octree chunks |
 | `H` | show the debug stats |
 | `Esc` | menu (save, load, options) |
+
+## On a touch screen
+
+The thumb controls appear on their own on a touch device, and the game keeps a
+smaller budget there : 500 chunks instead of 1100, and at most 1.5 device
+pixels per css pixel.
+
+| Control | Action |
+| --- | --- |
+| left thumb | walk — the stick appears wherever you touch the left of the screen |
+| right thumb | drag to look around |
+| ▲ / ▼ | jump or fly up, fly down |
+| ⛏ / ▣ | dig, build — hold to repeat |
+| − 1 + | build size, from 1 to 1024 |
+| Fly / Walk | switch between the two |
+| ☰ | menu, since a phone has no escape key |
+| the material row | tap a block to pick it |
+
+Aiming is the crosshair in the middle of the screen, as on a desktop : turn with
+the right thumb until the block you want is under it, then dig or build.
 
 Worlds are saved in the browser local storage, as the list of edits that were
 made to the generated world — exactly what `GameSave` stores in the Java
@@ -63,10 +87,15 @@ checks the javascript against values produced by the original code
 ```
 node web/test/world-reference.js      # 52 reference values, 0 mismatches
 node web/test/smoke.js                # drives the real page in headless chromium
+node web/test/touch.js                # the same page on an emulated phone
 ```
 
-The smoke test needs `playwright`, and checks that a world generates, that the
-player falls and lands, walks, flies, digs, builds, saves and reloads.
+The two page tests need `playwright`. `smoke.js` checks that a world generates,
+that the player falls and lands, walks, flies, digs, builds, saves and reloads,
+and that no holes open at the seams between levels of detail. `touch.js` loads
+the page in a phone sized viewport with a touch screen and no pointer lock, and
+checks the thumb stick, the look drag and every button. Both drive chromium :
+they cover the touch behaviour, not Safari itself.
 
 ## Deliberate differences
 
@@ -90,6 +119,10 @@ were changed on purpose :
   neighbour, so those faces depend on how finely the neighbour is cut. The Java
   version rebuilds a chunk when its own level of detail changes but never its
   neighbours (it does rebuild them around an edit), which leaves stale seams you
-  can see the sky through. Here a change of level marks the chunks along the six
-  sides for a rebuild; `test/smoke.js` measures the remaining holes by comparing
-  a frame against the same frame with backface culling switched off.
+  can see the sky through. Here the neighbours along the six sides are rebuilt in
+  the same batch as the change, so the swap is all or nothing;
+  `test/smoke.js` measures the remaining holes by comparing a frame against the
+  same frame with backface culling switched off, both while the rebuilds are in
+  flight and once they have settled.
+* **Thumb controls.** The original is a keyboard and mouse game; the touch
+  layer described above has no equivalent in it.
