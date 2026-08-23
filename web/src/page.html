@@ -1,5 +1,9 @@
 <title>SoBlock</title>
 <meta name="description" content="SoBlock — a sparse voxel octree block building game, playable in the browser.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#87cefa">
 <style>
 :root {
 	/* the palette is taken from the world itself : sky, ice, snow, stone, sand */
@@ -25,10 +29,15 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
 	* { transition: none !important; animation: none !important; }
 }
-#gl { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+#gl {
+	display: block; width: 100vw; height: 100vh; cursor: crosshair;
+	height: 100dvh;   /* the small viewport, so the safari toolbars do not cut it */
+	touch-action: none;
+}
+html, body { touch-action: none; -webkit-touch-callout: none; overscroll-behavior: none; }
 
 /* ---------- heads up display ---------- */
-#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 #crosshair {
 	position: absolute; left: 50%; top: 50%; width: 22px; height: 22px;
 	margin: -11px 0 0 -11px; opacity: 0.85;
@@ -80,14 +89,97 @@ html, body {
 	background: rgba(10, 14, 20, 0.35); padding: 8px 10px; border-radius: 8px;
 }
 
+
+/* ---------- touch controls ---------- */
+/* shown only on a touch device, see UI.enableTouch */
+#touch { position: fixed; inset: 0; display: none; pointer-events: none; z-index: 2; }
+body.touch #touch { display: block; }
+body.touch #hint { display: none; }
+body.touch #gl { cursor: default; }
+
+#stick {
+	position: absolute; width: 132px; height: 132px; border-radius: 50%;
+	left: calc(24px + env(safe-area-inset-left, 0px));
+	bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+	background: rgba(10, 14, 20, 0.28); border: 2px solid rgba(233, 242, 246, 0.35);
+	opacity: 0.5; transition: opacity 0.15s ease;
+}
+#stick.active { opacity: 0.95; }
+#stick-knob {
+	position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px;
+	border-radius: 50%; background: rgba(233, 242, 246, 0.55);
+	border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.tbtn, .tpill {
+	pointer-events: auto; touch-action: none; -webkit-tap-highlight-color: transparent;
+	font-family: var(--ui); color: var(--text); background: rgba(10, 14, 20, 0.55);
+	border: 2px solid rgba(233, 242, 246, 0.3); border-radius: 50%;
+	display: flex; align-items: center; justify-content: center; margin: 0;
+}
+.tbtn { width: 76px; height: 76px; font-size: 26px; }
+.tbtn.small { width: 60px; height: 60px; font-size: 20px; }
+.tbtn.pressed, .tpill.pressed { background: rgba(111, 211, 255, 0.45); border-color: var(--accent); }
+.tbtn .label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
+.tbtn .glyph { font-size: 24px; line-height: 1; }
+.tbtn .stack { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+#touch-actions {
+	position: absolute; display: flex; gap: 14px; align-items: flex-end;
+	right: calc(20px + env(safe-area-inset-right, 0px));
+	bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+}
+#touch-vert {
+	position: absolute; display: flex; flex-direction: column; gap: 12px;
+	right: calc(24px + env(safe-area-inset-right, 0px));
+	bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+}
+#touch-top {
+	position: absolute; display: flex; gap: 8px; align-items: center;
+	right: calc(12px + env(safe-area-inset-right, 0px));
+	top: calc(12px + env(safe-area-inset-top, 0px));
+}
+.tpill {
+	border-radius: 999px; height: 40px; min-width: 44px; padding: 0 13px; font-size: 15px;
+}
+.tpill.readout {
+	background: rgba(10, 14, 20, 0.35); border-style: dashed; color: var(--accent);
+	font-family: var(--data); font-variant-numeric: tabular-nums; pointer-events: none;
+}
+/* the palette sits above the thumb controls on a touch screen */
+body.touch #palette { bottom: calc(126px + env(safe-area-inset-bottom, 0px)); gap: 6px; }
+body.touch .slot { width: 46px; height: 46px; }
+body.touch #build-info { bottom: calc(182px + env(safe-area-inset-bottom, 0px)); }
+body.touch #stats { top: calc(60px + env(safe-area-inset-top, 0px)); }
+
+/* a phone held sideways is short : keep the palette down by the thumbs, well
+   clear of the crosshair in the middle */
+@media (max-height: 500px) {
+	body.touch #palette { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+	body.touch #build-info { bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* a phone held upright has little room : shrink the thumb controls */
+@media (max-width: 500px) and (orientation: portrait) {
+	#stick { width: 112px; height: 112px; }
+	.tbtn { width: 66px; height: 66px; }
+	.tbtn.small { width: 52px; height: 52px; }
+	body.touch #palette { bottom: calc(232px + env(safe-area-inset-bottom, 0px)); }
+	body.touch #build-info { bottom: calc(288px + env(safe-area-inset-bottom, 0px)); }
+	#touch-vert { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
+}
+#rotate-hint { display: none; color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+body.touch #rotate-hint { display: block; }
+
 /* ---------- menus ---------- */
 #menu {
-	position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+	position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 4;
 	background: radial-gradient(circle at 50% 35%, rgba(14, 26, 38, 0.45), rgba(6, 9, 13, 0.86));
 	backdrop-filter: blur(2px);
 }
 .panel {
-	width: min(560px, 92vw); max-height: 88vh; overflow: auto;
+	width: min(560px, 92vw); max-height: 84dvh; overflow: auto;
+	-webkit-overflow-scrolling: touch;
 	background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px;
 	padding: 26px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.5);
 }
@@ -131,7 +223,7 @@ input[type=text] {
 #save-feedback { color: var(--accent); font-size: 13px; min-height: 18px; margin: 4px 0 12px; }
 
 #loading {
-	position: fixed; inset: 0; display: none; flex-direction: column;
+	position: fixed; inset: 0; display: none; flex-direction: column; z-index: 3;
 	align-items: center; justify-content: center; gap: 18px;
 	background: rgba(6, 9, 13, 0.9); color: var(--text);
 }
@@ -141,9 +233,9 @@ input[type=text] {
 #loading .title { font-size: 18px; letter-spacing: 0.01em; }
 
 #fatal {
-	position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none;
+	position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none; z-index: 5;
 	max-width: 80vw; background: #2a1215; border: 1px solid var(--danger); color: #ffd7d7;
-	padding: 18px 22px; border-radius: 12px; font-size: 15px; z-index: 10;
+	padding: 18px 22px; border-radius: 12px; font-size: 15px;
 }
 </style>
 
@@ -163,6 +255,25 @@ input[type=text] {
 	<div id="palette"></div>
 </div>
 
+<div id="touch">
+	<div id="stick"><div id="stick-knob"></div></div>
+	<div id="touch-top">
+		<button class="tpill" id="t-size-down" aria-label="Smaller build size">−</button>
+		<span class="tpill readout" id="t-size">1</span>
+		<button class="tpill" id="t-size-up" aria-label="Bigger build size">+</button>
+		<button class="tpill" id="t-mode" aria-label="Switch between walking and flying">Fly</button>
+		<button class="tpill" id="t-menu" aria-label="Menu">☰</button>
+	</div>
+	<div id="touch-vert">
+		<button class="tbtn small" id="t-up" aria-label="Jump, or fly up">▲</button>
+		<button class="tbtn small" id="t-down" aria-label="Fly down">▼</button>
+	</div>
+	<div id="touch-actions">
+		<button class="tbtn" id="t-dig" aria-label="Dig a block"><span class="stack"><span class="glyph">⛏</span><span class="label">Dig</span></span></button>
+		<button class="tbtn" id="t-build" aria-label="Place a block"><span class="stack"><span class="glyph">▣</span><span class="label">Build</span></span></button>
+	</div>
+</div>
+
 <div id="loading">
 	<div class="title">Carving the world…</div>
 	<div id="loading-track"><div id="loading-bar"></div></div>
@@ -177,6 +288,7 @@ input[type=text] {
 			far away blocks are simply drawn coarser. Dig and build with blocks of any size,
 			from a single cube to a 1024 cube chunk of landscape.
 		</p>
+		<p id="rotate-hint">On a phone, turn it sideways and add the page to your home screen for a full screen game.</p>
 		<button class="primary" id="btn-new">New world</button>
 		<button id="btn-load">Load a world</button>
 		<button id="btn-controls">Controls</button>

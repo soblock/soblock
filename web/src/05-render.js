@@ -166,6 +166,7 @@ function Renderer(canvas) {
 	this.planes = new Float32Array(24);
 
 	this.chunks = new Map();      // node -> gpu buffers
+	this.maxPixelRatio = 2;
 	this.drawCalls = 0;
 	this.trianglesDrawn = 0;
 	this.showLines = false;
@@ -255,7 +256,7 @@ Renderer.prototype.gpuBytes = function () {
 };
 
 Renderer.prototype.resize = function () {
-	var dpr = Math.min(window.devicePixelRatio || 1, 2);
+	var dpr = Math.min(window.devicePixelRatio || 1, this.maxPixelRatio);
 	var w = Math.floor(this.canvas.clientWidth * dpr);
 	var h = Math.floor(this.canvas.clientHeight * dpr);
 	if (this.canvas.width !== w || this.canvas.height !== h) {
