@@ -8,6 +8,19 @@ var SELECTABLE = [Terran.MAN_BRICK, Terran.MAN_PARQUET, Terran.MAN_METAL,
 var MAX_TARGET_J = 10;
 
 var CHUNKS_PER_RADIUS2 = 96; // roughly how many chunks a radius of 1 costs, squared
+
+// The detail budget follows the machine : while a frame costs us little and the
+// player has asked for more detail than the budget can pay for, the budget
+// grows, and it falls back as soon as frames get expensive or the heap fills.
+var BUDGET_MIN = 300;
+var BUDGET_CEILING = 8000;      // even a fast machine stops here
+var CHUNK_HEAP_BYTES = 100000;  // measured : about 97 kB of heap per chunk
+var BUDGET_EVERY_MS = 1000;     // the budget moves at most once a second
+var BUDGET_STEP = 1.2;
+var FRAME_CHEAP_MS = 6;         // our own work in a frame : room to spare
+var FRAME_DEAR_MS = 12;         // too much of the frame is ours
+var HEAP_ROOM = 0.5;            // never grow past this share of the heap limit
+var HEAP_FULL = 0.75;
 var ADAPT_EVERY_MS = 250;    // how often the detail radius may move
 var ADAPT_EVERY_CALLS = 60;  // or this many frames, whichever comes first
 var ADAPT_MAX_STEP = 0.06;   // and by how much, so at most about 24% a second
@@ -27,7 +40,9 @@ function Game(renderer) {
 	this.regenQueue = [];
 	this.atoms = [];
 	this.maxChunks = 1600;   // detail budget : how many meshed chunks we keep
+	this.budgetCeiling = heapCeiling();
 	this.targetRadius = 6;   // the level of detail the player asked for
+	this.frameCosts = [];    // how long our own work took, over the last frames
 	this.pending = null;     // batch of meshes being built
 	this.stats = { splits: 0, merges: 0, lodMs: 0 };
 	this.newWorld();
@@ -165,6 +180,57 @@ Game.prototype.setChunkBudget = function (chunks) {
 	this.lastChunkCount = undefined;
 };
 
+/** how long the last frame took us, measured around our own work */
+Game.prototype.observeFrame = function (ms) {
+	this.frameCosts.push(ms);
+	if (this.frameCosts.length > 90) { this.frameCosts.shift(); }
+};
+
+/** the middle of the recent frame costs, or null while we have too few */
+Game.prototype.frameCost = function () {
+	if (this.frameCosts.length < 20) { return null; }
+	var sorted = this.frameCosts.slice().sort(function (a, b) { return a - b; });
+	return sorted[sorted.length >> 1];
+};
+
+/** as many chunks as the heap can hold, never more than the flat ceiling */
+function heapCeiling() {
+	var m = (typeof performance !== 'undefined') && performance.memory;
+	if (!m || !m.jsHeapSizeLimit) { return BUDGET_CEILING; }
+	return Math.max(BUDGET_MIN, Math.min(BUDGET_CEILING,
+		Math.floor(HEAP_ROOM * m.jsHeapSizeLimit / CHUNK_HEAP_BYTES)));
+}
+
+function heapShare() {
+	var m = (typeof performance !== 'undefined') && performance.memory;
+	if (!m || !m.jsHeapSizeLimit) { return 0; }
+	return m.usedJSHeapSize / m.jsHeapSizeLimit;
+}
+
+/**
+ * Spend as much detail as the machine will carry. The radius alone cannot do
+ * this : it is capped by the budget, so on a fast machine it would sit well
+ * below what the player asked for while most of the card went unused.
+ */
+Game.prototype.autoBudget = function () {
+	var now = performance.now();
+	if (now - (this.lastBudget || 0) < BUDGET_EVERY_MS) { return; }
+	this.lastBudget = now;
+	var cost = this.frameCost();
+	if (cost === null) { return; }
+	var heap = heapShare();
+	if (cost > FRAME_DEAR_MS || heap > HEAP_FULL) {
+		this.maxChunks = Math.max(BUDGET_MIN, Math.round(this.maxChunks / BUDGET_STEP));
+		return;
+	}
+	// only worth growing when the budget is what holds the detail back
+	if (cost >= FRAME_CHEAP_MS || heap > HEAP_ROOM) { return; }
+	if (this.builder.radius >= this.targetRadius - 0.05) { return; }
+	if (this.renderer.chunks.size < this.maxChunks * 0.9) { return; }
+	if (this.pending || this.regenQueue.length || this.meshQueue.length) { return; }
+	this.maxChunks = Math.min(this.budgetCeiling, Math.round(this.maxChunks * BUDGET_STEP));
+};
+
 /**
  * Keep the number of chunks near the budget by moving the level of detail
  * radius, rather than by refusing to split. A hard stop would freeze the whole
@@ -207,6 +273,7 @@ Game.prototype.adaptDetail = function () {
 
 /** run background work for at most budget milliseconds */
 Game.prototype.runJobs = function (budgetMs) {
+	this.autoBudget();
 	this.adaptDetail();
 	var t0 = performance.now();
 	var did = false;

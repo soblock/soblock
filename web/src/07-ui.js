@@ -168,6 +168,12 @@ UI.prototype.updateHud = function () {
 			'<br>triangles ' + (r.trianglesDrawn / 1000).toFixed(1) + 'k' +
 			'<br>gpu ' + (r.gpuBytes() / 1e6).toFixed(1) + ' MB' +
 			'<br>lod radius ' + g.builder.radius.toFixed(1) + ' of ' + g.targetRadius +
+			'<br>budget ' + g.maxChunks + ' of ' + g.budgetCeiling + ' chunks' +
+			(g.builder.radius < g.targetRadius - 0.05
+				? ((g.frameCost() !== null && g.frameCost() >= 6) ? ' (frames are the limit)'
+					: (g.maxChunks >= g.budgetCeiling ? ' (ceiling)' : ' (growing)'))
+				: ' (detail as asked)') +
+			'<br>frame ' + (g.frameCost() === null ? '?' : g.frameCost().toFixed(1)) + ' ms of our own work' +
 			'<br>splits ' + g.stats.splits + '  merges ' + g.stats.merges +
 			'<br>work ' + g.stats.lodMs.toFixed(1) + ' ms/frame' +
 			'<br>edits ' + g.atoms.length;
@@ -495,6 +501,7 @@ UI.prototype.enableTouch = function () {
 	var screenSide = Math.min(window.screen.width || 9999, window.screen.height || 9999);
 	if (screenSide < 900) {
 		this.game.setChunkBudget(700);
+		this.game.budgetCeiling = 1500;
 		this.renderer.maxPixelRatio = 1.5;
 	}
 	this.buildControlsList();
@@ -650,6 +657,7 @@ UI.prototype.hideStick = function () {
 // --- main loop ----------------------------------------------------------------
 
 UI.prototype.frame = function (now) {
+	var started = performance.now();
 	var dt = now - this.lastTime;
 	this.lastTime = now;
 	this.fpsFrames++;
@@ -682,6 +690,7 @@ UI.prototype.frame = function (now) {
 	}
 	this.renderer.render(this.game.player, highlights);
 	this.updateHud();
+	this.game.observeFrame(performance.now() - started);
 };
 
 UI.prototype.start = function () {

@@ -34,8 +34,8 @@ without the browser bars, which is worth the two taps.
 ## On a touch screen
 
 The thumb controls appear on their own on a touch device, and the game keeps a
-smaller budget there : 500 chunks instead of 1100, and at most 1.5 device
-pixels per css pixel.
+smaller budget there : it starts at 700 chunks instead of 1600 and stops
+growing at 1500, and draws at most 1.5 device pixels per css pixel.
 
 | Control | Action |
 | --- | --- |
@@ -87,6 +87,7 @@ checks the javascript against values produced by the original code
 ```
 node web/test/world-reference.js      # 52 reference values, 0 mismatches
 node web/test/edits.js                # digging and building, no browser needed
+node web/test/budget.js               # the budget follows the machine, no browser needed
 node web/test/smoke.js                # drives the real page in headless chromium
 node web/test/touch.js                # the same page on an emulated phone
 ```
@@ -96,6 +97,11 @@ every build size can be checked in a few seconds. After each dig and each build
 it asks that every chunk being drawn is still part of the octree, and that every
 chunk's mesh matches what a fresh build of it would produce — a chunk that has
 been replaced but is still drawn leaves its faces hanging in the air for good.
+
+`budget.js` uses the same stub renderer to drive the budget controller with made
+up frame costs : cheap frames have to buy a bigger budget and turn it into a
+wider detail radius, expensive ones have to hand it back, and the ceiling has to
+hold.
 
 The two page tests need `playwright`. `smoke.js` checks that a world generates,
 that the player falls and lands, walks, flies, digs, builds, saves and reloads,
@@ -116,16 +122,32 @@ were changed on purpose :
   speed is multiplied by `cos(phi)`, so looking at your feet while building
   slowed you to a crawl. Free flight still goes where you look.
 * **A detail budget.** The Java version had a background thread refining for
-  ever, which a browser tab cannot afford, so there is a budget of about 1600
-  meshed chunks (700 on a phone). It is spent by moving the level of detail
-  radius rather than by refusing to split : the radius starts at roughly what
-  the budget can pay for, then follows the chunk count, stepping at most 6% a
-  quarter of a second and holding still while the count is already moving.
-  Refusing to split instead would freeze the whole level of detail as soon as
-  the budget was full — nothing could be refined ahead of the player, because
-  nothing far behind had crossed its merge threshold yet. The option panel sets
-  the radius the player would like; the budget may keep the effective one lower,
-  and the debug stats show both.
+  ever, which a browser tab cannot afford, so the web version keeps a budget of
+  meshed chunks. It is spent by moving the level of detail radius rather than by
+  refusing to split : the radius starts at roughly what the budget can pay for,
+  then follows the chunk count, stepping at most 6% a quarter of a second and
+  holding still while the count is already moving. Refusing to split instead
+  would freeze the whole level of detail as soon as the budget was full —
+  nothing could be refined ahead of the player, because nothing far behind had
+  crossed its merge threshold yet. The option panel sets the radius the player
+  would like; the budget may keep the effective one lower, and the debug stats
+  show both.
+
+  The budget itself is not a fixed number : the game measures what it costs the
+  machine and moves it. It starts at 1600 chunks (700 on a phone) and, once a
+  second, looks at the median time its own work takes in a frame and at how much
+  of the js heap is spoken for. Under 6 ms and half the heap it grows the budget
+  by 20%, over 12 ms or three quarters of the heap it gives 20% back, and in
+  between it holds. It only grows when the player has actually asked for more
+  detail than they are getting, the chunks already paid for are on screen and no
+  work is queued, so a machine sitting comfortably at its requested radius is
+  left alone. A chunk costs about 97 kB of heap, so the ceiling is the smaller of
+  8000 chunks and half of `performance.memory.jsHeapSizeLimit` divided by that —
+  roughly 780 MB of heap and a detail radius near 9 on a desktop. Browsers
+  without `performance.memory` (Safari, Firefox) get the flat 8000. Radii much
+  past that are not a setting away : radius 15 is around 21 600 chunks, some
+  2 GB of heap, which would need the octree packed into typed arrays rather than
+  one object per node.
 * **Flying out of the ground.** If the camera ends up inside a block — flying
   fast into a hillside — collisions are skipped until it is out, instead of
   being stuck for good.
